@@ -1,0 +1,27 @@
+doc_id: swc-106
+kind: swc
+title: Unprotected SELFDESTRUCT Instruction
+vuln_class: [access-control]   # provisional
+swc_ids: [SWC-106]
+cwe_ids: [CWE-284]
+source_url: https://swcregistry.io/docs/SWC-106
+license: MIT
+date: null
+loss_usd: null
+summary: >
+  A function that can destroy the contract and forward its balance is callable
+  by anyone. The contract can be erased and its funds redirected by an
+  unauthorised party.
+root_cause: >
+  The selfdestruct instruction sits in a function with no authorisation check,
+  or with a check that can be bypassed.
+exploit_pattern: >
+  An attacker calls the exposed function and names their own address as the
+  beneficiary. The contract's code is removed and its ether is sent to the
+  attacker. In proxy setups, destroying the logic contract can also break every
+  proxy that depends on it.
+remediation: >
+  Avoid selfdestruct where possible. If it is truly needed, restrict it to a
+  tightly controlled role, ideally a multisig behind a timelock. Never expose
+  it through a public function without access control.
+excerpts: []

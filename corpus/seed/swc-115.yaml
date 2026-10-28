@@ -1,0 +1,25 @@
+doc_id: swc-115
+kind: swc
+title: Authorization through tx.origin
+vuln_class: [access-control]   # provisional
+swc_ids: [SWC-115]
+cwe_ids: [CWE-477]
+source_url: https://swcregistry.io/docs/SWC-115
+license: MIT
+date: null
+loss_usd: null
+summary: >
+  Using tx.origin to decide who is allowed to act means the contract trusts
+  the account that started the whole transaction, not the contract or account
+  that called it directly.
+root_cause: >
+  The authorisation check compares tx.origin with the owner. Any intermediate
+  contract the owner interacts with can then act with the owner's authority.
+exploit_pattern: >
+  An attacker tricks the owner into calling a malicious contract. That contract
+  calls the victim contract, tx.origin still equals the owner, and the
+  privileged action goes through.
+remediation: >
+  Use msg.sender for authorisation. Reserve tx.origin for rare cases such as
+  rejecting calls from contracts, and never use it to grant privileges.
+excerpts: []

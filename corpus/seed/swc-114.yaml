@@ -1,0 +1,27 @@
+doc_id: swc-114
+kind: swc
+title: Transaction Order Dependence
+vuln_class: [transaction-ordering]   # provisional, needs agreed class
+swc_ids: [SWC-114]
+cwe_ids: [CWE-362]
+source_url: https://swcregistry.io/docs/SWC-114
+license: MIT
+date: null
+loss_usd: null
+summary: >
+  The outcome of a transaction depends on the order in which transactions are
+  included in a block. Because pending transactions are visible and miners or
+  bots can reorder them, others can jump ahead.
+root_cause: >
+  State that affects a trade, reward or approval can change between the time a
+  user submits a transaction and the time it executes, and the contract
+  offers no protection against that change.
+exploit_pattern: >
+  A bot sees a profitable pending transaction and submits its own with a higher
+  fee so it runs first. Examples include front-running a price-setting call or
+  an approval change, so the victim executes at a worse state.
+remediation: >
+  Let users set limits such as minimum output or a deadline. Use commit-reveal
+  schemes where ordering matters, and avoid designs where a visible pending
+  transaction can be exploited for profit.
+excerpts: []

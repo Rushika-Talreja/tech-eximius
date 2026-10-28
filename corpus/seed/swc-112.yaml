@@ -1,0 +1,27 @@
+doc_id: swc-112
+kind: swc
+title: Delegatecall to Untrusted Callee
+vuln_class: [delegatecall]   # provisional
+swc_ids: [SWC-112]
+cwe_ids: [CWE-829]
+source_url: https://swcregistry.io/docs/SWC-112
+license: MIT
+date: null
+loss_usd: null
+summary: >
+  Delegatecall runs another contract's code using the caller's own storage and
+  balance. If the target address can be chosen by an untrusted party, that
+  party effectively controls the calling contract.
+root_cause: >
+  The contract passes a user-supplied or modifiable address to delegatecall, so
+  code from outside the trusted set executes with full access to the
+  contract's state.
+exploit_pattern: >
+  An attacker deploys a contract with malicious logic and gets it used as the
+  delegatecall target. That code overwrites ownership variables or transfers
+  funds out of the calling contract.
+remediation: >
+  Delegate only to fixed, audited addresses. Do not let user input choose the
+  target. Keep storage layouts aligned between caller and target, and protect
+  any function that can change the target address.
+excerpts: []

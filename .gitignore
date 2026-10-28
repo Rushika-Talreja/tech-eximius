@@ -1,0 +1,6 @@
+qdrant_data/
+storage.sqlite
+venv/
+__pycache__/
+.pytest_cache/
+*.egg-info/

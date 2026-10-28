@@ -1,0 +1,29 @@
+doc_id: swc-101
+kind: swc
+title: Integer Overflow and Underflow
+vuln_class: [integer-overflow]   # provisional
+swc_ids: [SWC-101]
+cwe_ids: [CWE-682]
+source_url: https://swcregistry.io/docs/SWC-101
+license: MIT
+date: null
+loss_usd: null
+summary: >
+  Arithmetic on fixed-size integers can wrap around when a result is too large
+  or too small for the type. A balance or counter then silently becomes a
+  tiny or huge value instead of failing.
+root_cause: >
+  The contract adds, subtracts or multiplies values without checking that the
+  result fits the type. This matters most in compilers older than Solidity
+  0.8, where wrapping is the default, and inside unchecked blocks in newer
+  versions.
+exploit_pattern: >
+  An attacker supplies a value that pushes a calculation past its limit, for
+  example making a subtraction go below zero so a balance becomes enormous, or
+  making a price multiplication wrap to a small number so purchases cost almost
+  nothing.
+remediation: >
+  Use Solidity 0.8 or later, which reverts on overflow by default. On older
+  versions use a checked arithmetic library. Review every unchecked block and
+  validate input ranges before doing arithmetic.
+excerpts: []
