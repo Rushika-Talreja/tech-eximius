@@ -58,3 +58,4 @@ __all__ = [
     "verify_draft",
     "verify_patch",
 ]
+"""Core building blocks for the DeFi auditor."""

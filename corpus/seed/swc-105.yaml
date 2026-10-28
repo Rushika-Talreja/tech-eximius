@@ -1,0 +1,25 @@
+doc_id: swc-105
+kind: swc
+title: Unprotected Ether Withdrawal
+vuln_class: [access-control]   # provisional
+swc_ids: [SWC-105]
+cwe_ids: [CWE-284]
+source_url: https://swcregistry.io/docs/SWC-105
+license: MIT
+date: null
+loss_usd: null
+summary: >
+  A contract exposes a function that sends ether out but does not check who is
+  calling it. Anyone can trigger the withdrawal and take funds that belong to
+  the owner or to users.
+root_cause: >
+  The withdrawing function is public or external and has no caller check, or
+  the check is missing on one code path.
+exploit_pattern: >
+  An attacker finds the unguarded function, calls it with their own address as
+  the recipient and drains the contract balance in a single transaction.
+remediation: >
+  Restrict withdrawal functions to authorised callers, for example with an
+  owner modifier or role-based access control. Send funds only to addresses
+  the contract already trusts.
+excerpts: []

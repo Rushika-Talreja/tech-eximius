@@ -1,0 +1,35 @@
+version: "1.0"
+detectors:
+  reentrancy-eth:
+    vuln_class: "Reentrancy"
+    swc_ids: ["SWC-107"]
+  reentrancy-no-eth:
+    vuln_class: "Reentrancy"
+    swc_ids: ["SWC-107"]
+  arbitrary-send-eth:
+    vuln_class: "Access Control"
+    swc_ids: ["SWC-105"]
+  arbitrary-send-erc20:
+    vuln_class: "Access Control"
+    swc_ids: ["SWC-105"]
+  suicidal:
+    vuln_class: "Access Control"
+    swc_ids: ["SWC-106"]
+  uninitialized-state:
+    vuln_class: "Initialization"
+    swc_ids: ["SWC-109"]
+  uninitialized-storage:
+    vuln_class: "Initialization"
+    swc_ids: ["SWC-109"]
+  unchecked-lowlevel:
+    vuln_class: "Unchecked Return Values"
+    swc_ids: ["SWC-104"]
+  unchecked-transfer:
+    vuln_class: "Unchecked Return Values"
+    swc_ids: ["SWC-104"]
+  tx-origin:
+    vuln_class: "Access Control"
+    swc_ids: ["SWC-115"]
+  timestamp:
+    vuln_class: "Time Manipulation"
+    swc_ids: ["SWC-116"]
