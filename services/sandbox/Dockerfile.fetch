@@ -1,0 +1,12 @@
+# Pinned base image for dependency fetch step
+FROM node:20-alpine@sha256:d80eb4c7fb3b22cf1262d1ec86d0b3ea79b380b2a59a7ea275b253b211d13dbb
+
+# Non-root user
+RUN addgroup -g 10001 auditor && adduser -D -u 10001 -G auditor auditor
+
+USER auditor
+WORKDIR /work
+
+# Enforce no scripts execution on dependency install
+ENTRYPOINT ["npm", "ci", "--ignore-scripts"]
+

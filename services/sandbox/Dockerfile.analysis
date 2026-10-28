@@ -1,0 +1,20 @@
+# Pinned Ubuntu 22.04 LTS base image digest
+FROM ubuntu:22.04@sha256:2b7412e6465c3c7fc5bb21d3e6f1917726704fb5b49f99cce200926c04f86d63
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Pinned toolchain versions
+ENV SOLC_VERSION="0.8.24"
+ENV SLITHER_VERSION="0.10.2"
+ENV FOUNDRY_VERSION="nightly-5b7e4cb30e82e30f14ec7f9b88dbd18ec06f4703"
+
+# Non-root user (10001:10001) per security_and_guardrails.md
+RUN groupadd -g 10001 auditor && \
+    useradd -u 10001 -g auditor -m -s /bin/bash auditor
+
+USER auditor
+WORKDIR /scratch
+
+# Analysis container runs with --network none, read-only rootfs
+ENTRYPOINT ["solc"]
+

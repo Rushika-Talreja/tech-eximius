@@ -1,0 +1,28 @@
+[
+  {
+    "title": "Unbounded Token Minting",
+    "severity": "high",
+    "source": "custom_detector",
+    "detector": "unbounded-mint",
+    "scored": true,
+    "status": "open",
+    "start_line": 8,
+    "evidence_count": 1,
+    "evidence_kinds": [
+      "static_fact"
+    ]
+  },
+  {
+    "title": "Unprotected Privileged State Change",
+    "severity": "high",
+    "source": "custom_detector",
+    "detector": "unprotected-privileged-write",
+    "scored": true,
+    "status": "open",
+    "start_line": 8,
+    "evidence_count": 1,
+    "evidence_kinds": [
+      "static_fact"
+    ]
+  }
+]

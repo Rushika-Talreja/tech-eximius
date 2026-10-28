@@ -1,0 +1,15 @@
+[
+  {
+    "title": "Unprotected Privileged State Change",
+    "severity": "high",
+    "source": "custom_detector",
+    "detector": "unprotected-privileged-write",
+    "scored": true,
+    "status": "open",
+    "start_line": 7,
+    "evidence_count": 1,
+    "evidence_kinds": [
+      "static_fact"
+    ]
+  }
+]

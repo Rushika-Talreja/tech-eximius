@@ -1,0 +1,67 @@
+[
+  {
+    "title": "Unprotected Privileged State Change",
+    "severity": "high",
+    "source": "custom_detector",
+    "detector": "unprotected-privileged-write",
+    "scored": true,
+    "status": "open",
+    "start_line": 31,
+    "evidence_count": 1,
+    "evidence_kinds": [
+      "static_fact"
+    ]
+  },
+  {
+    "title": "Unprotected Privileged State Change",
+    "severity": "high",
+    "source": "custom_detector",
+    "detector": "unprotected-privileged-write",
+    "scored": true,
+    "status": "open",
+    "start_line": 40,
+    "evidence_count": 1,
+    "evidence_kinds": [
+      "static_fact"
+    ]
+  },
+  {
+    "title": "Benign Reentrancy",
+    "severity": "low",
+    "source": "slither",
+    "detector": "reentrancy-benign",
+    "scored": true,
+    "status": "open",
+    "start_line": 31,
+    "evidence_count": 1,
+    "evidence_kinds": [
+      "static_fact"
+    ]
+  },
+  {
+    "title": "Reentrancy in Events",
+    "severity": "low",
+    "source": "slither",
+    "detector": "reentrancy-events",
+    "scored": true,
+    "status": "open",
+    "start_line": 31,
+    "evidence_count": 1,
+    "evidence_kinds": [
+      "static_fact"
+    ]
+  },
+  {
+    "title": "Reentrancy in Events",
+    "severity": "low",
+    "source": "slither",
+    "detector": "reentrancy-events",
+    "scored": true,
+    "status": "open",
+    "start_line": 40,
+    "evidence_count": 1,
+    "evidence_kinds": [
+      "static_fact"
+    ]
+  }
+]

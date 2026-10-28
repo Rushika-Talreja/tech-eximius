@@ -1,0 +1,133 @@
+reentrancy-eth:
+  default_severity: high
+  default_confidence: 0.85
+  vuln_class: reentrancy
+  swc_id: SWC-107
+  title: "Reentrancy via ETH Transfer"
+
+reentrancy-no-eth:
+  default_severity: medium
+  default_confidence: 0.80
+  vuln_class: reentrancy
+  swc_id: SWC-107
+  title: "Reentrancy without ETH Transfer"
+
+reentrancy-benign:
+  default_severity: low
+  default_confidence: 0.70
+  vuln_class: reentrancy
+  swc_id: SWC-107
+  title: "Benign Reentrancy"
+
+reentrancy-events:
+  default_severity: low
+  default_confidence: 0.70
+  vuln_class: reentrancy
+  swc_id: SWC-107
+  title: "Reentrancy in Events"
+
+unchecked-lowlevel:
+  default_severity: medium
+  default_confidence: 0.80
+  vuln_class: unchecked-calls
+  swc_id: SWC-104
+  title: "Unchecked Low-Level Call"
+
+unchecked-send:
+  default_severity: medium
+  default_confidence: 0.80
+  vuln_class: unchecked-calls
+  swc_id: SWC-104
+  title: "Unchecked Send Call"
+
+tx-origin:
+  default_severity: medium
+  default_confidence: 0.90
+  vuln_class: access-control
+  swc_id: SWC-115
+  title: "Dangerous Use of tx.origin"
+
+controlled-delegatecall:
+  default_severity: critical
+  default_confidence: 0.90
+  vuln_class: delegatecall
+  swc_id: SWC-112
+  title: "Controlled Delegatecall Target"
+
+delegatecall-loop:
+  default_severity: high
+  default_confidence: 0.85
+  vuln_class: delegatecall
+  swc_id: SWC-112
+  title: "Delegatecall inside Loop"
+
+uninitialized-state:
+  default_severity: high
+  default_confidence: 0.85
+  vuln_class: uninitialized-state
+  swc_id: SWC-109
+  title: "Uninitialized State Variable"
+
+uninitialized-storage:
+  default_severity: high
+  default_confidence: 0.85
+  vuln_class: uninitialized-storage
+  swc_id: SWC-109
+  title: "Uninitialized Storage Pointer"
+
+unprotected-upgrade:
+  default_severity: critical
+  default_confidence: 0.90
+  vuln_class: upgrade-safety
+  swc_id: SWC-112
+  title: "Unprotected Upgrade Function"
+
+suicidal:
+  default_severity: critical
+  default_confidence: 0.95
+  vuln_class: access-control
+  swc_id: SWC-106
+  title: "Unprotected Selfdestruct"
+
+arbitrary-send-eth:
+  default_severity: high
+  default_confidence: 0.85
+  vuln_class: access-control
+  swc_id: SWC-105
+  title: "Arbitrary ETH Transfer"
+
+arbitrary-send-erc20:
+  default_severity: high
+  default_confidence: 0.85
+  vuln_class: access-control
+  swc_id: SWC-105
+  title: "Arbitrary ERC20 Transfer"
+
+unprotected-privileged-write:
+  default_severity: high
+  default_confidence: 0.95
+  vuln_class: access-control
+  swc_id: SWC-105
+  title: "Unprotected Privileged State Change"
+
+unbounded-mint:
+  default_severity: high
+  default_confidence: 0.90
+  vuln_class: tokenomics-logic
+  swc_id: SWC-105
+  title: "Unbounded Token Minting"
+
+missing-initializer-guard:
+  default_severity: high
+  default_confidence: 0.85
+  vuln_class: initialization
+  swc_id: SWC-118
+  title: "Missing Initializer Reentrancy/Access Guard"
+
+privilege-escalation:
+  default_severity: high
+  default_confidence: 0.95
+  vuln_class: centralization-risk
+  swc_id: SWC-105
+  title: "Unmitigated Privileged Centralization Risk"
+

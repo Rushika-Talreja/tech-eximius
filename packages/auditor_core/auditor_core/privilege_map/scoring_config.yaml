@@ -1,0 +1,40 @@
+version: "1"
+base_scores:
+  SELFDESTRUCT_OR_DELEGATECALL: 100
+  UPGRADE: 95
+  WITHDRAW_FUNDS: 90
+  MINT: 85
+  CHANGE_ORACLE: 80
+  BURN_OTHERS: 75
+  BLACKLIST_FREEZE: 70
+  GRANT_ROLE: 60
+  CHANGE_FEE: 55
+  CHANGE_PARAMETER: 45
+  PAUSE: 40
+  OTHER_PRIVILEGED: 30
+
+multipliers:
+  cap: 0.6
+  reversible: 0.85
+  delay:
+    ge_24h: 0.5
+    ge_1h: 0.75
+    default: 1.0
+  holder:
+    none: 1.0
+    eoa: 1.0
+    contract_unknown: 0.9
+    multisig_threshold_2_signers_3: 0.7
+    multisig_threshold_3_signers_5: 0.6
+    timelock_multisig_ge_24h: 0.4
+    renounced: 0.0
+
+role_escalation_multiplier: 0.95
+
+tiers:
+  critical: 80
+  high: 60
+  medium: 35
+  low: 1
+  none: 0
+
