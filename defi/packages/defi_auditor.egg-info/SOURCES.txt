@@ -1,0 +1,12 @@
+pyproject.toml
+packages/auditor/__init__.py
+packages/auditor/corpus.py
+packages/auditor_core/__init__.py
+packages/auditor_core/rag/__init__.py
+packages/auditor_core/rag/ingest.py
+packages/defi_auditor.egg-info/PKG-INFO
+packages/defi_auditor.egg-info/SOURCES.txt
+packages/defi_auditor.egg-info/dependency_links.txt
+packages/defi_auditor.egg-info/requires.txt
+packages/defi_auditor.egg-info/top_level.txt
+tests/test_ingest.py

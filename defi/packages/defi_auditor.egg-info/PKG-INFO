@@ -1,0 +1,6 @@
+Metadata-Version: 2.4
+Name: defi-auditor
+Version: 0.1.0
+Summary: DeFi smart-contract audit tooling (corpus ingestion and RAG).
+Requires-Python: >=3.10
+Requires-Dist: PyYAML==6.0.2

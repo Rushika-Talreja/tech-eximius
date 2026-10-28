@@ -1,0 +1,27 @@
+doc_id: swc-110
+kind: swc
+title: Assert Violation
+vuln_class: [assertion-failure]   # provisional, needs agreed class
+swc_ids: [SWC-110]
+cwe_ids: [CWE-670]
+source_url: https://swcregistry.io/docs/SWC-110
+license: MIT
+date: null
+loss_usd: null
+summary: >
+  A failing assert signals that an internal invariant was broken. Reaching a
+  failing assert on valid user input points to a logic error, and it can lock
+  or disrupt the contract.
+root_cause: >
+  Assert is meant for conditions that should never be false. Using it to
+  validate external input, or writing an invariant that does not actually
+  hold, lets users trigger the failure.
+exploit_pattern: >
+  An attacker sends input that makes the asserted condition false. The
+  transaction fails in a way that reveals a real logic flaw, and repeating it
+  can block critical functions.
+remediation: >
+  Use require for input and precondition checks, and keep assert for true
+  invariants. Review each assert and prove that no reachable path can make it
+  fail, for example with fuzzing or formal checks.
+excerpts: []
