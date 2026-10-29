@@ -1,0 +1,63 @@
+version: "1.0"
+description: >
+  Golden retrieval set for the auditor corpus. Every entry maps an audit-style
+  query to the doc_id(s) that should come back. An entry with an empty
+  "targets" list is a negative case: no corpus document answers it, so the
+  retriever is expected to return no evidence at all.
+queries:
+  # --- positives: the target document should appear in the top 5 ---
+  - id: "q01"
+    query: "reentrancy withdraw re-enters before the balance is updated"
+    targets: ["swc-107"]
+  - id: "q02"
+    query: "checks-effects-interactions ordering external call stale state"
+    targets: ["swc-107"]
+  - id: "q03"
+    query: "integer overflow wraps around when subtracting below zero"
+    targets: ["swc-101"]
+  - id: "q04"
+    query: "multiplication of a price overflows the fixed size integer"
+    targets: ["swc-101"]
+  - id: "q05"
+    query: "low-level call return value is ignored so a failed send looks successful"
+    targets: ["swc-104"]
+  - id: "q06"
+    query: "public function sends ether out without checking who called it"
+    targets: ["swc-105"]
+  - id: "q07"
+    query: "anyone can call the function that destroys the contract and forwards its balance"
+    targets: ["swc-106"]
+  - id: "q08"
+    query: "failing assert on valid user input locks the contract"
+    targets: ["swc-110"]
+  - id: "q09"
+    query: "delegatecall to a user supplied address overwrites the owner"
+    targets: ["swc-112"]
+  - id: "q10"
+    query: "authorization check compares tx.origin with the owner"
+    targets: ["swc-115"]
+  - id: "q11"
+    query: "front-running a pending transaction with a higher fee"
+    targets: ["swc-114"]
+  - id: "q12"
+    query: "deadline depends on block.timestamp which a miner can nudge"
+    targets: ["swc-116"]
+  - id: "q13"
+    query: "lottery derives randomness from block hash and block number"
+    targets: ["swc-120"]
+  - id: "q14"
+    query: "statement has no effect because the comparison result is discarded"
+    targets: ["swc-135"]
+  # --- negatives: no document answers these, evidence must be empty ---
+  - id: "q15"
+    query: "how to write a unit test for a React component"
+    targets: []
+  - id: "q16"
+    query: "best practices for responsive CSS grid layout"
+    targets: []
+  - id: "q17"
+    query: "the history of the roman empire"
+    targets: null
+  - id: "q18"
+    query: "how to brew a good cup of espresso"
+    targets: []
