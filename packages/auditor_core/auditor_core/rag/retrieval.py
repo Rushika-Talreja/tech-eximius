@@ -10,6 +10,12 @@ values are tiny (a hit ranked first in both lists scores ``2 / 61``), so the
 fused scores are normalised against the best candidate of the run: the top
 hit is always ``1.0`` and ``min_score`` acts as a relative cut-off.
 
+Because RRF only sees *ranks*, its raw score barely varies between a
+relevant and an irrelevant query, so ``min_score`` alone cannot reject a
+query that has no answer. An optional absolute floor, ``min_similarity``,
+therefore filters on the dense cosine similarity instead: that value does
+depend on how close the query and the passage actually are.
+
 Every FastEmbed and Qdrant call is guarded. When the store is unreachable,
 the collection is missing or a model cannot be loaded, the call degrades to
 an empty :class:`RetrievalResult` instead of raising.
@@ -63,6 +69,13 @@ class Evidence:
     exact_quote: str
     score: float
     level: str
+    #: Dense cosine similarity of the query against this chunk, an absolute
+    #: relevance signal in ``[0, 1]`` (``0.0`` when the chunk was not ranked
+    #: by the dense retriever).
+    similarity: float = 0.0
+    #: Raw, unnormalised RRF score. Rank-based, so it is near-constant for the
+    #: best hit of any query; kept for diagnostics only.
+    rrf_score: float = 0.0
 
 
 @dataclass
@@ -80,6 +93,7 @@ def retrieve_evidence(
     swc_ids: list[str] | None = None,
     top_k: int = 20,
     min_score: float = 0.35,
+    min_similarity: float | None = None,
 ) -> RetrievalResult:
     """Retrieve fused dense+sparse evidence for *query*.
 
@@ -88,7 +102,13 @@ def retrieve_evidence(
         vuln_classes: Optional filter on the payload ``vuln_class`` field.
         swc_ids: Optional filter on the payload ``swc_ids`` field.
         top_k: Maximum number of evidence items returned.
-        min_score: Minimum normalised RRF score (``0.0``-``1.0``).
+        min_score: Minimum normalised RRF score (``0.0``-``1.0``). Because
+            the top hit is always normalised to ``1.0`` this only prunes the
+            tail of a result set.
+        min_similarity: Optional absolute floor on the dense cosine
+            similarity (``0.0``-``1.0``). Unlike ``min_score`` it can reject a
+            whole query, which is how a query with no matching document ends
+            up with no evidence.
 
     Returns:
         A :class:`RetrievalResult`. On any failure the evidence list is empty
@@ -97,7 +117,9 @@ def retrieve_evidence(
     if top_k <= 0:
         return RetrievalResult(evidence=[], degraded=False)
     try:
-        return _retrieve(query, vuln_classes, swc_ids, top_k, min_score)
+        return _retrieve(
+            query, vuln_classes, swc_ids, top_k, min_score, min_similarity
+        )
     except Exception as exc:  # noqa: BLE001 - degraded mode is the contract
         logger.warning("retrieval degraded: %s", type(exc).__name__)
         return _degraded()
@@ -114,6 +136,7 @@ def _retrieve(
     swc_ids: list[str] | None,
     top_k: int,
     min_score: float,
+    min_similarity: float | None,
 ) -> RetrievalResult:
     """Run the two rankings, fuse them and materialise the evidence."""
     client = QdrantClient(path=str(QDRANT_PATH))
@@ -145,16 +168,44 @@ def _retrieve(
         ).points
 
         fused = _reciprocal_rank_fusion([dense_hits, sparse_hits])
-        selected = [(point, score) for point, score in fused if score >= min_score]
-        selected = selected[:top_k]
+        similarities = {point.id: float(point.score) for point in dense_hits}
+        selected = _select(fused, similarities, min_score, min_similarity, top_k)
 
         titles = _resolve_titles(client, _doc_ids(selected))
         return RetrievalResult(
-            evidence=[_to_evidence(point, score, titles) for point, score in selected],
+            evidence=[
+                _to_evidence(point, score, raw, similarity, titles)
+                for point, score, raw, similarity in selected
+            ],
             degraded=False,
         )
     finally:
         client.close()
+
+
+def _select(
+    fused: list[tuple[models.ScoredPoint, float, float]],
+    similarities: dict[models.ExtendedPointId, float],
+    min_score: float,
+    min_similarity: float | None,
+    top_k: int,
+) -> list[tuple[models.ScoredPoint, float, float, float]]:
+    """Apply the relative and absolute cut-offs, keeping at most *top_k*.
+
+    Returns ``(point, normalised_score, raw_score, similarity)`` tuples in
+    fused order.
+    """
+    selected: list[tuple[models.ScoredPoint, float, float, float]] = []
+    for point, score, raw in fused:
+        if score < min_score:
+            continue
+        similarity = similarities.get(point.id, 0.0)
+        if min_similarity is not None and similarity < min_similarity:
+            continue
+        selected.append((point, score, raw, similarity))
+        if len(selected) == top_k:
+            break
+    return selected
 
 
 def _build_filter(
@@ -209,12 +260,13 @@ def _embed_query(query: str) -> tuple[list[float], models.SparseVector]:
 
 def _reciprocal_rank_fusion(
     rankings: list[list[models.ScoredPoint]],
-) -> list[tuple[models.ScoredPoint, float]]:
-    """Fuse *rankings* with RRF, returning ``(point, normalised_score)`` pairs.
+) -> list[tuple[models.ScoredPoint, float, float]]:
+    """Fuse *rankings* with RRF.
 
-    The raw score of a point is ``sum(1 / (RRF_K + rank))`` over the rankings
-    it appears in. Scores are then divided by the best raw score of the run,
-    so the strongest candidate always scores ``1.0``.
+    Returns ``(point, normalised_score, raw_score)`` triples, ordered by raw
+    score. The raw score of a point is ``sum(1 / (RRF_K + rank))`` over the
+    rankings it appears in. Normalised scores are divided by the best raw
+    score of the run, so the strongest candidate always scores ``1.0``.
     """
     raw: dict[models.ExtendedPointId, float] = {}
     points: dict[models.ExtendedPointId, models.ScoredPoint] = {}
@@ -227,15 +279,15 @@ def _reciprocal_rank_fusion(
         return []
     best = max(raw.values())
     ordered = sorted(raw.items(), key=lambda item: item[1], reverse=True)
-    return [(points[point_id], score / best) for point_id, score in ordered]
+    return [(points[point_id], score / best, score) for point_id, score in ordered]
 
 
 def _doc_ids(
-    selected: list[tuple[models.ScoredPoint, float]],
+    selected: list[tuple[models.ScoredPoint, float, float, float]],
 ) -> list[str]:
     """Unique, order-preserving document IDs among the selected hits."""
     doc_ids: list[str] = []
-    for point, _ in selected:
+    for point, *_ in selected:
         doc_id = str((point.payload or {}).get("doc_id") or "")
         if doc_id and doc_id not in doc_ids:
             doc_ids.append(doc_id)
@@ -283,6 +335,8 @@ def _resolve_titles(client: QdrantClient, doc_ids: list[str]) -> dict[str, str]:
 def _to_evidence(
     point: models.ScoredPoint,
     score: float,
+    raw: float,
+    similarity: float,
     titles: dict[str, str],
 ) -> Evidence:
     """Build one :class:`Evidence` from a fused point."""
@@ -300,4 +354,6 @@ def _to_evidence(
         exact_quote=str(payload.get("text") or ""),
         score=score,
         level=str(payload.get("level") or ""),
+        similarity=similarity,
+        rrf_score=raw,
     )
