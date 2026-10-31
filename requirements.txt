@@ -1,7 +1,0 @@
-# Runtime
-PyYAML==6.0.2
-fastembed==0.9.1
-qdrant-client==1.20.0
-
-# Tests
-pytest==8.3.5
