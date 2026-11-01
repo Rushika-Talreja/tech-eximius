@@ -18,3 +18,4 @@ root_cause: >
 exploit_pattern: >
   No direct exploit. A reviewer should treat the unused variable as a hint to check
   whether some intended logic was left out.
+remediation: "Remove all unused variables."

@@ -19,4 +19,4 @@ root_cause: >
 exploit_pattern: >
   An attacker calls a function that writes into the uninitialised local struct. The write
   lands on slot zero and changes values such as an owner address or a balance counter.
-
+remediation: "Avoid uninitialised storage pointers. Use a memory local if storage is not needed; otherwise initialise at declaration and state the storage location. Compiler 0.5.0 and later rejects this pattern."

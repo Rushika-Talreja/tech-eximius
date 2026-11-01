@@ -18,3 +18,4 @@ root_cause: >
 exploit_pattern: >
   The contract is deployed with a compiler version that contains a defect or
   changed behavior that testing never covered.
+remediation: "Pin the pragma to one exact compiler version after checking its known bugs. Floating pragmas are fine only for libraries meant for reuse by others."

@@ -18,4 +18,4 @@ root_cause: >
 exploit_pattern: >
   An attacker adds many entries to the array or mapping. Once iterating over all of them
   exceeds the block gas limit, any call that needs the full loop fails permanently.
-
+remediation: "Avoid looping over arrays that grow without bound. If unavoidable, design the work to span multiple transactions or blocks."

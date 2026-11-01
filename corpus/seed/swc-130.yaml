@@ -19,3 +19,4 @@ exploit_pattern: >
   An attacker inserts the control character into a name or string so that a harmful value
   appears harmless to a reader. The victim trusts what they see and approves the wrong
   thing.
+remediation: "Never allow the U+202E right-to-left override character in contract source code."

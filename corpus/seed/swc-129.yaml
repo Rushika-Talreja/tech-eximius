@@ -18,4 +18,4 @@ root_cause: >
 exploit_pattern: >
   An attacker looks for operations where the mistaken operator overwrites a balance or
   skips a check, then repeats the action to gain value or bypass a limit.
-
+remediation: "Check preconditions on arithmetic operations, or use a vetted arithmetic library such as OpenZeppelin SafeMath."

@@ -18,4 +18,4 @@ root_cause: >
 exploit_pattern: >
   An attacker reads the storage slot that holds the supposed secret, such as a password or
   a game answer, and uses it to win a game or authorise an action.
-
+remediation: "Keep private data off-chain, or encrypt it carefully."

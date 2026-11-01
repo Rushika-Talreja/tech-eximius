@@ -17,3 +17,4 @@ root_cause: >
 exploit_pattern: >
   Logic updates the child copy while checks read the parent copy, so a guard
   or balance appears unchanged and a rule can be bypassed.
+remediation: "Review storage layouts carefully to remove ambiguity, and always check compiler warnings, which can flag the issue within a single contract."

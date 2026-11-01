@@ -17,3 +17,4 @@ root_cause: >
 exploit_pattern: >
   An attacker crafts a message with an invalid or missing signature that the
   flawed check accepts, and gains an action reserved for the signer.
+remediation: "Do not use alternative verification schemes that skip proper signature verification through ecrecover."

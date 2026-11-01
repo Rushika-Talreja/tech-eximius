@@ -19,3 +19,4 @@ root_cause: >
 exploit_pattern: >
   An attacker takes a valid signature, produces an alternate valid form, and
   submits it to bypass a check that blocks reuse of the original bytes.
+remediation: "Never include the signature in the hash of a signed message when tracking which messages were already processed."

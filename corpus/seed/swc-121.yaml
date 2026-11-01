@@ -17,3 +17,4 @@ root_cause: >
 exploit_pattern: >
   An attacker resubmits a previously valid signed message, possibly on another
   contract or chain, to repeat a payment or permission.
+remediation: "Record every processed message hash and reject repeats, include the processing contract address in the signed message, and never build the message hash from the signature itself."

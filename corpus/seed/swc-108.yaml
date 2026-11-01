@@ -18,3 +18,4 @@ exploit_pattern: >
   A reviewer or integrator assumes a variable is private and builds logic on
   that belief, while the variable can in fact be read or used in ways the
   author did not plan.
+remediation: "Declare visibility (public, internal or private) explicitly for every state variable."

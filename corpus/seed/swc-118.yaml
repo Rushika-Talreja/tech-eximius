@@ -17,3 +17,4 @@ root_cause: >
 exploit_pattern: >
   An attacker calls the would-be constructor after deployment and sets
   themselves as owner or sets critical settings.
+remediation: "Upgrade to Solidity 0.4.22 or later and use the constructor keyword instead of a function named after the contract."

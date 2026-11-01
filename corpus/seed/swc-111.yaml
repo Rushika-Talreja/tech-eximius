@@ -18,3 +18,4 @@ root_cause: >
 exploit_pattern: >
   Rarely exploited directly. The risk is that deprecated constructs hide weaker checks, or
   break when the contract is rebuilt with a newer compiler.
+remediation: "Replace deprecated constructs with their current equivalents, e.g. selfdestruct, blockhash, keccak256, delegatecall and revert."

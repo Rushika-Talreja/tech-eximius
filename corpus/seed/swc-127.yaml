@@ -19,3 +19,4 @@ exploit_pattern: >
   An attacker overwrites a function-type variable, for example through an
   unchecked write, and then triggers the call so execution continues at a
   chosen place.
+remediation: "Keep assembly use minimal and never let users assign arbitrary values to function type variables."

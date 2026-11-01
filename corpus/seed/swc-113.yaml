@@ -19,4 +19,4 @@ exploit_pattern: >
   An attacker becomes one of the recipients, for example a bidder or refund target, using
   a contract whose receive logic always reverts. Every later attempt to pay out then
   fails.
-
+remediation: "Do not batch many external calls in one transaction or loop, assume every external call can fail, and write logic that handles failed calls."

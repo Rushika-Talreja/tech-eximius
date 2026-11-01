@@ -19,4 +19,4 @@ root_cause: >
 exploit_pattern: >
   The attacker first grows or wraps an array length, then writes to a computed index that
   maps onto a protected variable, for example the owner slot, and so takes control.
-
+remediation: "Make sure writes to one data structure cannot overwrite entries of another, since all structures share the same storage address space."

@@ -18,3 +18,4 @@ root_cause: >
 exploit_pattern: >
   A malicious relayer submits the transaction with limited gas so the target
   call fails, but the request is recorded as processed and cannot be retried.
+remediation: "Prevent insufficient-gas griefing by letting only trusted users relay transactions, or by requiring the forwarder to supply enough gas."

@@ -17,3 +17,4 @@ root_cause: >
 exploit_pattern: >
   External input that always fails a requirement inside a shared flow causes
   the whole operation to revert, blocking users or other logic.
+remediation: "If the required condition is too strong, relax it so all valid external inputs pass; otherwise fix the contract that supplies the invalid input."

@@ -18,3 +18,4 @@ root_cause: >
 exploit_pattern: >
   A function that the author expected to override another does not, so a
   safety check in one parent is skipped or a wrong version of logic runs.
+remediation: "Specify inheritance order carefully when contracts share function names, going from most general to most specific."

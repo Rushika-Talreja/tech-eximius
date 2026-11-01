@@ -18,3 +18,4 @@ root_cause: >
 exploit_pattern: >
   A known compiler bug is triggered by a code pattern in the contract,
   producing unexpected behavior that the source code alone would not suggest.
+remediation: "Compile with a recent, maintained Solidity compiler version."

@@ -20,4 +20,4 @@ exploit_pattern: >
   An attacker sends ether to the target by forcing it in. The balance no longer matches
   the expected value, so a strict equality check fails and can lock the contract or unlock
   a payout.
-
+remediation: "Avoid strict equality checks on a contract Ether balance."
