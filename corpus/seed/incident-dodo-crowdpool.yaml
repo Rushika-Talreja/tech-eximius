@@ -1,0 +1,19 @@
+doc_id: incident-dodo-crowdpool
+kind: incident
+title: DODO crowdpool reinitialization
+vuln_class: [initialization]
+swc_ids: []
+cwe_ids: []
+source_url: null
+license: null
+date: "2021-03-09"
+loss_usd: 3800000
+summary: >
+  DODO lost several million dollars because a pool could be initialized again
+  after it had already been set up.
+root_cause: >
+  The init function was not locked after the first call, so anyone could
+  replace the pool's token settings.
+exploit_pattern: >
+  Call init again with attacker-chosen tokens, then drain the real tokens
+  through a pool that now trusts the attacker's setup.

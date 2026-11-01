@@ -1,0 +1,19 @@
+doc_id: incident-wormhole-2022
+kind: incident
+title: Wormhole signature verification bypass
+vuln_class: [signature-verification]
+swc_ids: []
+cwe_ids: []
+source_url: null
+license: null
+date: "2022-02-02"
+loss_usd: 325000000
+summary: >
+  Attackers minted 120,000 wrapped ETH on Solana without backing and took
+  about 325 million dollars.
+root_cause: >
+  The verification step relied on a deprecated function that did not properly
+  confirm the signature account was genuine.
+exploit_pattern: >
+  Submit a forged verification account so the bridge accepts a mint message
+  that no guardian signed.

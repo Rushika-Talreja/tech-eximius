@@ -1,0 +1,19 @@
+doc_id: incident-sentiment-2023
+kind: incident
+title: Sentiment read-only reentrancy
+vuln_class: [reentrancy]
+swc_ids: [SWC-107]
+cwe_ids: []
+source_url: null
+license: null
+date: "2023-04-04"
+loss_usd: 1000000
+summary: >
+  Sentiment lost about 1 million dollars through read-only reentrancy
+  involving a pool price.
+root_cause: >
+  A price was read from a pool while that pool was in the middle of a state
+  change, so it returned a stale value.
+exploit_pattern: >
+  Trigger a callback during a pool withdrawal and borrow while the price view
+  is temporarily wrong.

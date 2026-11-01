@@ -1,0 +1,19 @@
+doc_id: incident-pickle-evil-jar
+kind: incident
+title: Pickle Finance evil jar
+vuln_class: [delegatecall, unchecked-calls]
+swc_ids: [SWC-112]
+cwe_ids: []
+source_url: null
+license: null
+date: "2020-11-21"
+loss_usd: 20000000
+summary: >
+  An attacker moved about 20 million dollars out of a Pickle strategy by
+  supplying a malicious jar contract.
+root_cause: >
+  A controller function accepted an arbitrary contract address and made calls
+  to it without validating that it was approved.
+exploit_pattern: >
+  Pass a fake jar address that causes the controller to run attacker-chosen
+  calls and pull out the strategy's funds.

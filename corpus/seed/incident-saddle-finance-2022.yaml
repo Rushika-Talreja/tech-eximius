@@ -1,0 +1,19 @@
+doc_id: incident-saddle-finance-2022
+kind: incident
+title: Saddle Finance pool exploit
+vuln_class: [logic-error]
+swc_ids: []
+cwe_ids: []
+source_url: null
+license: null
+date: "2022-04-30"
+loss_usd: 10000000
+summary: >
+  Saddle Finance lost about 10 million dollars from one of its pools through a
+  flaw in a swap-related contract.
+root_cause: >
+  A helper contract for metapools used a calculation that could be exploited
+  to receive more tokens than were paid.
+exploit_pattern: >
+  Run the vulnerable swap path with specific amounts so the output is larger
+  than fair value.

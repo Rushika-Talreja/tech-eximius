@@ -1,0 +1,19 @@
+doc_id: incident-the-dao
+kind: incident
+title: The DAO attack
+vuln_class: [reentrancy]
+swc_ids: [SWC-107]
+cwe_ids: []
+source_url: null
+license: null
+date: "2016-06-17"
+loss_usd: 60000000
+summary: >
+  An attacker drained about 3.6 million ETH from The DAO crowdfunding contract
+  by calling its withdrawal logic over and over.
+root_cause: >
+  The contract sent ether before it reduced the caller's balance, so the
+  balance check kept passing on each nested call.
+exploit_pattern: >
+  A malicious contract re-enters the split or withdraw function from its
+  fallback function before the first call finishes.

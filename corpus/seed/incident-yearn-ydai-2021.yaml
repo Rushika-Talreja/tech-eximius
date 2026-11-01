@@ -1,0 +1,19 @@
+doc_id: incident-yearn-ydai-2021
+kind: incident
+title: Yearn yDAI vault exploit
+vuln_class: [oracle-manipulation, flash-loan]
+swc_ids: []
+cwe_ids: []
+source_url: null
+license: null
+date: "2021-02-04"
+loss_usd: 11000000
+summary: >
+  The yDAI vault lost about 11 million dollars when its strategy was pushed
+  through a manipulated Curve pool.
+root_cause: >
+  The strategy could be made to trade at poor prices because pool state was
+  moved within one transaction.
+exploit_pattern: >
+  Use borrowed funds to distort the pool, force the vault to rebalance at the
+  bad rate, and capture the difference.

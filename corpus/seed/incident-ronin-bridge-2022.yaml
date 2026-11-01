@@ -1,0 +1,18 @@
+doc_id: incident-ronin-bridge-2022
+kind: incident
+title: Ronin bridge validator key theft
+vuln_class: [key-compromise, centralization-risk]
+swc_ids: []
+cwe_ids: []
+source_url: null
+license: null
+date: "2022-03-23"
+loss_usd: 625000000
+summary: >
+  Attackers took about 625 million dollars from the Ronin bridge after gaining
+  control of enough validator keys.
+root_cause: >
+  The bridge needed only a small majority of validator signatures, and several
+  keys were held by one organization with a stale permission.
+exploit_pattern: >
+  Compromise five of nine validator keys and sign withdrawals directly.

@@ -1,0 +1,18 @@
+doc_id: incident-parity-multisig-2017
+kind: incident
+title: Parity multisig wallet theft
+vuln_class: [initialization, delegatecall]
+swc_ids: [SWC-112]
+cwe_ids: []
+source_url: null
+license: null
+date: "2017-07-19"
+loss_usd: 30000000
+summary: >
+  Attackers took roughly 150,000 ETH from several Parity multisig wallets.
+root_cause: >
+  The wallet's initialization function was callable by anyone through a
+  delegatecall to a shared library, so ownership could be reset.
+exploit_pattern: >
+  The attacker calls the unprotected init function via the wallet fallback,
+  becomes owner, then withdraws funds.

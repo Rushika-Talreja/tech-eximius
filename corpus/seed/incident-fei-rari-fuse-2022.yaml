@@ -1,0 +1,18 @@
+doc_id: incident-fei-rari-fuse-2022
+kind: incident
+title: Fei Rari Fuse reentrancy
+vuln_class: [reentrancy]
+swc_ids: [SWC-107]
+cwe_ids: []
+source_url: null
+license: null
+date: "2022-04-30"
+loss_usd: 80000000
+summary: >
+  Several Rari Fuse lending pools were drained through a reentrancy flaw.
+root_cause: >
+  The borrow function sent funds to the borrower before updating the
+  borrower's recorded state.
+exploit_pattern: >
+  A malicious borrower contract re-enters the market during the transfer to
+  exit with collateral while keeping the loan.

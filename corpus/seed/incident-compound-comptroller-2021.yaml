@@ -1,0 +1,19 @@
+doc_id: incident-compound-comptroller-2021
+kind: incident
+title: Compound Comptroller reward bug
+vuln_class: [logic-error, upgrade-safety]
+swc_ids: []
+cwe_ids: []
+source_url: null
+license: null
+date: "2021-09-29"
+loss_usd: 80000000
+summary: >
+  A governance upgrade to Compound's reward logic caused users to receive far
+  more COMP than intended.
+root_cause: >
+  A comparison in the reward distribution code used the wrong operator, so
+  claimable amounts were over-credited.
+exploit_pattern: >
+  Users simply claim rewards after the faulty upgrade and receive inflated
+  amounts.

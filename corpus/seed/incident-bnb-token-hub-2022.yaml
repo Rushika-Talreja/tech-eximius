@@ -1,0 +1,19 @@
+doc_id: incident-bnb-token-hub-2022
+kind: incident
+title: BNB token hub proof forgery
+vuln_class: [signature-verification]
+swc_ids: []
+cwe_ids: []
+source_url: null
+license: null
+date: "2022-10-06"
+loss_usd: null
+summary: >
+  About two million BNB were minted on the BNB Chain bridge by forging a
+  proof, and part was later frozen.
+root_cause: >
+  A flaw in the Merkle proof verification allowed a fake proof to be treated
+  as valid.
+exploit_pattern: >
+  Submit a forged proof so the bridge releases tokens that were never
+  deposited.

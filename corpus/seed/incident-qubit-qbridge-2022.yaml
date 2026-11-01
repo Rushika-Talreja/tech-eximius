@@ -1,0 +1,19 @@
+doc_id: incident-qubit-qbridge-2022
+kind: incident
+title: Qubit QBridge deposit flaw
+vuln_class: [logic-error]
+swc_ids: []
+cwe_ids: []
+source_url: null
+license: null
+date: "2022-01-27"
+loss_usd: 80000000
+summary: >
+  An attacker minted collateral on Qubit's lending side without depositing
+  real assets on the origin chain.
+root_cause: >
+  A legacy deposit function did not properly reject deposits of an unsupported
+  asset, yet still emitted a valid deposit event.
+exploit_pattern: >
+  Call the legacy function with an invalid asset so the bridge credits funds
+  that were never sent.

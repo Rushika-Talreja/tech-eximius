@@ -1,0 +1,19 @@
+doc_id: incident-furucombo-2021
+kind: incident
+title: Furucombo proxy exploit
+vuln_class: [delegatecall, unchecked-calls]
+swc_ids: [SWC-112]
+cwe_ids: []
+source_url: null
+license: null
+date: "2021-02-27"
+loss_usd: 14000000
+summary: >
+  Furucombo users who had approved the contract lost funds after an attacker
+  changed an implementation address it relied on.
+root_cause: >
+  The proxy delegated calls to a handler address that an attacker could set to
+  a malicious contract.
+exploit_pattern: >
+  Set the handler to attacker code, then use existing user token approvals to
+  pull tokens out of user wallets.

@@ -1,0 +1,19 @@
+doc_id: incident-inverse-finance-2022
+kind: incident
+title: Inverse Finance oracle manipulation
+vuln_class: [oracle-manipulation]
+swc_ids: []
+cwe_ids: []
+source_url: null
+license: null
+date: "2022-04-02"
+loss_usd: 15000000
+summary: >
+  Inverse Finance lost about 15 million dollars when a price from a small pool
+  was pushed up and used for borrowing.
+root_cause: >
+  The protocol used a short-window price average from a thin liquidity pool as
+  an oracle.
+exploit_pattern: >
+  Move the pool price with a large trade, borrow against the inflated
+  collateral, then walk away with the loan.

@@ -1,0 +1,18 @@
+doc_id: incident-team-finance-2022
+kind: incident
+title: Team Finance migration exploit
+vuln_class: [logic-error, upgrade-safety]
+swc_ids: []
+cwe_ids: []
+source_url: null
+license: null
+date: "2022-10-27"
+loss_usd: 15000000
+summary: >
+  Team Finance lost about 15 million dollars during a locker migration.
+root_cause: >
+  The migration function accepted inputs that let an attacker set parameters
+  like price, which controlled what was paid.
+exploit_pattern: >
+  Call the migration function with manipulated parameters to receive locked
+  tokens for little cost.

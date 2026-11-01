@@ -1,0 +1,19 @@
+doc_id: incident-sushi-router-2023
+kind: incident
+title: SushiSwap RouteProcessor2 approvals
+vuln_class: [access-control, unchecked-calls]
+swc_ids: []
+cwe_ids: []
+source_url: null
+license: null
+date: "2023-04-09"
+loss_usd: 3300000
+summary: >
+  A SushiSwap router let an attacker spend tokens of users who had approved
+  it, costing about 3.3 million dollars.
+root_cause: >
+  The router trusted a caller-provided pool address and did not check it was a
+  legitimate pool.
+exploit_pattern: >
+  Pass a fake pool that makes the router pull tokens from users with existing
+  approvals.

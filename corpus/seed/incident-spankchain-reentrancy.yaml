@@ -1,0 +1,19 @@
+doc_id: incident-spankchain-reentrancy
+kind: incident
+title: SpankChain payment channel reentrancy
+vuln_class: [reentrancy]
+swc_ids: [SWC-107]
+cwe_ids: []
+source_url: null
+license: null
+date: "2018-10-08"
+loss_usd: 38000
+summary: >
+  A payment channel contract was drained through repeated calls made during a
+  withdrawal.
+root_cause: >
+  Funds were transferred out before the channel state was updated to show they
+  were gone.
+exploit_pattern: >
+  A malicious token or contract calls back into the close function while the
+  first transfer is still running.

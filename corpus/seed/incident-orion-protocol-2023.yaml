@@ -1,0 +1,19 @@
+doc_id: incident-orion-protocol-2023
+kind: incident
+title: Orion Protocol reentrancy
+vuln_class: [reentrancy]
+swc_ids: [SWC-107]
+cwe_ids: []
+source_url: null
+license: null
+date: "2023-02-02"
+loss_usd: 3000000
+summary: >
+  Orion Protocol lost about 3 million dollars through a reentrant call during
+  a token swap.
+root_cause: >
+  The deposit logic made an external call to a token that was controlled by
+  the attacker before the accounting was finalized.
+exploit_pattern: >
+  Use a custom token with a callback to re-enter the deposit path and inflate
+  the credited balance.

@@ -1,0 +1,18 @@
+doc_id: incident-bzx-flash-loan-feb-2020
+kind: incident
+title: bZx first flash loan attack
+vuln_class: [oracle-manipulation, flash-loan]
+swc_ids: []
+cwe_ids: []
+source_url: null
+license: null
+date: "2020-02-15"
+loss_usd: 350000
+summary: >
+  An attacker used a flash loan to move a price on a thin market and borrowed
+  against the distorted price on bZx.
+root_cause: >
+  The protocol read a spot price from a single easily moved exchange pool.
+exploit_pattern: >
+  Borrow a large amount, skew the pool price, take an over-valued loan, then
+  repay the flash loan and keep the difference.

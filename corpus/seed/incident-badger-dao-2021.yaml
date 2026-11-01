@@ -1,0 +1,19 @@
+doc_id: incident-badger-dao-2021
+kind: incident
+title: Badger DAO front-end compromise
+vuln_class: [key-compromise, supply-chain]
+swc_ids: []
+cwe_ids: []
+source_url: null
+license: null
+date: "2021-12-02"
+loss_usd: 120000000
+summary: >
+  Users of Badger DAO were tricked into granting token approvals to an
+  attacker and lost about 120 million dollars.
+root_cause: >
+  The website front-end was altered to request approvals for an attacker
+  address, bypassing the contracts themselves.
+exploit_pattern: >
+  The compromised site asks users to sign approvals, then the attacker moves
+  the approved tokens.

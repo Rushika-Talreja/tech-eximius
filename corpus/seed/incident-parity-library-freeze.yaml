@@ -1,0 +1,19 @@
+doc_id: incident-parity-library-freeze
+kind: incident
+title: Parity library self-destruct freeze
+vuln_class: [access-control]
+swc_ids: [SWC-106]
+cwe_ids: []
+source_url: null
+license: null
+date: "2017-11-06"
+loss_usd: 150000000
+summary: >
+  A user became owner of the shared Parity wallet library and destroyed it,
+  leaving funds in dependent wallets permanently locked.
+root_cause: >
+  The library was never initialized and exposed a public function that let
+  anyone claim ownership and trigger self-destruct.
+exploit_pattern: >
+  Call the public init function to take ownership, then self-destruct the
+  library so every wallet relying on it stops working.

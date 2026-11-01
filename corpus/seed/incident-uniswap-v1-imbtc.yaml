@@ -1,0 +1,19 @@
+doc_id: incident-uniswap-v1-imbtc
+kind: incident
+title: Uniswap V1 imBTC reentrancy
+vuln_class: [reentrancy]
+swc_ids: [SWC-107]
+cwe_ids: []
+source_url: null
+license: null
+date: "2020-04-18"
+loss_usd: 300000
+summary: >
+  An attacker drained an imBTC pool on Uniswap V1 using a token that triggers
+  a callback on transfer.
+root_cause: >
+  The pool updated its reserves after the token transfer, and the token's hook
+  allowed a nested call in between.
+exploit_pattern: >
+  Use the transfer hook of an ERC777-style token to re-enter the swap function
+  at a favorable price.

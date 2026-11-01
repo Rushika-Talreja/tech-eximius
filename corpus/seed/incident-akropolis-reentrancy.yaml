@@ -1,0 +1,19 @@
+doc_id: incident-akropolis-reentrancy
+kind: incident
+title: Akropolis deposit reentrancy
+vuln_class: [reentrancy]
+swc_ids: [SWC-107]
+cwe_ids: []
+source_url: null
+license: null
+date: "2020-11-12"
+loss_usd: 2000000
+summary: >
+  A deposit function in the Akropolis savings pool was abused to receive
+  credit multiple times for one deposit.
+root_cause: >
+  The deposit logic made an external token call before finalizing accounting
+  and had no reentrancy guard.
+exploit_pattern: >
+  A fake token with a callback re-enters deposit so the same funds are
+  credited repeatedly.

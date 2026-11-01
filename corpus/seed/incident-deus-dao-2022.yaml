@@ -1,0 +1,19 @@
+doc_id: incident-deus-dao-2022
+kind: incident
+title: DEUS DAO oracle manipulation
+vuln_class: [oracle-manipulation]
+swc_ids: []
+cwe_ids: []
+source_url: null
+license: null
+date: "2022-04-28"
+loss_usd: 13000000
+summary: >
+  DEUS DAO lost around 13 million dollars through a price oracle that could be
+  manipulated.
+root_cause: >
+  The protocol took a collateral price from a pool that could be moved by
+  large trades.
+exploit_pattern: >
+  Move the pool price, borrow against the inflated value, and keep the
+  proceeds.

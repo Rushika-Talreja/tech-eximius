@@ -1,0 +1,19 @@
+doc_id: incident-cream-finance-oct-2021
+kind: incident
+title: Cream Finance oracle manipulation
+vuln_class: [oracle-manipulation, flash-loan]
+swc_ids: []
+cwe_ids: []
+source_url: null
+license: null
+date: "2021-10-27"
+loss_usd: 130000000
+summary: >
+  Cream Finance lost about 130 million dollars after a flash loan was used to
+  inflate the price of a collateral token.
+root_cause: >
+  A vault share token was priced from a value that could be raised by donating
+  assets to the vault.
+exploit_pattern: >
+  Inflate the share price, borrow other assets against it, and leave the
+  lender with bad debt.

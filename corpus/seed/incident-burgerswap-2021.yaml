@@ -1,0 +1,19 @@
+doc_id: incident-burgerswap-2021
+kind: incident
+title: BurgerSwap pool manipulation
+vuln_class: [oracle-manipulation, flash-loan]
+swc_ids: []
+cwe_ids: []
+source_url: null
+license: null
+date: "2021-05-28"
+loss_usd: 7000000
+summary: >
+  BurgerSwap lost millions through a flash loan combined with a fake token
+  path in its pools.
+root_cause: >
+  The swap logic did not verify that token pairs and reserves were trustworthy
+  before using them to price trades.
+exploit_pattern: >
+  Use a fake token and borrowed funds to skew reserves, trade against the
+  distorted state, then repay.
