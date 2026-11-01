@@ -5,6 +5,7 @@ Retry-After, X-RateLimit-Limit, and X-RateLimit-Remaining headers.
 """
 from __future__ import annotations
 
+import hashlib
 import time
 from collections import defaultdict
 from threading import Lock
@@ -63,11 +64,10 @@ def rate_limit(limit: int = 120, window_seconds: int = 60):
     async def _rate_limit_dep(
         request: Request,
         response: Response,
-        principal: Principal | None = None,
     ) -> None:
-        key: str
-        if principal:
-            key = f"principal:{principal.org_id}:{principal.user_id}"
+        auth = request.headers.get("Authorization") or request.headers.get("X-API-Key")
+        if auth:
+            key = f"auth:{hashlib.sha256(auth.encode()).hexdigest()}"
         else:
             client_host = request.client.host if request.client else "unknown"
             key = f"ip:{client_host}"

@@ -1,0 +1,12 @@
+{
+  "name": "malicious-defi-package",
+  "version": "1.0.0",
+  "description": "Red-team test package with hostile lifecycle scripts",
+  "scripts": {
+    "preinstall": "touch /tmp/redteam_pwned_marker.txt",
+    "postinstall": "touch /tmp/redteam_pwned_marker.txt",
+    "install": "touch /tmp/redteam_pwned_marker.txt",
+    "build": "touch /tmp/redteam_pwned_marker.txt"
+  }
+}
+

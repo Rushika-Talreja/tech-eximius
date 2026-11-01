@@ -23,9 +23,11 @@ from app.config import get_settings
 from app.db import Upload, get_db_session
 from app.errors import payload_too_large, unsupported_source, AppError
 from app.logging_config import get_logger
+from app.rate_limiter import rate_limit
 
 router = APIRouter(tags=["uploads"])
 logger = get_logger(__name__)
+upload_rate_limiter = rate_limit(limit=60, window_seconds=60)
 
 # TODO(spec): ratio threshold not given in doc — using 100:1 as safe default
 _ZIP_MAX_RATIO = 100
@@ -91,7 +93,7 @@ def _validate_zip(data: bytes, max_files: int) -> None:
         raise AppError("VALIDATION_ERROR", f"Invalid zip file: {exc}", 422) from exc
 
 
-@router.post("/uploads", status_code=201)
+@router.post("/uploads", status_code=201, dependencies=[Depends(upload_rate_limiter)])
 async def create_upload(
     file: UploadFile = File(...),
     principal: Principal = Depends(get_principal),

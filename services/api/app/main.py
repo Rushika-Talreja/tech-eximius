@@ -95,6 +95,17 @@ app.add_middleware(
 )
 
 
+# ─── Security Headers Middleware ─────────────────────────────────────────────
+@app.middleware("http")
+async def security_headers_middleware(request: Request, call_next):  # type: ignore[no-untyped-def]
+    response: Response = await call_next(request)
+    response.headers["Content-Security-Policy"] = "default-src 'self'; frame-ancestors 'none';"
+    response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    response.headers["X-Frame-Options"] = "DENY"
+    return response
+
+
 # ─── Request-ID middleware ────────────────────────────────────────────────────
 @app.middleware("http")
 async def request_id_middleware(request: Request, call_next):  # type: ignore[no-untyped-def]
@@ -194,6 +205,7 @@ app.include_router(audits.router, prefix=API_PREFIX)
 app.include_router(privilege_map.router, prefix=API_PREFIX)
 app.include_router(findings.router, prefix=API_PREFIX)
 app.include_router(patches.router, prefix=API_PREFIX)
+app.include_router(patches.router)
 app.include_router(proofs.router, prefix=API_PREFIX)
 app.include_router(invariants.router, prefix=API_PREFIX)
 app.include_router(exports.router, prefix=API_PREFIX)

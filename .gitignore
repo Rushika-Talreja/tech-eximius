@@ -54,3 +54,5 @@ openapi.json
 # Local database and storage
 data/
 *.db
+*.log
+

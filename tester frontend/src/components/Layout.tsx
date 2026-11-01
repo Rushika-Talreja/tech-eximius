@@ -26,10 +26,51 @@ const NAV_ITEMS = [
 
 export function Layout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const { authMode, setAuthMode, apiKey, setApiKey, showRawJson, setShowRawJson } = useConsole();
+  const {
+    authMode,
+    setAuthMode,
+    apiKey,
+    setApiKey,
+    showRawJson,
+    setShowRawJson,
+    useRecordedFallback,
+    setUseRecordedFallback,
+    isRecordedActive,
+  } = useConsole();
 
   return (
     <div style={{ display: "flex", flexDirection: "column", minHeight: "100vh", fontFamily: "sans-serif" }}>
+      {/* Fallback Active Banner */}
+      {(useRecordedFallback || isRecordedActive) && (
+        <div
+          style={{
+            backgroundColor: "#2c3e50",
+            color: "#f39c12",
+            borderBottom: "2px solid #e67e22",
+            padding: "8px 16px",
+            textAlign: "center",
+            fontWeight: "bold",
+            fontSize: "13px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: "10px",
+          }}
+        >
+          <span style={{ backgroundColor: "#e67e22", color: "#fff", padding: "2px 8px", borderRadius: "3px", fontSize: "11px" }}>
+            RECORDED
+          </span>
+          <span>
+            DEMO FALLBACK ACTIVE &mdash; Displaying pre-generated analysis results for reliable presentation.
+          </span>
+          {isRecordedActive && !useRecordedFallback && (
+            <span style={{ fontSize: "11px", color: "#bdc3c7" }}>
+              (Live backend request unavailable; fallback served seamlessly)
+            </span>
+          )}
+        </div>
+      )}
+
       {/* Red Alert Banner */}
       <div
         style={{
@@ -93,7 +134,16 @@ export function Layout({ children }: { children: React.ReactNode }) {
               checked={showRawJson}
               onChange={(e) => setShowRawJson(e.target.checked)}
             />
-            <span>Show Raw JSON Everywhere</span>
+            <span>Show Raw JSON</span>
+          </label>
+
+          <label style={{ display: "flex", alignItems: "center", gap: "4px", cursor: "pointer", marginLeft: "12px", color: useRecordedFallback ? "#e67e22" : "#333" }}>
+            <input
+              type="checkbox"
+              checked={useRecordedFallback}
+              onChange={(e) => setUseRecordedFallback(e.target.checked)}
+            />
+            <span><strong>{useRecordedFallback ? "● Recorded Fallback Active" : "Force Recorded Fallback"}</strong></span>
           </label>
         </div>
       </div>

@@ -8,7 +8,7 @@ import { ErrorDisplay } from "../../components/ErrorDisplay";
 import { RawJsonViewer } from "../../components/RawJsonViewer";
 import { AuditFileItem } from "../../types/backend";
 
-export default function FilesPage() {
+function FilesContent() {
   const searchParams = useSearchParams();
   const initialAuditId = searchParams.get("audit_id") || "";
 
@@ -189,6 +189,14 @@ export default function FilesPage() {
 
       <RawJsonViewer data={files} title="Raw Files List JSON" />
     </div>
+  );
+}
+
+export default function FilesPage() {
+  return (
+    <React.Suspense fallback={<div style={{ padding: "20px" }}>Loading files...</div>}>
+      <FilesContent />
+    </React.Suspense>
   );
 }
 

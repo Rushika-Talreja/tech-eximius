@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_standard" name="shell-type"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{colors:{"surface-bright":"#3d3836","on-tertiary":"#003354","tertiary-fixed":"#cee5ff","on-primary-container":"#583a00","surface-tint":"#feba49","background":"#161311","primary-fixed-dim":"#feba49","on-surface":"#e9e1dd","secondary-fixed":"#ece1d4","surface-container-low":"#1e1b19","primary":"#ffbb49","tertiary-fixed-dim":"#98cbff","on-background":"#e9e1dd","on-primary":"#442c00","secondary":"#d0c5b9","tertiary":"#9accff","on-surface-variant":"#d5c4af","inverse-on-surface":"#34302d","surface":"#161311","on-primary-fixed":"#281800","on-tertiary-fixed-variant":"#004a77","on-secondary-fixed-variant":"#4d463d","on-error-container":"#ffdad6","secondary-container":"#4d463d","error-container":"#93000a","outline-variant":"#514535","tertiary-container":"#65b2f6","primary-container":"#e0a030","surface-container":"#221f1d","on-secondary-fixed":"#201b13","on-tertiary-fixed":"#001d33","on-primary-fixed-variant":"#614000","on-secondary-container":"#beb3a8","surface-dim":"#161311","on-secondary":"#362f27","outline":"#9d8e7c","surface-container-highest":"#383431","primary-fixed":"#ffddb0","inverse-primary":"#805600","error":"#ffb4ab","inverse-surface":"#e9e1dd","on-tertiary-container":"#00436c","surface-container-lowest":"#100e0c","on-error":"#690005","surface-variant":"#383431","secondary-fixed-dim":"#d0c5b9","surface-container-high":"#2d2927"},borderRadius:{DEFAULT:"0.25rem",lg:"0.5rem",xl:"0.75rem",full:"9999px"},spacing:{"space-lg":"1.5rem","space-sm":"0.5rem","space-xl":"2.5rem","gutter-mobile":"0.75rem","space-xs":"0.25rem",margin:"2rem",gutter:"1.5rem","space-md":"1rem","margin-mobile":"1rem"},fontFamily:{"headline-sm":["Inter"],"code-md":["JetBrains Mono"],"label-caps":["JetBrains Mono"],display:["Inter"],"body-md":["Inter"],"body-sm":["Inter"],"headline-lg":["Inter"],disclaimer:["JetBrains Mono"],"body-lg":["Inter"],"code-lg":["JetBrains Mono"],"headline-md":["Inter"],"code-sm":["JetBrains Mono"],"display-mobile":["Inter"],"headline-lg-mobile":["Inter"]},fontSize:{"headline-sm":["16px",{lineHeight:"24px",letterSpacing:"0em",fontWeight:"600"}],"code-md":["13px",{lineHeight:"20px",letterSpacing:"0em",fontWeight:"400"}],"label-caps":["11px",{lineHeight:"14px",letterSpacing:"0.08em",fontWeight:"500"}],display:["40px",{lineHeight:"48px",letterSpacing:"-0.02em",fontWeight:"600"}],"body-md":["14px",{lineHeight:"22px",letterSpacing:"0em",fontWeight:"400"}],"body-sm":["12px",{lineHeight:"18px",letterSpacing:"0.01em",fontWeight:"400"}],"headline-lg":["28px",{lineHeight:"36px",letterSpacing:"-0.015em",fontWeight:"600"}],disclaimer:["11px",{lineHeight:"16px",letterSpacing:"0.03em",fontWeight:"400"}],"body-lg":["16px",{lineHeight:"26px",letterSpacing:"0em",fontWeight:"400"}],"code-lg":["15px",{lineHeight:"24px",letterSpacing:"0em",fontWeight:"400"}],"headline-md":["20px",{lineHeight:"28px",letterSpacing:"-0.01em",fontWeight:"500"}],"code-sm":["11px",{lineHeight:"16px",letterSpacing:"0.02em",fontWeight:"400"}],"display-mobile":["30px",{lineHeight:"36px",letterSpacing:"-0.02em",fontWeight:"600"}],"headline-lg-mobile":["22px",{lineHeight:"28px",letterSpacing:"-0.015em",fontWeight:"600"}]}}}};</script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=JetBrains+Mono:wght@100..900&display=swap" rel="stylesheet"/></head><body class="bg-background font-body-md text-on-surface antialiased selection:bg-primary-container selection:text-on-primary-container"><header class="fixed top-0 w-full z-50 bg-surface-container-low/95 backdrop-blur-md shadow-[0_1px_8px_rgba(0,0,0,0.4)]"><div class="h-16 w-full px-margin flex items-center justify-between"><div class="flex items-center gap-space-md"><span class="font-headline-sm text-headline-sm text-on-surface tracking-tight">DeFi Contract Auditor</span><span class="font-label-caps text-label-caps text-on-primary-container bg-primary-container px-space-xs py-0.5 rounded">ADVISORY SUITE</span></div><nav class="hidden md:flex items-center gap-space-xs" data-active-classes="bg-surface-container text-primary font-code-md"><a class="font-code-md text-code-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container px-space-sm py-space-xs rounded transition-colors" data-path="workspace" href="#">Workspace</a><a aria-current="page" class="px-space-sm py-space-xs rounded transition-colors bg-surface-container text-primary font-code-md" data-path="live-run" href="#">Live Run</a><a class="font-code-md text-code-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container px-space-sm py-space-xs rounded transition-colors" data-path="report-summary" href="#">Report Summary</a><a class="font-code-md text-code-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container px-space-sm py-space-xs rounded transition-colors" data-path="patch-diff" href="#">Patch Diff</a><a class="font-code-md text-code-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container px-space-sm py-space-xs rounded transition-colors" data-path="evidence-drawer" href="#">Evidence Drawer</a></nav><div class="flex items-center gap-space-md"><button class="bg-primary-container text-on-primary-container font-label-caps text-label-caps px-space-lg py-space-sm rounded hover:bg-primary hover:text-on-primary transition-colors" type="button">New Audit</button><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center font-code-sm text-code-sm text-on-primary font-bold">SEC</div></div></div></header><main class="w-full pt-16 min-h-screen bg-background"><div class="flex flex-col w-full">
+<div class="w-full px-margin py-space-lg flex flex-col gap-space-lg">
+<!-- Top Telemetry Banner & Overall Progress -->
+<section class="bg-surface-container-low p-space-lg shadow-sm flex flex-col gap-space-md">
+<div class="flex flex-col lg:flex-row lg:items-center justify-between gap-space-md">
+<div class="flex flex-col gap-space-xs">
+<div class="flex items-center gap-space-sm">
+<span class="font-label-caps text-label-caps text-primary bg-surface-container px-space-sm py-0.5">ACTIVE EXECUTION</span>
+<span class="font-code-sm text-code-sm text-outline">JOB ID: AUD-2024-8841-B</span>
+</div>
+<h1 class="font-headline-lg text-headline-lg text-on-surface">Audit in Progress: YieldVault.sol</h1>
+</div>
+<div class="flex items-center gap-space-md">
+<div class="hidden sm:flex flex-col items-end">
+<span class="font-label-caps text-label-caps text-outline">EXECUTION PROFILE</span>
+<span class="font-code-md text-code-md text-on-surface">SOLC 0.8.20 / SLITHER STATIC</span>
+</div>
+<button class="bg-transparent text-on-surface font-label-caps text-label-caps px-space-lg py-space-sm hover:bg-surface-container active:bg-surface-container-high transition-colors" id="cancelRunBtn" type="button">
+            Cancel Run
+          </button>
+</div>
+</div>
+<!-- Linear Primary Progress Meter -->
+<div class="flex flex-col gap-space-xs">
+<div class="w-full h-2 bg-surface-container-high overflow-hidden">
+<div class="h-full bg-primary transition-all duration-500 ease-out" id="overallProgressFill" style="width: 71%;"></div>
+</div>
+<div class="flex flex-wrap items-center justify-between gap-space-sm font-code-sm text-code-sm text-on-surface-variant">
+<span class="text-primary font-medium">Overall Progress: 71 Percent</span>
+<span class="text-outline">Estimated Time Remaining: 14 seconds</span>
+<span class="text-outline">Elapsed: 32 seconds</span>
+<span class="text-outline">Sandbox Load: 18 Percent</span>
+</div>
+</div>
+</section>
+<!-- Main Workspace Split: Left Config Sidebar (3 cols) + Center/Right Diagnostic Pipeline (9 cols) -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-space-lg items-start">
+<!-- Left Column: Read-Only Audit Parameters (3 cols) -->
+<aside class="lg:col-span-4 xl:col-span-3 flex flex-col gap-space-md">
+<!-- Parameter Summary Card -->
+<div class="bg-surface-container-low p-space-md shadow-sm flex flex-col gap-space-md">
+<div class="flex items-center justify-between pb-space-xs bg-surface-container-lowest px-space-sm py-space-xs">
+<span class="font-label-caps text-label-caps text-outline">CONFIGURATION PROFILE</span>
+<span class="font-code-sm text-code-sm text-primary">READ ONLY</span>
+</div>
+<div class="flex flex-col gap-space-sm">
+<div class="bg-surface-container p-space-sm flex flex-col gap-0.5">
+<span class="font-label-caps text-label-caps text-outline">TARGET CONTRACT</span>
+<span class="font-code-md text-code-md text-on-surface font-semibold">YieldVault.sol</span>
+<span class="font-code-sm text-code-sm text-outline-variant">SHA256: 7f20...da49</span>
+</div>
+<div class="bg-surface-container p-space-sm flex flex-col gap-0.5">
+<span class="font-label-caps text-label-caps text-outline">REGULATORY FRAMEWORK</span>
+<span class="font-code-md text-code-md text-on-surface">India: SEBI and RBI</span>
+<span class="font-code-sm text-code-sm text-outline-variant">Direct Custody Annexure 4</span>
+</div>
+<div class="bg-surface-container p-space-sm flex flex-col gap-0.5">
+<span class="font-label-caps text-label-caps text-outline">ANALYSIS DEPTH</span>
+<span class="font-code-md text-code-md text-on-surface">Standard</span>
+<span class="font-code-sm text-code-sm text-outline-variant">Static AST + Symbolic + Exploit DB</span>
+</div>
+<div class="bg-surface-container p-space-sm flex flex-col gap-0.5">
+<span class="font-label-caps text-label-caps text-outline">SEVERITY THRESHOLD</span>
+<span class="font-code-md text-code-md text-on-surface">Critical and High</span>
+<span class="font-code-sm text-code-sm text-outline-variant">Informational suppressed</span>
+</div>
+<div class="bg-surface-container p-space-sm flex flex-col gap-0.5">
+<span class="font-label-caps text-label-caps text-outline">KEY CUSTODY SCHEME</span>
+<span class="font-code-md text-code-md text-on-surface">Declared Multisig</span>
+<span class="font-code-sm text-code-sm text-outline-variant">2 of 3, 48h timelock enforced</span>
+</div>
+<div class="bg-surface-container p-space-sm flex flex-col gap-0.5">
+<span class="font-label-caps text-label-caps text-outline">ORACLE DEPENDENCY</span>
+<span class="font-code-md text-code-md text-on-surface">Chainlink ETH/USD Feed</span>
+<span class="font-code-sm text-code-sm text-outline-variant">Staleness check required</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-space-sm flex flex-col gap-space-xs">
+<span class="font-label-caps text-label-caps text-outline">SANDBOX INSTANCE</span>
+<span class="font-code-sm text-code-sm text-on-surface-variant font-mono">sbx-802.us-east.advisory</span>
+<span class="font-code-sm text-code-sm text-outline">ISOLATION: SECCOMP / MEMORY-CAPPED</span>
+</div>
+</div>
+<!-- Failure Policy Informational Callout -->
+<div class="bg-surface-container-low p-space-md shadow-sm flex flex-col gap-space-sm">
+<div class="flex items-center justify-between">
+<span class="font-label-caps text-label-caps text-on-surface">COMPILER POLICY</span>
+<span class="font-code-sm text-code-sm text-outline">POLICY DOC 04</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+            Compiler Failure Policy Notice: If contract syntax is invalid or dependencies fail to resolve, the engine halts with status <span class="font-label-caps text-label-caps text-error bg-surface-container-highest px-1">Failed</span> in red text ("The tool does not review code it cannot build") and enables a Return to Editor text button.
+          </p>
+<div class="pt-space-xs">
+<button class="w-full bg-surface-container hover:bg-surface-container-high text-on-surface font-label-caps text-label-caps py-space-sm transition-colors text-center" type="button">
+              View Build Specs
+            </button>
+</div>
+</div>
+</aside>
+<!-- Center & Right Column: Pipeline Stepper & Live Execution Log (9 cols) -->
+<main class="lg:col-span-8 xl:col-span-9 flex flex-col gap-space-lg">
+<!-- Stepper Section: 7 Deterministic Steps -->
+<section class="bg-surface-container-low p-space-lg shadow-sm flex flex-col gap-space-md">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-space-xs pb-space-xs bg-surface-container-lowest px-space-sm py-space-xs">
+<span class="font-label-caps text-label-caps text-outline">AUDIT EXECUTION PIPELINE</span>
+<span class="font-code-sm text-code-sm text-on-surface-variant">STAGE 5 OF 7 IN RUNTIME</span>
+</div>
+<div class="flex flex-col gap-space-sm">
+<!-- Step 1: Complete -->
+<div class="bg-surface-container p-space-md flex flex-col sm:flex-row sm:items-center justify-between gap-space-sm">
+<div class="flex items-start gap-space-md">
+<span class="font-code-md text-code-md text-on-surface font-bold bg-surface-container-highest px-space-sm py-0.5">01</span>
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-on-surface">Validating and building in an isolated sandbox</span>
+<span class="font-body-sm text-body-sm text-outline">Solc 0.8.20 compilation environment verification</span>
+</div>
+</div>
+<div class="flex sm:flex-col items-end justify-between sm:justify-center gap-space-xs shrink-0 pl-10 sm:pl-0">
+<span class="font-label-caps text-label-caps text-[#4C9A5B] bg-surface-container-lowest px-space-sm py-0.5">Complete</span>
+<span class="font-code-sm text-code-sm text-outline">Elapsed: 3.1s</span>
+</div>
+</div>
+<!-- Step 2: Complete -->
+<div class="bg-surface-container p-space-md flex flex-col sm:flex-row sm:items-center justify-between gap-space-sm">
+<div class="flex items-start gap-space-md">
+<span class="font-code-md text-code-md text-on-surface font-bold bg-surface-container-highest px-space-sm py-0.5">02</span>
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-on-surface">Parsing AST and mapping privileged roles</span>
+<span class="font-body-sm text-body-sm text-outline">Extracting contract inheritance, external entrypoints, and state variables</span>
+</div>
+</div>
+<div class="flex sm:flex-col items-end justify-between sm:justify-center gap-space-xs shrink-0 pl-10 sm:pl-0">
+<span class="font-label-caps text-label-caps text-[#4C9A5B] bg-surface-container-lowest px-space-sm py-0.5">Complete</span>
+<span class="font-code-sm text-code-sm text-outline">Elapsed: 4.8s</span>
+</div>
+</div>
+<!-- Step 3: Complete -->
+<div class="bg-surface-container p-space-md flex flex-col sm:flex-row sm:items-center justify-between gap-space-sm">
+<div class="flex items-start gap-space-md">
+<span class="font-code-md text-code-md text-on-surface font-bold bg-surface-container-highest px-space-sm py-0.5">03</span>
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-on-surface">Running Slither static analysis</span>
+<span class="font-body-sm text-body-sm text-outline">Executing 42 vulnerability detectors including reentrancy and arbitrary transfer</span>
+</div>
+</div>
+<div class="flex sm:flex-col items-end justify-between sm:justify-center gap-space-xs shrink-0 pl-10 sm:pl-0">
+<span class="font-label-caps text-label-caps text-[#4C9A5B] bg-surface-container-lowest px-space-sm py-0.5">Complete</span>
+<span class="font-code-sm text-code-sm text-outline">Elapsed: 11.2s</span>
+</div>
+</div>
+<!-- Step 4: Complete -->
+<div class="bg-surface-container p-space-md flex flex-col sm:flex-row sm:items-center justify-between gap-space-sm">
+<div class="flex items-start gap-space-md">
+<span class="font-code-md text-code-md text-on-surface font-bold bg-surface-container-highest px-space-sm py-0.5">04</span>
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-on-surface">Scanning historical post-mortems</span>
+<span class="font-body-sm text-body-sm text-outline">Cross-referencing logic signatures against Immunefi and DeFiHackLabs datasets</span>
+</div>
+</div>
+<div class="flex sm:flex-col items-end justify-between sm:justify-center gap-space-xs shrink-0 pl-10 sm:pl-0">
+<span class="font-label-caps text-label-caps text-[#4C9A5B] bg-surface-container-lowest px-space-sm py-0.5">Complete</span>
+<span class="font-code-sm text-code-sm text-outline">Elapsed: 7.9s</span>
+</div>
+</div>
+<!-- Step 5: Active / Running -->
+<div class="bg-surface-container-high p-space-md flex flex-col gap-space-sm shadow-md">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-space-sm">
+<div class="flex items-start gap-space-md">
+<span class="font-code-md text-code-md text-on-primary bg-primary px-space-sm py-0.5 font-bold">05</span>
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-on-surface font-semibold">Checking financial regulations</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Evaluating custodian rights, freeze powers, and jurisdictional checklists</span>
+</div>
+</div>
+<div class="flex sm:flex-col items-end justify-between sm:justify-center gap-space-xs shrink-0 pl-10 sm:pl-0">
+<span class="font-label-caps text-label-caps text-primary bg-surface-container-lowest px-space-sm py-0.5 font-bold animate-pulse">Running</span>
+<span class="font-code-sm text-code-sm text-on-surface-variant">Elapsed: 5.2s</span>
+</div>
+</div>
+<!-- Active Step Progress Bar -->
+<div class="w-full h-1 bg-surface-container-lowest overflow-hidden mt-space-xs">
+<div class="h-full bg-primary animate-pulse" style="width: 64%;"></div>
+</div>
+</div>
+<!-- Step 6: Waiting -->
+<div class="bg-surface-container-low/60 p-space-md flex flex-col sm:flex-row sm:items-center justify-between gap-space-sm">
+<div class="flex items-start gap-space-md">
+<span class="font-code-md text-code-md text-outline font-bold bg-surface-container px-space-sm py-0.5">06</span>
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-outline">Drafting and testing patches</span>
+<span class="font-body-sm text-body-sm text-outline-variant">Generating differential AST edits and executing regression tests in Foundry sandbox</span>
+</div>
+</div>
+<div class="flex sm:flex-col items-end justify-between sm:justify-center gap-space-xs shrink-0 pl-10 sm:pl-0">
+<span class="font-label-caps text-label-caps text-outline bg-surface-container-lowest px-space-sm py-0.5">Waiting</span>
+<span class="font-code-sm text-code-sm text-outline-variant">Queued</span>
+</div>
+</div>
+<!-- Step 7: Waiting -->
+<div class="bg-surface-container-low/60 p-space-md flex flex-col sm:flex-row sm:items-center justify-between gap-space-sm">
+<div class="flex items-start gap-space-md">
+<span class="font-code-md text-code-md text-outline font-bold bg-surface-container px-space-sm py-0.5">07</span>
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-outline">Compiling your report</span>
+<span class="font-body-sm text-body-sm text-outline-variant">Aggregating findings, severity grading, and evidence citations</span>
+</div>
+</div>
+<div class="flex sm:flex-col items-end justify-between sm:justify-center gap-space-xs shrink-0 pl-10 sm:pl-0">
+<span class="font-label-caps text-label-caps text-outline bg-surface-container-lowest px-space-sm py-0.5">Waiting</span>
+<span class="font-code-sm text-code-sm text-outline-variant">Queued</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Live Log Terminal Panel -->
+<section class="bg-surface-container-lowest p-space-md shadow-sm flex flex-col gap-space-sm">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-space-xs pb-space-xs bg-surface-container-low px-space-sm py-space-xs">
+<span class="font-label-caps text-label-caps text-on-surface">Execution Logs (Sandbox Instance: sbx-802)</span>
+<div class="flex items-center gap-space-md font-code-sm text-code-sm">
+<span class="text-outline">STREAM: ACTIVE</span>
+<button class="text-primary hover:text-on-surface transition-colors font-label-caps text-label-caps" id="copyLogsBtn" type="button">
+                Copy Buffer
+              </button>
+</div>
+</div>
+<!-- Monospace Stream Area -->
+<div class="bg-surface-container-lowest p-space-md font-code-md text-code-md text-on-surface flex flex-col gap-1 overflow-x-auto max-h-72">
+<div class="flex items-start gap-space-sm">
+<span class="text-outline shrink-0">[14:22:01]</span>
+<span class="text-on-surface-variant">Initializing isolated solc 0.8.20 runtime environment</span>
+</div>
+<div class="flex items-start gap-space-sm">
+<span class="text-outline shrink-0">[14:22:04]</span>
+<span class="text-[#4C9A5B]">Compilation succeeded with 0 warnings</span>
+</div>
+<div class="flex items-start gap-space-sm">
+<span class="text-outline shrink-0">[14:22:09]</span>
+<span class="text-on-surface-variant">AST generated: 1 contract, 4 state variables, 2 functions</span>
+</div>
+<div class="flex items-start gap-space-sm">
+<span class="text-outline shrink-0">[14:22:15]</span>
+<span class="text-[#E8782A]">Slither run completed: detector arbitrary-send-eth triggered on line 16</span>
+</div>
+<div class="flex items-start gap-space-sm">
+<span class="text-outline shrink-0">[14:22:21]</span>
+<span class="text-on-surface-variant">Matching pattern with Euler Finance and Grim Finance incidents</span>
+</div>
+<div class="flex items-start gap-space-sm">
+<span class="text-outline shrink-0">[14:22:28]</span>
+<span class="text-primary font-medium">Evaluating SEBI guidelines on asset custody and withdrawal rights...</span>
+</div>
+<div class="flex items-start gap-space-sm animate-pulse">
+<span class="text-outline shrink-0">[14:22:33]</span>
+<span class="text-on-surface-variant font-mono">Running symbolic rule validator: rule_custody_lock_timelock_v2</span>
+</div>
+</div>
+<div class="flex items-center justify-between pt-space-xs font-code-sm text-code-sm text-outline">
+<span>TERMINAL ECHO: 6 OF 18 CHUNKS EMITTED</span>
+<span>ENCODING: UTF-8 / RFC-5424</span>
+</div>
+</section>
+</main>
+</div>
+<!-- Inline Persistent Compliance Advisory Bar -->
+<div class="w-full bg-surface-container-low px-space-md py-space-sm flex items-center justify-between">
+<span class="font-disclaimer text-disclaimer text-outline">Automated advisory check. Not a formal audit. Not legal advice.</span>
+<span class="font-code-sm text-code-sm text-outline-variant">SESSION ID: 0x8F91A23D</span>
+</div>
+</div>
+</div>
+<script>
+  (function () {
+    var cancelBtn = document.getElementById('cancelRunBtn');
+    if (cancelBtn) {
+      cancelBtn.addEventListener('click', function () {
+        if (confirm('Cancel active audit run on YieldVault.sol? Engine will discard sandbox artifacts.')) {
+          cancelBtn.textContent = 'Canceling...';
+          cancelBtn.classList.add('text-error');
+        }
+      });
+    }
+
+    var copyLogsBtn = document.getElementById('copyLogsBtn');
+    if (copyLogsBtn) {
+      copyLogsBtn.addEventListener('click', function () {
+        var logs = [
+          '[14:22:01] Initializing isolated solc 0.8.20 runtime environment',
+          '[14:22:04] Compilation succeeded with 0 warnings',
+          '[14:22:09] AST generated: 1 contract, 4 state variables, 2 functions',
+          '[14:22:15] Slither run completed: detector arbitrary-send-eth triggered on line 16',
+          '[14:22:21] Matching pattern with Euler Finance and Grim Finance incidents',
+          '[14:22:28] Evaluating SEBI guidelines on asset custody and withdrawal rights...'
+        ].join('\n');
+        
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(logs).then(function() {
+            copyLogsBtn.textContent = 'Copied';
+            setTimeout(function() {
+              copyLogsBtn.textContent = 'Copy Buffer';
+            }, 2000);
+          });
+        }
+      });
+    }
+  })();
+</script></main><footer class="w-full bg-surface-container-lowest py-space-md shadow-[0_-1px_8px_rgba(0,0,0,0.3)]"><div class="w-full px-margin flex items-center justify-between"><p class="font-disclaimer text-disclaimer text-outline">Automated advisory check. Not a formal audit. Not legal advice.</p><div class="flex items-center gap-space-md"><span class="font-code-sm text-code-sm text-outline-variant">CORE v2.4.0</span><span class="font-code-sm text-code-sm text-outline-variant">SOLIDITY 0.8.24</span></div></div></footer></body></html>

@@ -1,0 +1,15 @@
+[
+  {
+    "id": "staking_rewards_capped",
+    "description": "rewards claimed <= rewards funded",
+    "applies_if": "contract_type == 'staking'",
+    "file": "staking_rewards_capped.sol"
+  },
+  {
+    "id": "staking_round_trip",
+    "description": "stake/unstake round trip does not gain",
+    "applies_if": "contract_type == 'staking'",
+    "file": "staking_round_trip.sol"
+  }
+]
+

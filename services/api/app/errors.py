@@ -116,10 +116,19 @@ def build_failed(message: str, diagnostics: list[dict[str, Any]] | None = None) 
     )
 
 
+def feature_disabled(feature: str) -> AppError:
+    return AppError(
+        "FEATURE_DISABLED",
+        f"Feature '{feature}' is disabled",
+        422,
+        {"feature": feature},
+    )
+
+
 def feature_not_enabled(feature: str) -> AppError:
     return AppError(
-        "VALIDATION_ERROR",
-        f"Feature '{feature}' is not yet enabled. It will be available in a future milestone.",
+        "FEATURE_NOT_ENABLED",
+        f"Feature '{feature}' is disabled",
         422,
         {"feature": feature},
     )

@@ -19,6 +19,17 @@ from auditor_core.pipeline.building import (
     run_building_stage,
 )
 from auditor_core.sandbox.runner import ExecutionResult, SandboxRunner
+from auditor_core.patching import (
+    PatchHunk,
+    PatchPlan,
+    VerificationResult,
+    apply_unified_diff,
+    check_storage_layout_impact,
+    generate_and_verify_patch,
+    plan_patch,
+    render_unified_diff,
+    verify_patch,
+)
 
 __version__ = "0.1.0"
 
@@ -31,10 +42,19 @@ __all__ = [
     "Evidence",
     "ExecutionResult",
     "FindingDraft",
+    "PatchHunk",
+    "PatchPlan",
     "RetrievalResult",
     "SandboxRunner",
     "SourceManifest",
+    "VerificationResult",
+    "apply_unified_diff",
+    "check_storage_layout_impact",
+    "generate_and_verify_patch",
+    "plan_patch",
+    "render_unified_diff",
     "retrieve_evidence",
     "run_building_stage",
     "verify_draft",
+    "verify_patch",
 ]

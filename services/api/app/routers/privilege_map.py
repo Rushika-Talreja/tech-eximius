@@ -38,6 +38,23 @@ class DeclarationInput(BaseModel):
     threshold: int | None = None
     signers: int | None = None
     delay_hours: float | None = None
+    params: dict[str, Any] | None = None
+
+    @model_validator(mode="before")
+    @classmethod
+    def unpack_nested_params(cls, data: Any) -> Any:
+        if isinstance(data, dict):
+            p = data.get("params")
+            if isinstance(p, dict):
+                if "threshold" in p and data.get("threshold") is None:
+                    data["threshold"] = p["threshold"]
+                if "signers" in p and data.get("signers") is None:
+                    data["signers"] = p["signers"]
+                if "delay_hours" in p and data.get("delay_hours") is None:
+                    data["delay_hours"] = p["delay_hours"]
+                elif "delay_seconds" in p and data.get("delay_hours") is None:
+                    data["delay_hours"] = float(p["delay_seconds"]) / 3600.0
+        return data
 
     @model_validator(mode="after")
     def validate_declaration_params(self) -> "DeclarationInput":

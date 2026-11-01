@@ -108,3 +108,225 @@ async def test_cross_tenant_project_isolation(
             text(f"SELECT id FROM audits WHERE id = '{audit_id}'")
         )
         assert audit_result.first() is None, "Postgres RLS leaked org A audit to org B session"
+
+
+@pytest.mark.asyncio
+async def test_cross_tenant_every_endpoint_isolation(
+    async_client: AsyncClient,
+    auth_a: dict[str, str],
+    auth_b: dict[str, str],
+) -> None:
+    """
+    Exhaustive cross-tenant isolation test across every API endpoint.
+    Org B cannot read, write, mutate, or trigger jobs on any Org A resource.
+    """
+    import asyncio
+    import io
+    from app.config import get_settings
+
+    settings = get_settings()
+    settings.proofs_enabled = True
+    settings.invariants_enabled = True
+
+    # 1. Setup Org A full resources
+    # Create Project A
+    p_resp = await async_client.post(
+        "/v1/projects",
+        json={"name": "Org A Private DeFi App"},
+        headers=auth_a,
+    )
+    assert p_resp.status_code == 201
+    project_a_id = p_resp.json()["id"]
+
+    # Upload A
+    sol_code = """// SPDX-License-Identifier: MIT
+pragma solidity 0.8.24;
+
+contract VaultA {
+    address public owner;
+    mapping(address => uint256) public balances;
+
+    constructor() { owner = msg.sender; }
+
+    function deposit() external payable {
+        balances[msg.sender] += msg.value;
+    }
+
+    function withdraw() external {
+        uint256 bal = balances[msg.sender];
+        (bool ok, ) = msg.sender.call{value: bal}("");
+        require(ok);
+        balances[msg.sender] = 0;
+    }
+}
+"""
+    files = {"file": ("VaultA.sol", io.BytesIO(sol_code.encode()), "text/plain")}
+    up_resp = await async_client.post("/v1/uploads", files=files, headers=auth_a)
+    assert up_resp.status_code == 201
+    upload_a_id = up_resp.json()["upload_id"]
+
+    # Create Audit A
+    audit_resp = await async_client.post(
+        f"/v1/projects/{project_a_id}/audits",
+        json={"upload_id": upload_a_id},
+        headers=auth_a,
+    )
+    assert audit_resp.status_code == 202
+    audit_a_id = audit_resp.json()["audit_id"]
+
+    # Wait for completion
+    for _ in range(40):
+        get_res = await async_client.get(f"/v1/audits/{audit_a_id}", headers=auth_a)
+        if get_res.json().get("status") in ("complete", "failed"):
+            break
+        await asyncio.sleep(0.1)
+
+    assert get_res.json()["status"] == "complete"
+
+    # Get File A
+    files_res = await async_client.get(f"/v1/audits/{audit_a_id}/files", headers=auth_a)
+    assert files_res.status_code == 200
+    file_a_id = files_res.json()["items"][0]["id"]
+
+    # Get Finding A
+    findings_res = await async_client.get(f"/v1/audits/{audit_a_id}/findings", headers=auth_a)
+    assert findings_res.status_code == 200
+    items = findings_res.json().get("items", [])
+    assert len(items) > 0
+    finding_a_id = items[0]["id"]
+
+    # Create Patch A
+    patch_resp = await async_client.post(
+        f"/v1/audits/{audit_a_id}/findings/{finding_a_id}/patches",
+        headers=auth_a,
+    )
+    assert patch_resp.status_code == 202
+    patch_a_id = patch_resp.json()["patch_id"]
+
+    # Create API Key A
+    key_resp = await async_client.post(
+        "/v1/api-keys",
+        json={"name": "Org A Key", "scopes": ["audits:read"]},
+        headers=auth_a,
+    )
+    assert key_resp.status_code == 201
+    api_key_a_id = key_resp.json()["id"]
+
+    # 2. Org B attempts to access Org A's resources across EVERY endpoint:
+
+    # Projects
+    res = await async_client.get(f"/v1/projects/{project_a_id}", headers=auth_b)
+    assert res.status_code in (403, 404), f"GET project: expected 403/404, got {res.status_code}"
+
+    res = await async_client.delete(f"/v1/projects/{project_a_id}", headers=auth_b)
+    assert res.status_code in (403, 404), f"DELETE project: expected 403/404, got {res.status_code}"
+
+    # Audits under Project
+    res = await async_client.post(
+        f"/v1/projects/{project_a_id}/audits",
+        json={"upload_id": upload_a_id},
+        headers=auth_b,
+    )
+    assert res.status_code in (403, 404), f"POST project audit: expected 403/404, got {res.status_code}"
+
+    # Audit lifecycle
+    res = await async_client.get(f"/v1/audits/{audit_a_id}", headers=auth_b)
+    assert res.status_code in (403, 404), f"GET audit: expected 403/404, got {res.status_code}"
+
+    res = await async_client.post(f"/v1/audits/{audit_a_id}/cancel", headers=auth_b)
+    assert res.status_code in (403, 404), f"POST cancel audit: expected 403/404, got {res.status_code}"
+
+    res = await async_client.delete(f"/v1/audits/{audit_a_id}", headers=auth_b)
+    assert res.status_code in (403, 404), f"DELETE audit: expected 403/404, got {res.status_code}"
+
+    # Files
+    res = await async_client.get(f"/v1/audits/{audit_a_id}/files", headers=auth_b)
+    assert res.status_code in (403, 404), f"GET audit files: expected 403/404, got {res.status_code}"
+
+    res = await async_client.get(f"/v1/audits/{audit_a_id}/files/{file_a_id}", headers=auth_b)
+    assert res.status_code in (403, 404), f"GET audit file: expected 403/404, got {res.status_code}"
+
+    # Privilege map & roles
+    res = await async_client.get(f"/v1/audits/{audit_a_id}/privilege-map", headers=auth_b)
+    assert res.status_code in (403, 404), f"GET privilege map: expected 403/404, got {res.status_code}"
+
+    res = await async_client.get(f"/v1/audits/{audit_a_id}/role-declarations", headers=auth_b)
+    assert res.status_code in (403, 404), f"GET role-declarations: expected 403/404, got {res.status_code}"
+
+    res = await async_client.put(
+        f"/v1/audits/{audit_a_id}/role-declarations",
+        json={"declarations": [{"role_key": "ADMIN", "holder_type": "multisig"}]},
+        headers=auth_b,
+    )
+    assert res.status_code in (403, 404), f"PUT role-declarations: expected 403/404, got {res.status_code}"
+
+    # Findings
+    res = await async_client.get(f"/v1/audits/{audit_a_id}/findings", headers=auth_b)
+    assert res.status_code in (403, 404), f"GET findings: expected 403/404, got {res.status_code}"
+
+    res = await async_client.get(f"/v1/audits/{audit_a_id}/findings/{finding_a_id}", headers=auth_b)
+    assert res.status_code in (403, 404), f"GET finding: expected 403/404, got {res.status_code}"
+
+    res = await async_client.patch(
+        f"/v1/audits/{audit_a_id}/findings/{finding_a_id}",
+        json={"status": "resolved"},
+        headers=auth_b,
+    )
+    assert res.status_code in (403, 404), f"PATCH finding: expected 403/404, got {res.status_code}"
+
+    # Patches
+    res = await async_client.get(f"/v1/audits/{audit_a_id}/findings/{finding_a_id}/patches", headers=auth_b)
+    assert res.status_code in (403, 404), f"GET patches: expected 403/404, got {res.status_code}"
+
+    res = await async_client.post(
+        f"/v1/audits/{audit_a_id}/findings/{finding_a_id}/patches",
+        headers=auth_b,
+    )
+    assert res.status_code in (403, 404), f"POST generate patch: expected 403/404, got {res.status_code}"
+
+    res = await async_client.get(
+        f"/v1/audits/{audit_a_id}/findings/{finding_a_id}/patches/{patch_a_id}",
+        headers=auth_b,
+    )
+    assert res.status_code in (403, 404), f"GET patch: expected 403/404, got {res.status_code}"
+
+    res = await async_client.post(
+        f"/v1/audits/{audit_a_id}/findings/{finding_a_id}/patches/{patch_a_id}/verify",
+        headers=auth_b,
+    )
+    assert res.status_code in (403, 404), f"POST verify patch: expected 403/404, got {res.status_code}"
+
+    # Proofs (M6)
+    res = await async_client.get(f"/v1/audits/{audit_a_id}/proofs", headers=auth_b)
+    assert res.status_code in (403, 404), f"GET proofs: expected 403/404, got {res.status_code}"
+
+    res = await async_client.post(
+        f"/v1/audits/{audit_a_id}/findings/{finding_a_id}/proof",
+        headers=auth_b,
+    )
+    assert res.status_code in (403, 404), f"POST proof: expected 403/404, got {res.status_code}"
+
+    # Invariants (M7)
+    res = await async_client.get(f"/v1/audits/{audit_a_id}/invariants", headers=auth_b)
+    assert res.status_code in (403, 404), f"GET invariants: expected 403/404, got {res.status_code}"
+
+    res = await async_client.post(
+        f"/v1/audits/{audit_a_id}/invariant-runs",
+        json={"runs": 10},
+        headers=auth_b,
+    )
+    assert res.status_code in (403, 404), f"POST invariant-runs: expected 403/404, got {res.status_code}"
+
+    # Exports
+    res = await async_client.get(f"/v1/audits/{audit_a_id}/export?format=json", headers=auth_b)
+    assert res.status_code in (403, 404), f"GET export: expected 403/404, got {res.status_code}"
+
+    # API Keys
+    keys_b_resp = await async_client.get("/v1/api-keys", headers=auth_b)
+    assert keys_b_resp.status_code == 200
+    b_key_ids = [k["id"] for k in keys_b_resp.json().get("items", [])]
+    assert api_key_a_id not in b_key_ids
+
+    del_key_b_resp = await async_client.delete(f"/v1/api-keys/{api_key_a_id}", headers=auth_b)
+    assert del_key_b_resp.status_code in (403, 404)
+

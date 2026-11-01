@@ -1,0 +1,15 @@
+[
+  {
+    "id": "lending_debt_ltv",
+    "description": "total debt <= total collateral value * max LTV (when oracle mocked)",
+    "applies_if": "contract_type == 'lending'",
+    "file": "lending_debt_ltv.sol"
+  },
+  {
+    "id": "lending_healthy_liquidation",
+    "description": "liquidation cannot make a healthy position insolvent",
+    "applies_if": "contract_type == 'lending'",
+    "file": "lending_healthy_liquidation.sol"
+  }
+]
+

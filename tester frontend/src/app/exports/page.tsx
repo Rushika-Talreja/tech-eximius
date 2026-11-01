@@ -7,7 +7,7 @@ import { useConsole } from "../../lib/store";
 import { ErrorDisplay } from "../../components/ErrorDisplay";
 import { RawJsonViewer } from "../../components/RawJsonViewer";
 
-export default function ExportsPage() {
+function ExportsContent() {
   const searchParams = useSearchParams();
   const initialAuditId = searchParams.get("audit_id") || "";
 
@@ -164,6 +164,14 @@ export default function ExportsPage() {
 
       <RawJsonViewer data={exportContent ? { format: exportFormat, size_bytes: fileSizeBytes } : null} title="Export Metadata" />
     </div>
+  );
+}
+
+export default function ExportsPage() {
+  return (
+    <React.Suspense fallback={<div style={{ padding: "20px" }}>Loading exports...</div>}>
+      <ExportsContent />
+    </React.Suspense>
   );
 }
 

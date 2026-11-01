@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_standard" name="shell-type"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{colors:{"surface-bright":"#3d3836","on-tertiary":"#003354","tertiary-fixed":"#cee5ff","on-primary-container":"#583a00","surface-tint":"#feba49","background":"#161311","primary-fixed-dim":"#feba49","on-surface":"#e9e1dd","secondary-fixed":"#ece1d4","surface-container-low":"#1e1b19","primary":"#ffbb49","tertiary-fixed-dim":"#98cbff","on-background":"#e9e1dd","on-primary":"#442c00","secondary":"#d0c5b9","tertiary":"#9accff","on-surface-variant":"#d5c4af","inverse-on-surface":"#34302d","surface":"#161311","on-primary-fixed":"#281800","on-tertiary-fixed-variant":"#004a77","on-secondary-fixed-variant":"#4d463d","on-error-container":"#ffdad6","secondary-container":"#4d463d","error-container":"#93000a","outline-variant":"#514535","tertiary-container":"#65b2f6","primary-container":"#e0a030","surface-container":"#221f1d","on-secondary-fixed":"#201b13","on-tertiary-fixed":"#001d33","on-primary-fixed-variant":"#614000","on-secondary-container":"#beb3a8","surface-dim":"#161311","on-secondary":"#362f27","outline":"#9d8e7c","surface-container-highest":"#383431","primary-fixed":"#ffddb0","inverse-primary":"#805600","error":"#ffb4ab","inverse-surface":"#e9e1dd","on-tertiary-container":"#00436c","surface-container-lowest":"#100e0c","on-error":"#690005","surface-variant":"#383431","secondary-fixed-dim":"#d0c5b9","surface-container-high":"#2d2927"},borderRadius:{DEFAULT:"0.25rem",lg:"0.5rem",xl:"0.75rem",full:"9999px"},spacing:{"space-lg":"1.5rem","space-sm":"0.5rem","space-xl":"2.5rem","gutter-mobile":"0.75rem","space-xs":"0.25rem",margin:"2rem",gutter:"1.5rem","space-md":"1rem","margin-mobile":"1rem"},fontFamily:{"headline-sm":["Inter"],"code-md":["JetBrains Mono"],"label-caps":["JetBrains Mono"],display:["Inter"],"body-md":["Inter"],"body-sm":["Inter"],"headline-lg":["Inter"],disclaimer:["JetBrains Mono"],"body-lg":["Inter"],"code-lg":["JetBrains Mono"],"headline-md":["Inter"],"code-sm":["JetBrains Mono"],"display-mobile":["Inter"],"headline-lg-mobile":["Inter"]},fontSize:{"headline-sm":["16px",{lineHeight:"24px",letterSpacing:"0em",fontWeight:"600"}],"code-md":["13px",{lineHeight:"20px",letterSpacing:"0em",fontWeight:"400"}],"label-caps":["11px",{lineHeight:"14px",letterSpacing:"0.08em",fontWeight:"500"}],display:["40px",{lineHeight:"48px",letterSpacing:"-0.02em",fontWeight:"600"}],"body-md":["14px",{lineHeight:"22px",letterSpacing:"0em",fontWeight:"400"}],"body-sm":["12px",{lineHeight:"18px",letterSpacing:"0.01em",fontWeight:"400"}],"headline-lg":["28px",{lineHeight:"36px",letterSpacing:"-0.015em",fontWeight:"600"}],disclaimer:["11px",{lineHeight:"16px",letterSpacing:"0.03em",fontWeight:"400"}],"body-lg":["16px",{lineHeight:"26px",letterSpacing:"0em",fontWeight:"400"}],"code-lg":["15px",{lineHeight:"24px",letterSpacing:"0em",fontWeight:"400"}],"headline-md":["20px",{lineHeight:"28px",letterSpacing:"-0.01em",fontWeight:"500"}],"code-sm":["11px",{lineHeight:"16px",letterSpacing:"0.02em",fontWeight:"400"}],"display-mobile":["30px",{lineHeight:"36px",letterSpacing:"-0.02em",fontWeight:"600"}],"headline-lg-mobile":["22px",{lineHeight:"28px",letterSpacing:"-0.015em",fontWeight:"600"}]}}}};</script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=JetBrains+Mono:wght@100..900&display=swap" rel="stylesheet"/></head><body class="bg-background font-body-md text-on-surface antialiased selection:bg-primary-container selection:text-on-primary-container"><header class="fixed top-0 w-full z-50 bg-surface-container-low/95 backdrop-blur-md shadow-[0_1px_8px_rgba(0,0,0,0.4)]"><div class="h-16 w-full px-margin flex items-center justify-between"><div class="flex items-center gap-space-md"><span class="font-headline-sm text-headline-sm text-on-surface tracking-tight">DeFi Contract Auditor</span><span class="font-label-caps text-label-caps text-on-primary-container bg-primary-container px-space-xs py-0.5 rounded">ADVISORY SUITE</span></div><nav class="hidden md:flex items-center gap-space-xs" data-active-classes="bg-surface-container text-primary font-code-md"><a aria-current="page" class="px-space-sm py-space-xs rounded transition-colors bg-surface-container text-primary font-code-md" data-path="workspace" href="#">Workspace</a><a class="font-code-md text-code-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container px-space-sm py-space-xs rounded transition-colors" data-path="live-run" href="#">Live Run</a><a class="font-code-md text-code-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container px-space-sm py-space-xs rounded transition-colors" data-path="report-summary" href="#">Report Summary</a><a class="font-code-md text-code-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container px-space-sm py-space-xs rounded transition-colors" data-path="patch-diff" href="#">Patch Diff</a><a class="font-code-md text-code-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container px-space-sm py-space-xs rounded transition-colors" data-path="evidence-drawer" href="#">Evidence Drawer</a></nav><div class="flex items-center gap-space-md"><button class="bg-primary-container text-on-primary-container font-label-caps text-label-caps px-space-lg py-space-sm rounded hover:bg-primary hover:text-on-primary transition-colors" type="button">New Audit</button><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center font-code-sm text-code-sm text-on-primary font-bold">SEC</div></div></div></header><main class="w-full pt-16 min-h-screen bg-background"><div class="flex flex-col w-full">
+<div class="w-full px-margin py-space-md flex items-center justify-between bg-surface-container-lowest border-b border-outline-variant">
+<div class="flex items-center gap-space-md">
+<span class="font-label-caps text-label-caps text-on-surface">SECURITY ADVISORY WORKSPACE</span>
+<span class="font-code-sm text-code-sm text-outline-variant">SESSION ID 0x8F92D1B</span>
+<span class="font-code-sm text-code-sm text-primary">STATE READY</span>
+</div>
+<div class="flex items-center gap-space-lg">
+<span class="font-disclaimer text-disclaimer text-outline">Automated advisory check. Not a formal audit. Not legal advice.</span>
+<button class="font-code-sm text-code-sm text-on-surface-variant hover:text-primary transition-colors py-0.5 px-space-sm bg-surface-container rounded border border-outline-variant" id="sidebar-toggle-btn" type="button">Hide Settings</button>
+</div>
+</div>
+<div class="w-full px-margin py-space-lg">
+<div class="grid grid-cols-12 gap-gutter items-start">
+<!-- LEFT SETTINGS SIDEBAR -->
+<aside class="col-span-12 lg:col-span-4 flex flex-col gap-space-md bg-surface-container-low p-space-md rounded border border-outline-variant" id="settings-sidebar">
+<div class="flex items-center justify-between border-b border-outline-variant pb-space-sm">
+<div>
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Analysis Configuration</h2>
+<p class="font-code-sm text-code-sm text-outline">Ruleset and AST detection depth</p>
+</div>
+<span class="font-label-caps text-label-caps text-primary bg-surface-container-highest px-space-xs py-0.5 rounded">CONFIG VER 2.4</span>
+</div>
+<!-- Regulatory Framework -->
+<div class="flex flex-col gap-space-xs">
+<label class="font-code-sm text-code-sm text-on-surface font-semibold">Regulatory Framework</label>
+<div class="grid grid-cols-1 gap-1">
+<button class="regulatory-option text-left font-code-md text-code-md py-space-xs px-space-sm rounded bg-surface-container text-on-surface hover:text-primary border border-outline-variant" type="button">India: SEBI and RBI</button>
+<button class="regulatory-option text-left font-code-md text-code-md py-space-xs px-space-sm rounded bg-surface-container-high text-primary border border-primary" type="button">United States: SEC</button>
+<button class="regulatory-option text-left font-code-md text-code-md py-space-xs px-space-sm rounded bg-surface-container text-on-surface hover:text-primary border border-outline-variant" type="button">Global or Generic</button>
+</div>
+<p class="font-disclaimer text-disclaimer text-outline">Used only to generate questions to take to a lawyer.</p>
+</div>
+<!-- Analysis Depth -->
+<div class="flex flex-col gap-space-xs">
+<div class="flex items-center justify-between">
+<label class="font-code-sm text-code-sm text-on-surface font-semibold">Analysis Depth</label>
+<span class="font-code-sm text-code-sm text-primary" id="depth-est">Estimated: 45 seconds</span>
+</div>
+<div class="grid grid-cols-3 gap-1 p-0.5 bg-surface-container-lowest rounded border border-outline-variant">
+<button class="depth-btn py-space-xs px-space-sm font-label-caps text-label-caps rounded text-on-surface-variant hover:text-on-surface text-center" type="button">Quick</button>
+<button class="depth-btn py-space-xs px-space-sm font-label-caps text-label-caps rounded bg-primary text-on-primary font-bold text-center" type="button">Standard</button>
+<button class="depth-btn py-space-xs px-space-sm font-label-caps text-label-caps rounded text-on-surface-variant hover:text-on-surface text-center" type="button">Deep</button>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">AST check, Slither heuristics, and high-frequency vulnerability matching.</p>
+</div>
+<!-- Risk Threshold -->
+<div class="flex flex-col gap-space-xs">
+<label class="font-code-sm text-code-sm text-on-surface font-semibold">Risk Threshold</label>
+<div class="flex flex-col gap-1">
+<button class="threshold-btn text-left font-code-sm text-code-sm py-space-xs px-space-sm rounded bg-surface-container text-on-surface-variant border border-outline-variant" type="button">Report Critical only</button>
+<button class="threshold-btn text-left font-code-sm text-code-sm py-space-xs px-space-sm rounded bg-surface-container-high text-primary border border-primary font-semibold" type="button">Critical and High</button>
+<button class="threshold-btn text-left font-code-sm text-code-sm py-space-xs px-space-sm rounded bg-surface-container text-on-surface-variant border border-outline-variant" type="button">Critical, High and Medium</button>
+<button class="threshold-btn text-left font-code-sm text-code-sm py-space-xs px-space-sm rounded bg-surface-container text-on-surface-variant border border-outline-variant" type="button">Everything</button>
+</div>
+</div>
+<!-- Check Modules -->
+<div class="flex flex-col gap-space-xs">
+<label class="font-code-sm text-code-sm text-on-surface font-semibold">Check Modules</label>
+<div class="flex flex-col gap-1">
+<button class="module-toggle flex items-center justify-between py-space-xs px-space-sm bg-surface-container rounded border border-outline-variant text-left font-code-sm text-code-sm" type="button">
+<span class="text-on-surface">Privilege Map</span>
+<span class="state-label font-label-caps text-label-caps text-primary">[ON]</span>
+</button>
+<button class="module-toggle flex items-center justify-between py-space-xs px-space-sm bg-surface-container rounded border border-outline-variant text-left font-code-sm text-code-sm" type="button">
+<span class="text-on-surface">Static Analysis</span>
+<span class="state-label font-label-caps text-label-caps text-primary">[ON]</span>
+</button>
+<button class="module-toggle flex items-center justify-between py-space-xs px-space-sm bg-surface-container rounded border border-outline-variant text-left font-code-sm text-code-sm" type="button">
+<span class="text-on-surface">Historical Incident Lookup</span>
+<span class="state-label font-label-caps text-label-caps text-primary">[ON]</span>
+</button>
+<button class="module-toggle flex items-center justify-between py-space-xs px-space-sm bg-surface-container rounded border border-outline-variant text-left font-code-sm text-code-sm" type="button">
+<span class="text-on-surface">Regulatory Check</span>
+<span class="state-label font-label-caps text-label-caps text-primary">[ON]</span>
+</button>
+<button class="module-toggle flex items-center justify-between py-space-xs px-space-sm bg-surface-container rounded border border-outline-variant text-left font-code-sm text-code-sm" type="button">
+<span class="text-on-surface">Patch Generation and Testing</span>
+<span class="state-label font-label-caps text-label-caps text-primary">[ON]</span>
+</button>
+</div>
+</div>
+<!-- Key Custody Form -->
+<div class="flex flex-col gap-space-xs border-t border-outline-variant pt-space-sm">
+<div class="flex items-center justify-between">
+<label class="font-code-sm text-code-sm text-on-surface font-semibold">Key Custody (optional)</label>
+<span class="font-label-caps text-label-caps text-outline">ASSUMPTION GUARD</span>
+</div>
+<div class="flex flex-col gap-space-xs">
+<span class="font-code-sm text-code-sm text-on-surface-variant">Owner key type</span>
+<div class="grid grid-cols-2 gap-1">
+<button class="custody-key-btn py-space-xs px-space-sm font-code-sm text-code-sm rounded bg-surface-container text-on-surface border border-outline-variant text-center" type="button">Single wallet</button>
+<button class="custody-key-btn py-space-xs px-space-sm font-code-sm text-code-sm rounded bg-surface-container-high text-primary border border-primary font-semibold text-center" type="button">Multisig</button>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-space-sm mt-1">
+<div class="flex flex-col gap-0.5">
+<label class="font-disclaimer text-disclaimer text-on-surface-variant">Approvals required</label>
+<input class="bg-surface-container border border-outline-variant px-space-sm py-1 font-code-md text-code-md text-on-surface rounded focus:border-primary focus:outline-none" type="text" value="2"/>
+</div>
+<div class="flex flex-col gap-0.5">
+<label class="font-disclaimer text-disclaimer text-on-surface-variant">Total signers</label>
+<input class="bg-surface-container border border-outline-variant px-space-sm py-1 font-code-md text-code-md text-on-surface rounded focus:border-primary focus:outline-none" type="text" value="3"/>
+</div>
+</div>
+<div class="flex flex-col gap-0.5 mt-1">
+<label class="font-disclaimer text-disclaimer text-on-surface-variant">Timelock delay in hours</label>
+<input class="bg-surface-container border border-outline-variant px-space-sm py-1 font-code-md text-code-md text-on-surface rounded focus:border-primary focus:outline-none" type="text" value="48"/>
+</div>
+<p class="font-disclaimer text-disclaimer text-outline mt-1">If left empty, the worst case is assumed and results are labeled assumed.</p>
+</div>
+<!-- Primary Action -->
+<div class="flex flex-col gap-space-xs pt-space-xs">
+<button class="w-full py-space-sm px-space-lg bg-primary text-on-primary font-label-caps text-label-caps rounded hover:bg-primary-container transition-colors text-center font-bold" type="button">Run Audit</button>
+<p class="font-disclaimer text-disclaimer text-outline text-center">Code is kept private to your account and deleted after 24 hours by default.</p>
+<p class="font-disclaimer text-disclaimer text-outline-variant text-center">Automated advisory check. Not a formal audit. Not legal advice.</p>
+</div>
+</aside>
+<!-- CENTER CODE AREA -->
+<main class="col-span-12 lg:col-span-8 flex flex-col gap-space-md" id="center-workspace">
+<!-- Workspace Tabs & Control Actions -->
+<div class="flex items-center justify-between border-b border-outline-variant pb-space-xs">
+<div class="flex items-center gap-space-sm">
+<button class="font-label-caps text-label-caps py-space-xs px-space-md rounded-t text-primary border-b-2 border-primary font-bold" id="tab-paste" type="button">Paste Code</button>
+<button class="font-label-caps text-label-caps py-space-xs px-space-md rounded-t text-on-surface-variant hover:text-on-surface font-normal" id="tab-upload" type="button">Upload Files</button>
+</div>
+<div class="flex items-center gap-space-xs">
+<button class="font-code-sm text-code-sm px-space-sm py-1 bg-surface-container text-on-surface rounded border border-outline-variant hover:border-primary hover:text-primary transition-colors" id="load-sample-btn" type="button">Load Sample Contract</button>
+<button class="font-code-sm text-code-sm px-space-sm py-1 bg-surface-container text-on-surface-variant rounded border border-outline-variant hover:text-error hover:border-error transition-colors" id="clear-editor-btn" type="button">Clear</button>
+</div>
+</div>
+<!-- Code Editor Panel (Monaco Styled) -->
+<div class="flex flex-col rounded border border-outline-variant bg-surface-container-low overflow-hidden" id="paste-view-panel">
+<div class="flex items-center justify-between px-space-md py-space-xs bg-surface-container border-b border-outline-variant font-code-sm text-code-sm">
+<div class="flex items-center gap-space-md">
+<span class="text-on-surface font-semibold">YieldVault.sol</span>
+<span class="text-outline">Solidity 0.8.20</span>
+<span class="text-outline">UTF-8</span>
+</div>
+<div class="flex items-center gap-space-sm">
+<span class="text-outline">AST Status: Parsed</span>
+<span class="text-primary font-semibold">Modified</span>
+</div>
+</div>
+<!-- Monaco Style Editor Content -->
+<div class="p-space-md overflow-x-auto font-code-md text-code-md leading-relaxed select-text bg-[#14110F]">
+<table class="w-full border-collapse">
+<tbody>
+<tr>
+<td class="text-right pr-space-md text-outline select-none font-code-sm w-12 align-top">1</td>
+<td class="text-[#A89E93] align-top">// SPDX-License-Identifier: MIT</td>
+</tr>
+<tr>
+<td class="text-right pr-space-md text-outline select-none font-code-sm w-12 align-top">2</td>
+<td class="align-top"><span class="text-[#E0A030] font-semibold">pragma</span> <span class="text-[#E3B73C]">solidity</span> <span class="text-[#E8782A]">0.8.20</span>;</td>
+</tr>
+<tr>
+<td class="text-right pr-space-md text-outline select-none font-code-sm w-12 align-top">3</td>
+<td class="align-top"> </td>
+</tr>
+<tr>
+<td class="text-right pr-space-md text-outline select-none font-code-sm w-12 align-top">4</td>
+<td class="align-top"><span class="text-[#E0A030] font-semibold">contract</span> <span class="text-[#E3B73C] font-semibold">YieldVault</span> {</td>
+</tr>
+<tr>
+<td class="text-right pr-space-md text-outline select-none font-code-sm w-12 align-top">5</td>
+<td class="pl-space-md align-top"><span class="text-[#E3B73C]">address</span> <span class="text-[#E0A030]">public</span> <span class="text-on-surface">owner</span>;</td>
+</tr>
+<tr>
+<td class="text-right pr-space-md text-outline select-none font-code-sm w-12 align-top">6</td>
+<td class="pl-space-md align-top"><span class="text-[#E3B73C]">uint256</span> <span class="text-[#E0A030]">public</span> <span class="text-on-surface">totalLocked</span>;</td>
+</tr>
+<tr>
+<td class="text-right pr-space-md text-outline select-none font-code-sm w-12 align-top">7</td>
+<td class="pl-space-md align-top"><span class="text-[#E0A030]">mapping</span>(<span class="text-[#E3B73C]">address</span> => <span class="text-[#E3B73C]">uint256</span>) <span class="text-[#E0A030]">public</span> <span class="text-on-surface">balances</span>;</td>
+</tr>
+<tr>
+<td class="text-right pr-space-md text-outline select-none font-code-sm w-12 align-top">8</td>
+<td class="align-top"> </td>
+</tr>
+<tr>
+<td class="text-right pr-space-md text-outline select-none font-code-sm w-12 align-top">9</td>
+<td class="pl-space-md align-top"><span class="text-[#E0A030] font-semibold">function</span> <span class="text-on-surface font-semibold">deposit</span>() <span class="text-[#E0A030]">external</span> <span class="text-[#E0A030]">payable</span> {</td>
+</tr>
+<tr>
+<td class="text-right pr-space-md text-outline select-none font-code-sm w-12 align-top">10</td>
+<td class="pl-space-xl align-top"><span class="text-on-surface">balances</span>[<span class="text-[#E3B73C]">msg</span>.<span class="text-on-surface">sender</span>] += <span class="text-[#E3B73C]">msg</span>.<span class="text-on-surface">value</span>;</td>
+</tr>
+<tr>
+<td class="text-right pr-space-md text-outline select-none font-code-sm w-12 align-top">11</td>
+<td class="pl-space-xl align-top"><span class="text-on-surface">totalLocked</span> += <span class="text-[#E3B73C]">msg</span>.<span class="text-on-surface">value</span>;</td>
+</tr>
+<tr>
+<td class="text-right pr-space-md text-outline select-none font-code-sm w-12 align-top">12</td>
+<td class="pl-space-md align-top">}</td>
+</tr>
+<tr>
+<td class="text-right pr-space-md text-outline select-none font-code-sm w-12 align-top">13</td>
+<td class="align-top"> </td>
+</tr>
+<tr>
+<td class="text-right pr-space-md text-outline select-none font-code-sm w-12 align-top">14</td>
+<td class="pl-space-md align-top"><span class="text-[#E0A030] font-semibold">function</span> <span class="text-on-surface font-semibold">emergencyDrain</span>(<span class="text-[#E3B73C]">address</span> <span class="text-on-surface">target</span>) <span class="text-[#E0A030]">external</span> {</td>
+</tr>
+<tr>
+<td class="text-right pr-space-md text-outline select-none font-code-sm w-12 align-top">15</td>
+<td class="pl-space-xl align-top"><span class="text-[#E0A030] font-semibold">require</span>(<span class="text-[#E3B73C]">msg</span>.<span class="text-on-surface">sender</span> == <span class="text-on-surface">owner</span>, <span class="text-[#8FA84A]">"Unauthorized"</span>);</td>
+</tr>
+<tr>
+<td class="text-right pr-space-md text-outline select-none font-code-sm w-12 align-top">16</td>
+<td class="pl-space-xl align-top">(<span class="text-[#E3B73C]">bool</span> <span class="text-on-surface">sent</span>, ) = <span class="text-on-surface">target</span>.<span class="text-on-surface">call</span>{<span class="text-on-surface">value</span>: <span class="text-[#E3B73C]">address</span>(<span class="text-[#E0A030]">this</span>).<span class="text-on-surface">balance</span>}(<span class="text-[#8FA84A]">""</span>);</td>
+</tr>
+<tr>
+<td class="text-right pr-space-md text-outline select-none font-code-sm w-12 align-top">17</td>
+<td class="pl-space-xl align-top"><span class="text-[#E0A030] font-semibold">require</span>(<span class="text-on-surface">sent</span>, <span class="text-[#8FA84A]">"Transfer failed"</span>);</td>
+</tr>
+<tr>
+<td class="text-right pr-space-md text-outline select-none font-code-sm w-12 align-top">18</td>
+<td class="pl-space-md align-top">}</td>
+</tr>
+<tr>
+<td class="text-right pr-space-md text-outline select-none font-code-sm w-12 align-top">19</td>
+<td class="align-top">}</td>
+</tr>
+<tr>
+<td class="text-right pr-space-md text-outline select-none font-code-sm w-12 align-top">20</td>
+<td class="align-top"> </td>
+</tr>
+<tr>
+<td class="text-right pr-space-md text-outline select-none font-code-sm w-12 align-top">21</td>
+<td class="text-[#A89E93] align-top">// Note: External calls inside emergencyDrain present reentrancy risk</td>
+</tr>
+<tr>
+<td class="text-right pr-space-md text-outline select-none font-code-sm w-12 align-top">22</td>
+<td class="text-[#A89E93] align-top">// Ensure pull payment pattern or OpenZeppelin ReentrancyGuard is applied</td>
+</tr>
+<tr>
+<td class="text-right pr-space-md text-outline select-none font-code-sm w-12 align-top">23</td>
+<td class="text-[#A89E93] align-top">// Privilege check: owner cannot be 0x0 or multi-sig bypassable</td>
+</tr>
+<tr>
+<td class="text-right pr-space-md text-outline select-none font-code-sm w-12 align-top">24</td>
+<td class="text-[#A89E93] align-top">// Advisory validation marker: READY_FOR_SLITHER_RUN</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Editor Footer Info -->
+<div class="px-space-md py-space-xs bg-surface-container border-t border-outline-variant flex items-center justify-between font-code-sm text-code-sm text-on-surface-variant">
+<span>Lines: 24 | Characters: 642 | Detected Language: Solidity</span>
+<span>Tab Size: 4 Spaces | Encoding: UTF-8</span>
+</div>
+</div>
+<!-- Upload & Validation Area -->
+<div class="flex flex-col gap-space-sm bg-surface-container-low p-space-md rounded border border-outline-variant" id="upload-section">
+<div class="flex items-center justify-between">
+<span class="font-headline-sm text-headline-sm text-on-surface">Archive and Batch Import</span>
+<span class="font-code-sm text-code-sm text-outline">Direct parser</span>
+</div>
+<!-- Dashed Drop Zone -->
+<div class="flex flex-col items-center justify-center p-space-xl border-2 border-dashed border-outline-variant bg-surface-container rounded hover:border-primary transition-colors text-center cursor-pointer">
+<span class="font-code-md text-code-md text-on-surface font-semibold mb-1">Drop .sol files or a .zip project here, or Browse files</span>
+<span class="font-code-sm text-code-sm text-outline">.sol and .zip. Maximum 5 MB per upload.</span>
+</div>
+<!-- File Validation Rows with Explicit Plain Text States -->
+<div class="flex flex-col gap-1.5 mt-space-xs">
+<div class="flex items-center justify-between p-space-xs px-space-sm bg-surface-container rounded border border-outline-variant font-code-sm text-code-sm">
+<span class="text-[#4C9A5B] font-medium">YieldVault.sol (12 KB) — Accepted</span>
+<span class="text-[#4C9A5B] font-label-caps text-label-caps">READY</span>
+</div>
+<div class="flex items-center justify-between p-space-xs px-space-sm bg-surface-container rounded border border-outline-variant font-code-sm text-code-sm">
+<span class="text-[#D6403A] font-medium">config.ts (4 KB) — Wrong file type. Only Solidity source and zip archives are processed.</span>
+<span class="text-[#D6403A] font-label-caps text-label-caps">REJECTED</span>
+</div>
+<div class="flex items-center justify-between p-space-xs px-space-sm bg-surface-container rounded border border-outline-variant font-code-sm text-code-sm">
+<span class="text-[#D6403A] font-medium">archive_heavy.zip (8.2 MB) — Too large. Maximum allowed size is 5 MB.</span>
+<span class="text-[#D6403A] font-label-caps text-label-caps">REJECTED</span>
+</div>
+</div>
+</div>
+<!-- Telemetry Audit Summary Banner -->
+<div class="p-space-md bg-surface-container rounded border border-outline-variant flex flex-col md:flex-row md:items-center justify-between gap-space-md">
+<div class="flex flex-col gap-0.5">
+<span class="font-label-caps text-label-caps text-primary">PRE-EXECUTION AUDIT MATRIX</span>
+<span class="font-body-sm text-body-sm text-on-surface">5 modules engaged. Targeted heuristics: Reentrancy, Access Controls, Storage Clashing.</span>
+</div>
+<div class="flex items-center gap-space-sm">
+<button class="font-code-sm text-code-sm px-space-md py-space-xs bg-surface-container-high text-on-surface rounded border border-outline-variant hover:border-primary" type="button">View Rule Matrix</button>
+<button class="font-label-caps text-label-caps px-space-md py-space-xs bg-primary text-on-primary font-bold rounded hover:bg-primary-container" type="button">Execute Run</button>
+</div>
+</div>
+</main>
+</div>
+</div>
+<script>
+    // Toggle sidebar logic
+    const sidebarToggleBtn = document.getElementById('sidebar-toggle-btn');
+    const settingsSidebar = document.getElementById('settings-sidebar');
+    const centerWorkspace = document.getElementById('center-workspace');
+
+    let sidebarHidden = false;
+
+    sidebarToggleBtn.addEventListener('click', () => {
+      sidebarHidden = !sidebarHidden;
+      if (sidebarHidden) {
+        settingsSidebar.classList.add('hidden');
+        centerWorkspace.classList.remove('lg:col-span-8');
+        centerWorkspace.classList.add('lg:col-span-12');
+        sidebarToggleBtn.textContent = 'Show Settings';
+      } else {
+        settingsSidebar.classList.remove('hidden');
+        centerWorkspace.classList.remove('lg:col-span-12');
+        centerWorkspace.classList.add('lg:col-span-8');
+        sidebarToggleBtn.textContent = 'Hide Settings';
+      }
+    });
+
+    // Tab switcher between Paste Code and Upload Files
+    const tabPaste = document.getElementById('tab-paste');
+    const tabUpload = document.getElementById('tab-upload');
+    const pastePanel = document.getElementById('paste-view-panel');
+    const uploadSection = document.getElementById('upload-section');
+
+    tabPaste.addEventListener('click', () => {
+      tabPaste.className = 'font-label-caps text-label-caps py-space-xs px-space-md rounded-t text-primary border-b-2 border-primary font-bold';
+      tabUpload.className = 'font-label-caps text-label-caps py-space-xs px-space-md rounded-t text-on-surface-variant hover:text-on-surface font-normal';
+      pastePanel.classList.remove('opacity-40');
+    });
+
+    tabUpload.addEventListener('click', () => {
+      tabUpload.className = 'font-label-caps text-label-caps py-space-xs px-space-md rounded-t text-primary border-b-2 border-primary font-bold';
+      tabPaste.className = 'font-label-caps text-label-caps py-space-xs px-space-md rounded-t text-on-surface-variant hover:text-on-surface font-normal';
+      uploadSection.scrollIntoView({ behavior: 'smooth' });
+    });
+
+    // Check Modules Toggle [ON] / [OFF]
+    const moduleToggles = document.querySelectorAll('.module-toggle');
+    moduleToggles.forEach(toggle => {
+      toggle.addEventListener('click', () => {
+        const stateSpan = toggle.querySelector('.state-label');
+        if (stateSpan.textContent.includes('ON')) {
+          stateSpan.textContent = '[OFF]';
+          stateSpan.classList.remove('text-primary');
+          stateSpan.classList.add('text-outline');
+        } else {
+          stateSpan.textContent = '[ON]';
+          stateSpan.classList.remove('text-outline');
+          stateSpan.classList.add('text-primary');
+        }
+      });
+    });
+
+    // Regulatory Framework Selector
+    const regOptions = document.querySelectorAll('.regulatory-option');
+    regOptions.forEach(opt => {
+      opt.addEventListener('click', () => {
+        regOptions.forEach(o => {
+          o.className = 'regulatory-option text-left font-code-md text-code-md py-space-xs px-space-sm rounded bg-surface-container text-on-surface hover:text-primary border border-outline-variant';
+        });
+        opt.className = 'regulatory-option text-left font-code-md text-code-md py-space-xs px-space-sm rounded bg-surface-container-high text-primary border border-primary font-semibold';
+      });
+    });
+
+    // Analysis Depth Slider / Buttons
+    const depthBtns = document.querySelectorAll('.depth-btn');
+    const depthEst = document.getElementById('depth-est');
+    depthBtns.forEach((btn, idx) => {
+      btn.addEventListener('click', () => {
+        depthBtns.forEach(b => {
+          b.className = 'depth-btn py-space-xs px-space-sm font-label-caps text-label-caps rounded text-on-surface-variant hover:text-on-surface text-center';
+        });
+        btn.className = 'depth-btn py-space-xs px-space-sm font-label-caps text-label-caps rounded bg-primary text-on-primary font-bold text-center';
+        if (idx === 0) depthEst.textContent = 'Estimated: 12 seconds';
+        if (idx === 1) depthEst.textContent = 'Estimated: 45 seconds';
+        if (idx === 2) depthEst.textContent = 'Estimated: 180 seconds';
+      });
+    });
+
+    // Risk Threshold Buttons
+    const threshBtns = document.querySelectorAll('.threshold-btn');
+    threshBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        threshBtns.forEach(b => {
+          b.className = 'threshold-btn text-left font-code-sm text-code-sm py-space-xs px-space-sm rounded bg-surface-container text-on-surface-variant border border-outline-variant';
+        });
+        btn.className = 'threshold-btn text-left font-code-sm text-code-sm py-space-xs px-space-sm rounded bg-surface-container-high text-primary border border-primary font-semibold';
+      });
+    });
+
+    // Custody Key Buttons
+    const custodyBtns = document.querySelectorAll('.custody-key-btn');
+    custodyBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        custodyBtns.forEach(b => {
+          b.className = 'custody-key-btn py-space-xs px-space-sm font-code-sm text-code-sm rounded bg-surface-container text-on-surface border border-outline-variant text-center';
+        });
+        btn.className = 'custody-key-btn py-space-xs px-space-sm font-code-sm text-code-sm rounded bg-surface-container-high text-primary border border-primary font-semibold text-center';
+      });
+    });
+
+    // Clear and Load Sample micro-interactions
+    const clearBtn = document.getElementById('clear-editor-btn');
+    const loadSampleBtn = document.getElementById('load-sample-btn');
+    
+    clearBtn.addEventListener('click', () => {
+      const codeTbody = pastePanel.querySelector('tbody');
+      codeTbody.innerHTML = `
+        <tr>
+          <td class="text-right pr-space-md text-outline select-none font-code-sm w-12 align-top">1</td>
+          <td class="text-outline align-top">// Workspace cleared. Paste contract source or click "Load Sample Contract".</td>
+        </tr>
+      `;
+    });
+
+    loadSampleBtn.addEventListener('click', () => {
+      window.location.reload();
+    });
+  </script>
+</div></main><footer class="w-full bg-surface-container-lowest py-space-md shadow-[0_-1px_8px_rgba(0,0,0,0.3)]"><div class="w-full px-margin flex items-center justify-between"><p class="font-disclaimer text-disclaimer text-outline">Automated advisory check. Not a formal audit. Not legal advice.</p><div class="flex items-center gap-space-md"><span class="font-code-sm text-code-sm text-outline-variant">CORE v2.4.0</span><span class="font-code-sm text-code-sm text-outline-variant">SOLIDITY 0.8.24</span></div></div></footer></body></html>

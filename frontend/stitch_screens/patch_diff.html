@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_standard" name="shell-type"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{colors:{"surface-bright":"#3d3836","on-tertiary":"#003354","tertiary-fixed":"#cee5ff","on-primary-container":"#583a00","surface-tint":"#feba49","background":"#161311","primary-fixed-dim":"#feba49","on-surface":"#e9e1dd","secondary-fixed":"#ece1d4","surface-container-low":"#1e1b19","primary":"#ffbb49","tertiary-fixed-dim":"#98cbff","on-background":"#e9e1dd","on-primary":"#442c00","secondary":"#d0c5b9","tertiary":"#9accff","on-surface-variant":"#d5c4af","inverse-on-surface":"#34302d","surface":"#161311","on-primary-fixed":"#281800","on-tertiary-fixed-variant":"#004a77","on-secondary-fixed-variant":"#4d463d","on-error-container":"#ffdad6","secondary-container":"#4d463d","error-container":"#93000a","outline-variant":"#514535","tertiary-container":"#65b2f6","primary-container":"#e0a030","surface-container":"#221f1d","on-secondary-fixed":"#201b13","on-tertiary-fixed":"#001d33","on-primary-fixed-variant":"#614000","on-secondary-container":"#beb3a8","surface-dim":"#161311","on-secondary":"#362f27","outline":"#9d8e7c","surface-container-highest":"#383431","primary-fixed":"#ffddb0","inverse-primary":"#805600","error":"#ffb4ab","inverse-surface":"#e9e1dd","on-tertiary-container":"#00436c","surface-container-lowest":"#100e0c","on-error":"#690005","surface-variant":"#383431","secondary-fixed-dim":"#d0c5b9","surface-container-high":"#2d2927"},borderRadius:{DEFAULT:"0.25rem",lg:"0.5rem",xl:"0.75rem",full:"9999px"},spacing:{"space-lg":"1.5rem","space-sm":"0.5rem","space-xl":"2.5rem","gutter-mobile":"0.75rem","space-xs":"0.25rem",margin:"2rem",gutter:"1.5rem","space-md":"1rem","margin-mobile":"1rem"},fontFamily:{"headline-sm":["Inter"],"code-md":["JetBrains Mono"],"label-caps":["JetBrains Mono"],display:["Inter"],"body-md":["Inter"],"body-sm":["Inter"],"headline-lg":["Inter"],disclaimer:["JetBrains Mono"],"body-lg":["Inter"],"code-lg":["JetBrains Mono"],"headline-md":["Inter"],"code-sm":["JetBrains Mono"],"display-mobile":["Inter"],"headline-lg-mobile":["Inter"]},fontSize:{"headline-sm":["16px",{lineHeight:"24px",letterSpacing:"0em",fontWeight:"600"}],"code-md":["13px",{lineHeight:"20px",letterSpacing:"0em",fontWeight:"400"}],"label-caps":["11px",{lineHeight:"14px",letterSpacing:"0.08em",fontWeight:"500"}],display:["40px",{lineHeight:"48px",letterSpacing:"-0.02em",fontWeight:"600"}],"body-md":["14px",{lineHeight:"22px",letterSpacing:"0em",fontWeight:"400"}],"body-sm":["12px",{lineHeight:"18px",letterSpacing:"0.01em",fontWeight:"400"}],"headline-lg":["28px",{lineHeight:"36px",letterSpacing:"-0.015em",fontWeight:"600"}],disclaimer:["11px",{lineHeight:"16px",letterSpacing:"0.03em",fontWeight:"400"}],"body-lg":["16px",{lineHeight:"26px",letterSpacing:"0em",fontWeight:"400"}],"code-lg":["15px",{lineHeight:"24px",letterSpacing:"0em",fontWeight:"400"}],"headline-md":["20px",{lineHeight:"28px",letterSpacing:"-0.01em",fontWeight:"500"}],"code-sm":["11px",{lineHeight:"16px",letterSpacing:"0.02em",fontWeight:"400"}],"display-mobile":["30px",{lineHeight:"36px",letterSpacing:"-0.02em",fontWeight:"600"}],"headline-lg-mobile":["22px",{lineHeight:"28px",letterSpacing:"-0.015em",fontWeight:"600"}]}}}};</script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=JetBrains+Mono:wght@100..900&display=swap" rel="stylesheet"/></head><body class="bg-background font-body-md text-on-surface antialiased selection:bg-primary-container selection:text-on-primary-container"><header class="fixed top-0 w-full z-50 bg-surface-container-low/95 backdrop-blur-md shadow-[0_1px_8px_rgba(0,0,0,0.4)]"><div class="h-16 w-full px-margin flex items-center justify-between"><div class="flex items-center gap-space-md"><span class="font-headline-sm text-headline-sm text-on-surface tracking-tight">DeFi Contract Auditor</span><span class="font-label-caps text-label-caps text-on-primary-container bg-primary-container px-space-xs py-0.5 rounded">ADVISORY SUITE</span></div><nav class="hidden md:flex items-center gap-space-xs" data-active-classes="bg-surface-container text-primary font-code-md"><a class="font-code-md text-code-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container px-space-sm py-space-xs rounded transition-colors" data-path="workspace" href="#">Workspace</a><a class="font-code-md text-code-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container px-space-sm py-space-xs rounded transition-colors" data-path="live-run" href="#">Live Run</a><a class="font-code-md text-code-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container px-space-sm py-space-xs rounded transition-colors" data-path="report-summary" href="#">Report Summary</a><a aria-current="page" class="px-space-sm py-space-xs rounded transition-colors bg-surface-container text-primary font-code-md" data-path="patch-diff" href="#">Patch Diff</a><a class="font-code-md text-code-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container px-space-sm py-space-xs rounded transition-colors" data-path="evidence-drawer" href="#">Evidence Drawer</a></nav><div class="flex items-center gap-space-md"><button class="bg-primary-container text-on-primary-container font-label-caps text-label-caps px-space-lg py-space-sm rounded hover:bg-primary hover:text-on-primary transition-colors" type="button">New Audit</button><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center font-code-sm text-code-sm text-on-primary font-bold">SEC</div></div></div></header><main class="w-full pt-16 min-h-screen bg-background"><div class="flex flex-col w-full">
+<div class="w-full px-margin py-space-lg flex flex-col gap-space-lg max-w-7xl mx-auto">
+<div class="bg-surface-container-low border border-outline-variant p-space-md flex flex-col md:flex-row md:items-center justify-between gap-space-md">
+<div class="flex flex-col gap-space-xs">
+<div class="flex items-center gap-space-sm flex-wrap">
+<span class="font-label-caps text-label-caps tracking-widest px-space-xs py-0.5 border border-error text-error bg-error/10">CRITICAL</span>
+<span class="font-code-sm text-code-sm text-outline">FINDING-041</span>
+<span class="font-code-sm text-code-sm text-outline-variant">contracts/YieldVault.sol</span>
+<span class="font-code-sm text-code-sm text-outline">Lines 14 to 22</span>
+</div>
+<h1 class="font-headline-sm text-headline-sm text-on-surface">
+          Arbitrary external call allows unconstrained vault drainage in emergencyDrain()
+        </h1>
+</div>
+<div class="flex items-center gap-space-xs shrink-0">
+<button class="px-space-md py-space-xs bg-surface-container border border-outline-variant hover:border-primary text-on-surface-variant hover:text-on-surface font-code-sm text-code-sm transition-colors" type="button">
+          Previous Finding
+        </button>
+<button class="px-space-md py-space-xs bg-surface-container border border-outline-variant hover:border-primary text-on-surface-variant hover:text-on-surface font-code-sm text-code-sm transition-colors" type="button">
+          Next Finding
+        </button>
+</div>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant p-space-sm flex flex-col md:flex-row md:items-center justify-between gap-space-xs">
+<div class="flex items-center gap-space-md flex-wrap font-code-sm text-code-sm text-on-surface-variant">
+<span>Patch compiled: <strong class="text-[#4C9A5B] font-semibold">Yes</strong></span>
+<span class="text-outline-variant">/</span>
+<span>Test passed: <strong class="text-[#4C9A5B] font-semibold">Yes</strong></span>
+<span class="text-outline-variant">/</span>
+<span>Regression baseline: <strong class="text-primary font-semibold">Zero Breakage</strong></span>
+</div>
+<p class="font-disclaimer text-disclaimer text-outline">
+        Patches that fail automated compilation or regression tests are rejected and never displayed.
+      </p>
+</div>
+<div class="bg-surface-container border border-outline-variant px-space-md py-space-xs flex items-center justify-between font-code-sm text-code-sm text-on-surface-variant">
+<span>Legend: Red lines indicate Removed code. Green lines indicate Added code.</span>
+<span class="font-label-caps text-label-caps text-outline">UNIFIED TARGET: SOLC 0.8.24</span>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-0 border border-outline-variant bg-surface-container-lowest">
+<div class="flex flex-col border-b lg:border-b-0 lg:border-r border-outline-variant">
+<div class="px-space-md py-space-sm bg-surface-container border-b border-outline-variant flex items-center justify-between">
+<span class="font-code-md text-code-md text-on-surface font-semibold">Vulnerable Code</span>
+<span class="font-code-sm text-code-sm text-outline">YieldVault.sol (Original)</span>
+</div>
+<div class="font-code-md text-code-md py-space-xs overflow-x-auto text-on-surface">
+<div class="flex items-center px-space-sm py-0.5 hover:bg-surface-container-high/40">
+<span class="w-8 shrink-0 text-outline select-none text-right pr-space-sm font-code-sm">13</span>
+<span class="text-outline-variant flex-1 pr-space-sm">// Vulnerable unrestricted drain</span>
+</div>
+<div class="flex items-center px-space-sm py-0.5 bg-[#2E1514] border-l-2 border-[#C4453F]">
+<span class="w-8 shrink-0 text-error select-none text-right pr-space-sm font-code-sm">14</span>
+<span class="flex-1 pr-space-sm text-on-surface">function emergencyDrain(address target) external {</span>
+<span class="font-label-caps text-[9px] uppercase tracking-wider text-error bg-error/10 px-1 border border-error/30 select-none">Removed</span>
+</div>
+<div class="flex items-center px-space-sm py-0.5 bg-[#2E1514] border-l-2 border-[#C4453F]">
+<span class="w-8 shrink-0 text-error select-none text-right pr-space-sm font-code-sm">15</span>
+<span class="flex-1 pr-space-sm text-on-surface pl-4">require(msg.sender == owner, "Unauthorized");</span>
+<span class="font-label-caps text-[9px] uppercase tracking-wider text-error bg-error/10 px-1 border border-error/30 select-none">Removed</span>
+</div>
+<div class="flex items-center px-space-sm py-0.5 bg-[#2E1514] border-l-2 border-[#C4453F]">
+<span class="w-8 shrink-0 text-error select-none text-right pr-space-sm font-code-sm">16</span>
+<span class="flex-1 pr-space-sm text-on-surface pl-4">(bool sent, ) = target.call{value: address(this).balance}("");</span>
+<span class="font-label-caps text-[9px] uppercase tracking-wider text-error bg-error/10 px-1 border border-error/30 select-none">Removed</span>
+</div>
+<div class="flex items-center px-space-sm py-0.5 bg-[#2E1514] border-l-2 border-[#C4453F]">
+<span class="w-8 shrink-0 text-error select-none text-right pr-space-sm font-code-sm">17</span>
+<span class="flex-1 pr-space-sm text-on-surface pl-4">require(sent, "Transfer failed");</span>
+<span class="font-label-caps text-[9px] uppercase tracking-wider text-error bg-error/10 px-1 border border-error/30 select-none">Removed</span>
+</div>
+<div class="flex items-center px-space-sm py-0.5 bg-[#2E1514] border-l-2 border-[#C4453F]">
+<span class="w-8 shrink-0 text-error select-none text-right pr-space-sm font-code-sm">18</span>
+<span class="flex-1 pr-space-sm text-on-surface">}</span>
+<span class="font-label-caps text-[9px] uppercase tracking-wider text-error bg-error/10 px-1 border border-error/30 select-none">Removed</span>
+</div>
+<div class="flex items-center px-space-sm py-0.5 hover:bg-surface-container-high/40">
+<span class="w-8 shrink-0 text-outline select-none text-right pr-space-sm font-code-sm">19</span>
+<span class="flex-1 pr-space-sm text-outline-variant"></span>
+</div>
+<div class="flex items-center px-space-sm py-0.5 hover:bg-surface-container-high/40">
+<span class="w-8 shrink-0 text-outline select-none text-right pr-space-sm font-code-sm">20</span>
+<span class="flex-1 pr-space-sm text-outline-variant">// Subsequent pool functions</span>
+</div>
+<div class="flex items-center px-space-sm py-0.5 hover:bg-surface-container-high/40">
+<span class="w-8 shrink-0 text-outline select-none text-right pr-space-sm font-code-sm">21</span>
+<span class="flex-1 pr-space-sm text-outline-variant">function getBalance() external view returns (uint256) {</span>
+</div>
+<div class="flex items-center px-space-sm py-0.5 hover:bg-surface-container-high/40">
+<span class="w-8 shrink-0 text-outline select-none text-right pr-space-sm font-code-sm">22</span>
+<span class="flex-1 pr-space-sm text-outline-variant pl-4">return address(this).balance;</span>
+</div>
+</div>
+</div>
+<div class="flex flex-col">
+<div class="px-space-md py-space-sm bg-surface-container border-b border-outline-variant flex items-center justify-between">
+<span class="font-code-md text-code-md text-on-surface font-semibold">Proposed Patch</span>
+<span class="font-code-sm text-code-sm text-[#4C9A5B]">Validated Remediation</span>
+</div>
+<div class="font-code-md text-code-md py-space-xs overflow-x-auto text-on-surface">
+<div class="flex items-center px-space-sm py-0.5 hover:bg-surface-container-high/40">
+<span class="w-8 shrink-0 text-outline select-none text-right pr-space-sm font-code-sm">13</span>
+<span class="text-outline-variant flex-1 pr-space-sm">// Remediated with ReentrancyGuard and Timelock</span>
+</div>
+<div class="flex items-center px-space-sm py-0.5 bg-[#142818] border-l-2 border-[#4C9A5B]">
+<span class="w-8 shrink-0 text-[#4C9A5B] select-none text-right pr-space-sm font-code-sm">14</span>
+<span class="flex-1 pr-space-sm text-on-surface">function emergencyDrain() external onlyOwner nonReentrant {</span>
+<span class="font-label-caps text-[9px] uppercase tracking-wider text-[#4C9A5B] bg-[#4C9A5B]/10 px-1 border border-[#4C9A5B]/30 select-none">Added</span>
+</div>
+<div class="flex items-center px-space-sm py-0.5 bg-[#142818] border-l-2 border-[#4C9A5B]">
+<span class="w-8 shrink-0 text-[#4C9A5B] select-none text-right pr-space-sm font-code-sm">15</span>
+<span class="flex-1 pr-space-sm text-on-surface pl-4">require(timelockPassed(), "Timelock active");</span>
+<span class="font-label-caps text-[9px] uppercase tracking-wider text-[#4C9A5B] bg-[#4C9A5B]/10 px-1 border border-[#4C9A5B]/30 select-none">Added</span>
+</div>
+<div class="flex items-center px-space-sm py-0.5 bg-[#142818] border-l-2 border-[#4C9A5B]">
+<span class="w-8 shrink-0 text-[#4C9A5B] select-none text-right pr-space-sm font-code-sm">16</span>
+<span class="flex-1 pr-space-sm text-on-surface pl-4">uint256 amount = address(this).balance;</span>
+<span class="font-label-caps text-[9px] uppercase tracking-wider text-[#4C9A5B] bg-[#4C9A5B]/10 px-1 border border-[#4C9A5B]/30 select-none">Added</span>
+</div>
+<div class="flex items-center px-space-sm py-0.5 bg-[#142818] border-l-2 border-[#4C9A5B]">
+<span class="w-8 shrink-0 text-[#4C9A5B] select-none text-right pr-space-sm font-code-sm">17</span>
+<span class="flex-1 pr-space-sm text-on-surface pl-4">require(amount > 0, "Zero balance");</span>
+<span class="font-label-caps text-[9px] uppercase tracking-wider text-[#4C9A5B] bg-[#4C9A5B]/10 px-1 border border-[#4C9A5B]/30 select-none">Added</span>
+</div>
+<div class="flex items-center px-space-sm py-0.5 bg-[#142818] border-l-2 border-[#4C9A5B]">
+<span class="w-8 shrink-0 text-[#4C9A5B] select-none text-right pr-space-sm font-code-sm">18</span>
+<span class="flex-1 pr-space-sm text-on-surface pl-4">(bool sent, ) = payable(owner).call{value: amount}("");</span>
+<span class="font-label-caps text-[9px] uppercase tracking-wider text-[#4C9A5B] bg-[#4C9A5B]/10 px-1 border border-[#4C9A5B]/30 select-none">Added</span>
+</div>
+<div class="flex items-center px-space-sm py-0.5 bg-[#142818] border-l-2 border-[#4C9A5B]">
+<span class="w-8 shrink-0 text-[#4C9A5B] select-none text-right pr-space-sm font-code-sm">19</span>
+<span class="flex-1 pr-space-sm text-on-surface pl-4">require(sent, "Transfer failed");</span>
+<span class="font-label-caps text-[9px] uppercase tracking-wider text-[#4C9A5B] bg-[#4C9A5B]/10 px-1 border border-[#4C9A5B]/30 select-none">Added</span>
+</div>
+<div class="flex items-center px-space-sm py-0.5 bg-[#142818] border-l-2 border-[#4C9A5B]">
+<span class="w-8 shrink-0 text-[#4C9A5B] select-none text-right pr-space-sm font-code-sm">20</span>
+<span class="flex-1 pr-space-sm text-on-surface pl-4">emit EmergencyDrainExecuted(owner, amount);</span>
+<span class="font-label-caps text-[9px] uppercase tracking-wider text-[#4C9A5B] bg-[#4C9A5B]/10 px-1 border border-[#4C9A5B]/30 select-none">Added</span>
+</div>
+<div class="flex items-center px-space-sm py-0.5 bg-[#142818] border-l-2 border-[#4C9A5B]">
+<span class="w-8 shrink-0 text-[#4C9A5B] select-none text-right pr-space-sm font-code-sm">21</span>
+<span class="flex-1 pr-space-sm text-on-surface">}</span>
+<span class="font-label-caps text-[9px] uppercase tracking-wider text-[#4C9A5B] bg-[#4C9A5B]/10 px-1 border border-[#4C9A5B]/30 select-none">Added</span>
+</div>
+<div class="flex items-center px-space-sm py-0.5 hover:bg-surface-container-high/40">
+<span class="w-8 shrink-0 text-outline select-none text-right pr-space-sm font-code-sm">22</span>
+<span class="flex-1 pr-space-sm text-outline-variant"></span>
+</div>
+<div class="flex items-center px-space-sm py-0.5 hover:bg-surface-container-high/40">
+<span class="w-8 shrink-0 text-outline select-none text-right pr-space-sm font-code-sm">23</span>
+<span class="flex-1 pr-space-sm text-outline-variant">// Subsequent pool functions</span>
+</div>
+<div class="flex items-center px-space-sm py-0.5 hover:bg-surface-container-high/40">
+<span class="w-8 shrink-0 text-outline select-none text-right pr-space-sm font-code-sm">24</span>
+<span class="flex-1 pr-space-sm text-outline-variant">function getBalance() external view returns (uint256) {</span>
+</div>
+</div>
+</div>
+</div>
+<div class="bg-surface-container border border-outline-variant p-space-lg flex flex-col gap-space-sm">
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Remediation Details and Rationale</h2>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+        The original implementation allowed sending ether to an arbitrary external target address supplied in the function parameters, enabling reentrancy attacks and fund extraction to unmonitored accounts. The proposed patch enforces three critical invariant guards: 1) It binds the destination exclusively to the declared owner address, preventing diversion to malicious contracts; 2) It introduces nonReentrant modifier protection; 3) It requires an enforced timelock delay before emergency withdrawals can execute, giving depositors time to respond.
+      </p>
+</div>
+<div class="sticky bottom-4 z-40 bg-surface-container-high border border-outline-variant p-space-md flex flex-col md:flex-row items-center justify-between gap-space-md shadow-xl">
+<div class="flex flex-col gap-0.5">
+<span class="font-code-sm text-code-sm text-on-surface font-semibold">Remediation Action Workspace</span>
+<span class="font-disclaimer text-disclaimer text-outline">Automated advisory check. Not a formal audit. Not legal advice.</span>
+</div>
+<div class="flex items-center gap-space-sm shrink-0 w-full md:w-auto justify-end">
+<button class="px-space-md py-space-sm bg-transparent hover:bg-surface-container text-on-surface-variant hover:text-on-surface font-code-sm text-code-sm transition-colors border border-outline-variant" type="button">
+          Download Diff
+        </button>
+<button class="px-space-md py-space-sm bg-transparent hover:bg-surface-container text-primary hover:text-on-surface font-code-sm text-code-sm border border-primary transition-colors" id="copyPatchBtn" type="button">
+          Copy Patch
+        </button>
+<button class="px-space-lg py-space-sm bg-[#E0A030] hover:bg-[#F2B850] active:bg-[#C88C24] text-[#14110F] font-label-caps text-label-caps font-bold transition-colors" type="button">
+          Apply Fix
+        </button>
+</div>
+</div>
+</div>
+</div>
+<script>
+  (function () {
+    var copyBtn = document.getElementById('copyPatchBtn');
+    if (!copyBtn) return;
+    var originalText = 'Copy Patch';
+    var patchCode = [
+      '// Remediated with ReentrancyGuard and Timelock',
+      'function emergencyDrain() external onlyOwner nonReentrant {',
+      '    require(timelockPassed(), "Timelock active");',
+      '    uint256 amount = address(this).balance;',
+      '    require(amount > 0, "Zero balance");',
+      '    (bool sent, ) = payable(owner).call{value: amount}("");',
+      '    require(sent, "Transfer failed");',
+      '    emit EmergencyDrainExecuted(owner, amount);',
+      '}'
+    ].join('\n');
+
+    copyBtn.addEventListener('click', function () {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(patchCode).catch(function() {});
+      }
+      copyBtn.innerText = 'Copied';
+      copyBtn.classList.add('bg-primary/10');
+      setTimeout(function () {
+        copyBtn.innerText = originalText;
+        copyBtn.classList.remove('bg-primary/10');
+      }, 2000);
+    });
+  })();
+</script></main><footer class="w-full bg-surface-container-lowest py-space-md shadow-[0_-1px_8px_rgba(0,0,0,0.3)]"><div class="w-full px-margin flex items-center justify-between"><p class="font-disclaimer text-disclaimer text-outline">Automated advisory check. Not a formal audit. Not legal advice.</p><div class="flex items-center gap-space-md"><span class="font-code-sm text-code-sm text-outline-variant">CORE v2.4.0</span><span class="font-code-sm text-code-sm text-outline-variant">SOLIDITY 0.8.24</span></div></div></footer></body></html>

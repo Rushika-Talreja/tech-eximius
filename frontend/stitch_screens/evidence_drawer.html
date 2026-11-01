@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_standard" name="shell-type"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{colors:{"surface-bright":"#3d3836","on-tertiary":"#003354","tertiary-fixed":"#cee5ff","on-primary-container":"#583a00","surface-tint":"#feba49","background":"#161311","primary-fixed-dim":"#feba49","on-surface":"#e9e1dd","secondary-fixed":"#ece1d4","surface-container-low":"#1e1b19","primary":"#ffbb49","tertiary-fixed-dim":"#98cbff","on-background":"#e9e1dd","on-primary":"#442c00","secondary":"#d0c5b9","tertiary":"#9accff","on-surface-variant":"#d5c4af","inverse-on-surface":"#34302d","surface":"#161311","on-primary-fixed":"#281800","on-tertiary-fixed-variant":"#004a77","on-secondary-fixed-variant":"#4d463d","on-error-container":"#ffdad6","secondary-container":"#4d463d","error-container":"#93000a","outline-variant":"#514535","tertiary-container":"#65b2f6","primary-container":"#e0a030","surface-container":"#221f1d","on-secondary-fixed":"#201b13","on-tertiary-fixed":"#001d33","on-primary-fixed-variant":"#614000","on-secondary-container":"#beb3a8","surface-dim":"#161311","on-secondary":"#362f27","outline":"#9d8e7c","surface-container-highest":"#383431","primary-fixed":"#ffddb0","inverse-primary":"#805600","error":"#ffb4ab","inverse-surface":"#e9e1dd","on-tertiary-container":"#00436c","surface-container-lowest":"#100e0c","on-error":"#690005","surface-variant":"#383431","secondary-fixed-dim":"#d0c5b9","surface-container-high":"#2d2927"},borderRadius:{DEFAULT:"0.25rem",lg:"0.5rem",xl:"0.75rem",full:"9999px"},spacing:{"space-lg":"1.5rem","space-sm":"0.5rem","space-xl":"2.5rem","gutter-mobile":"0.75rem","space-xs":"0.25rem",margin:"2rem",gutter:"1.5rem","space-md":"1rem","margin-mobile":"1rem"},fontFamily:{"headline-sm":["Inter"],"code-md":["JetBrains Mono"],"label-caps":["JetBrains Mono"],display:["Inter"],"body-md":["Inter"],"body-sm":["Inter"],"headline-lg":["Inter"],disclaimer:["JetBrains Mono"],"body-lg":["Inter"],"code-lg":["JetBrains Mono"],"headline-md":["Inter"],"code-sm":["JetBrains Mono"],"display-mobile":["Inter"],"headline-lg-mobile":["Inter"]},fontSize:{"headline-sm":["16px",{lineHeight:"24px",letterSpacing:"0em",fontWeight:"600"}],"code-md":["13px",{lineHeight:"20px",letterSpacing:"0em",fontWeight:"400"}],"label-caps":["11px",{lineHeight:"14px",letterSpacing:"0.08em",fontWeight:"500"}],display:["40px",{lineHeight:"48px",letterSpacing:"-0.02em",fontWeight:"600"}],"body-md":["14px",{lineHeight:"22px",letterSpacing:"0em",fontWeight:"400"}],"body-sm":["12px",{lineHeight:"18px",letterSpacing:"0.01em",fontWeight:"400"}],"headline-lg":["28px",{lineHeight:"36px",letterSpacing:"-0.015em",fontWeight:"600"}],disclaimer:["11px",{lineHeight:"16px",letterSpacing:"0.03em",fontWeight:"400"}],"body-lg":["16px",{lineHeight:"26px",letterSpacing:"0em",fontWeight:"400"}],"code-lg":["15px",{lineHeight:"24px",letterSpacing:"0em",fontWeight:"400"}],"headline-md":["20px",{lineHeight:"28px",letterSpacing:"-0.01em",fontWeight:"500"}],"code-sm":["11px",{lineHeight:"16px",letterSpacing:"0.02em",fontWeight:"400"}],"display-mobile":["30px",{lineHeight:"36px",letterSpacing:"-0.02em",fontWeight:"600"}],"headline-lg-mobile":["22px",{lineHeight:"28px",letterSpacing:"-0.015em",fontWeight:"600"}]}}}};</script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=JetBrains+Mono:wght@100..900&display=swap" rel="stylesheet"/></head><body class="bg-background font-body-md text-on-surface antialiased selection:bg-primary-container selection:text-on-primary-container"><header class="fixed top-0 w-full z-50 bg-surface-container-low/95 backdrop-blur-md shadow-[0_1px_8px_rgba(0,0,0,0.4)]"><div class="h-16 w-full px-margin flex items-center justify-between"><div class="flex items-center gap-space-md"><span class="font-headline-sm text-headline-sm text-on-surface tracking-tight">DeFi Contract Auditor</span><span class="font-label-caps text-label-caps text-on-primary-container bg-primary-container px-space-xs py-0.5 rounded">ADVISORY SUITE</span></div><nav class="hidden md:flex items-center gap-space-xs" data-active-classes="bg-surface-container text-primary font-code-md"><a class="font-code-md text-code-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container px-space-sm py-space-xs rounded transition-colors" data-path="workspace" href="#">Workspace</a><a class="font-code-md text-code-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container px-space-sm py-space-xs rounded transition-colors" data-path="live-run" href="#">Live Run</a><a class="font-code-md text-code-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container px-space-sm py-space-xs rounded transition-colors" data-path="report-summary" href="#">Report Summary</a><a class="font-code-md text-code-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container px-space-sm py-space-xs rounded transition-colors" data-path="patch-diff" href="#">Patch Diff</a><a aria-current="page" class="px-space-sm py-space-xs rounded transition-colors bg-surface-container text-primary font-code-md" data-path="evidence-drawer" href="#">Evidence Drawer</a></nav><div class="flex items-center gap-space-md"><button class="bg-primary-container text-on-primary-container font-label-caps text-label-caps px-space-lg py-space-sm rounded hover:bg-primary hover:text-on-primary transition-colors" type="button">New Audit</button><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center font-code-sm text-code-sm text-on-primary font-bold">SEC</div></div></div></header><main class="w-full pt-16 min-h-screen bg-background"><div class="flex flex-col w-full relative">
+<!-- Backdrop Workspace / Blurred Summary Dashboard Behind Drawer -->
+<div class="w-full min-h-[calc(100vh-4rem)] p-margin opacity-30 pointer-events-none select-none filter blur-[2px]">
+<!-- Dashboard Mockup Header -->
+<div class="flex flex-col gap-space-xs mb-space-lg">
+<div class="flex items-center gap-space-sm font-label-caps text-label-caps text-outline">
+<span>PROJECT AUDIT REPORT</span>
+<span>/</span>
+<span>YIELDVAULT V2</span>
+<span>/</span>
+<span>COMMIT 8F32C01</span>
+</div>
+<h1 class="font-headline-lg text-headline-lg text-on-surface">Target Architecture Diagnostic Matrix</h1>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-3xl">Static bytecode inspection, symbolic trace generation, and regulatory advisory correlation across active solidity assets.</p>
+</div>
+<!-- Metric Row -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-space-md mb-space-lg">
+<div class="bg-surface-container p-space-md rounded">
+<span class="font-label-caps text-label-caps text-outline block mb-space-xs">CRITICAL FINDINGS</span>
+<span class="font-display text-display text-error block">01</span>
+<span class="font-code-sm text-code-sm text-outline-variant">Unchecked Call Execution</span>
+</div>
+<div class="bg-surface-container p-space-md rounded">
+<span class="font-label-caps text-label-caps text-outline block mb-space-xs">HIGH SEVERITY</span>
+<span class="font-display text-display text-primary block">03</span>
+<span class="font-code-sm text-code-sm text-outline-variant">Privileged Balance Sweeps</span>
+</div>
+<div class="bg-surface-container p-space-md rounded">
+<span class="font-label-caps text-label-caps text-outline block mb-space-xs">AST COGNITION SCORE</span>
+<span class="font-display text-display text-on-surface block">88 / 100</span>
+<span class="font-code-sm text-code-sm text-outline-variant">Concentrated Authority Factor</span>
+</div>
+<div class="bg-surface-container p-space-md rounded">
+<span class="font-label-caps text-label-caps text-outline block mb-space-xs">REGULATORY CHECKS</span>
+<span class="font-display text-display text-on-surface block">04 FLAGS</span>
+<span class="font-code-sm text-code-sm text-outline-variant">Custodial Segregation</span>
+</div>
+</div>
+<!-- Active Findings Mock List -->
+<div class="flex flex-col gap-space-sm">
+<div class="bg-surface-container-high p-space-md rounded flex items-center justify-between">
+<div class="flex items-center gap-space-md">
+<span class="font-label-caps text-label-caps text-error bg-surface-container-lowest px-space-xs py-0.5 rounded">FINDING-041</span>
+<span class="font-headline-sm text-headline-sm text-on-surface">Arbitrary external call allows unconstrained vault drainage in emergencyDrain()</span>
+</div>
+<span class="font-label-caps text-label-caps text-primary">Drawer Open</span>
+</div>
+<div class="bg-surface-container p-space-md rounded flex items-center justify-between">
+<div class="flex items-center gap-space-md">
+<span class="font-label-caps text-label-caps text-primary bg-surface-container-lowest px-space-xs py-0.5 rounded">FINDING-042</span>
+<span class="font-headline-sm text-headline-sm text-on-surface">Precision loss in proportional yield attribution formula</span>
+</div>
+<span class="font-label-caps text-label-caps text-outline">View Details</span>
+</div>
+<div class="bg-surface-container p-space-md rounded flex items-center justify-between">
+<div class="flex items-center gap-space-md">
+<span class="font-label-caps text-label-caps text-primary bg-surface-container-lowest px-space-xs py-0.5 rounded">FINDING-043</span>
+<span class="font-headline-sm text-headline-sm text-on-surface">Missing slippage protection bounds on automated DEX swap routing</span>
+</div>
+<span class="font-label-caps text-label-caps text-outline">View Details</span>
+</div>
+</div>
+</div>
+<!-- Modal Backdrop Overlay -->
+<div class="fixed inset-0 bg-surface-container-lowest/80 z-40 transition-opacity" id="drawer-overlay"></div>
+<!-- Slide-In Evidence and Citation Drawer -->
+<aside class="fixed top-16 right-0 w-full sm:w-[580px] h-[calc(100vh-4rem)] bg-surface-container-low shadow-[0_0_40px_rgba(0,0,0,0.8)] z-50 flex flex-col overflow-hidden" id="evidence-drawer">
+<!-- Drawer Fixed Header -->
+<header class="p-space-md bg-surface-container flex flex-col gap-space-sm flex-shrink-0">
+<div class="flex items-center justify-between">
+<!-- Severity Text Badge -->
+<div class="flex items-center gap-space-xs">
+<span class="font-label-caps text-label-caps text-error bg-surface-container-lowest px-space-sm py-space-xs rounded font-bold">
+            FINDING-041 (Severity: Critical)
+          </span>
+<span class="font-code-sm text-code-sm text-outline-variant">EVM-AST-DRAIN</span>
+</div>
+<!-- Text-Only Close Button -->
+<button class="bg-surface-container-highest text-primary hover:bg-surface-bright hover:text-primary-fixed font-label-caps text-label-caps px-space-md py-space-xs rounded transition-colors" id="close-drawer-btn" type="button">
+          Close
+        </button>
+</div>
+<!-- Finding Title -->
+<div>
+<h2 class="font-headline-sm text-headline-sm text-on-surface font-semibold">
+          Arbitrary external call allows unconstrained vault drainage in emergencyDrain()
+        </h2>
+</div>
+<!-- Secondary State Toggle Control -->
+<div class="flex items-center justify-between pt-space-xs">
+<span class="font-code-sm text-code-sm text-outline">Inspector View: Citation & Evidence Matrix</span>
+<button class="font-label-caps text-label-caps text-primary hover:text-on-surface underline transition-colors" id="toggle-evidence-btn" type="button">
+          Hide Evidence
+        </button>
+</div>
+</header>
+<!-- Drawer Scrollable Content Body -->
+<div class="flex-1 overflow-y-auto p-space-md flex flex-col gap-space-lg" id="drawer-content-body">
+<!-- Interactive Tooltip Callout Example -->
+<section class="bg-surface-container p-space-sm rounded">
+<div class="flex items-center justify-between mb-space-xs">
+<span class="font-label-caps text-label-caps text-primary">HOVER PREVIEW COMPONENT</span>
+<span class="font-code-sm text-code-sm text-outline-variant">METRIC ID #88-CUST</span>
+</div>
+<div class="bg-surface-container-highest p-space-sm rounded">
+<p class="font-code-sm text-code-sm text-on-surface">
+            Hover Preview: Score 88/100 indicates concentrated admin withdrawal power without multisig enforcement. Click to Open Evidence.
+          </p>
+</div>
+</section>
+<!-- Section 1: Why this was flagged -->
+<section class="flex flex-col gap-space-sm">
+<div class="flex items-center justify-between">
+<h3 class="font-label-caps text-label-caps text-outline tracking-wider uppercase">Section 1: Why This Was Flagged</h3>
+<span class="font-code-sm text-code-sm text-outline-variant">RULE-VEC-09</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+          The contract function emergencyDrain accepts a user-controlled address target and executes target.call with value without validating destination whitelist or reentrancy lock. A caller can redirect the contract's entire ETH balance to an exploit contract.
+        </p>
+<!-- Monospace Citation Box with Amber Left Accent -->
+<div class="bg-surface-container p-space-md rounded">
+<div class="flex items-center justify-between pb-space-xs mb-space-xs">
+<span class="font-code-sm text-code-sm text-primary font-bold">File: contracts/YieldVault.sol (Lines 14-17)</span>
+<span class="font-label-caps text-label-caps text-outline-variant">EVM OP: CALL</span>
+</div>
+<div class="font-code-md text-code-md space-y-1">
+<div class="text-outline-variant"><span class="inline-block w-8 text-outline">14</span>function emergencyDrain(address target) external onlyOwner {</div>
+<div class="text-outline-variant"><span class="inline-block w-8 text-outline">15</span>    // Unchecked raw invocation</div>
+<div class="text-primary bg-surface-container-highest px-space-xs py-0.5 rounded font-medium"><span class="inline-block w-8 text-primary">16</span>    (bool sent, ) = target.call{value: address(this).balance}("");</div>
+<div class="text-outline-variant"><span class="inline-block w-8 text-outline">17</span>    require(sent, "Drain failed");</div>
+<div class="text-outline-variant"><span class="inline-block w-8 text-outline">18</span>}</div>
+</div>
+</div>
+</section>
+<!-- Section 2: Evidence Type Badges -->
+<section class="flex flex-col gap-space-sm">
+<h3 class="font-label-caps text-label-caps text-outline tracking-wider uppercase">Section 2: Evidence Type</h3>
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-space-xs">
+<!-- Code Fact Badge -->
+<div class="bg-surface-container p-space-sm rounded flex flex-col justify-between gap-space-xs">
+<span class="font-code-sm text-code-sm text-outline">Static AST Fact</span>
+<span class="font-label-caps text-label-caps text-on-surface bg-surface-container-highest px-space-xs py-0.5 rounded self-start">
+              Code fact [CONFIRMED]
+            </span>
+</div>
+<!-- Past Incident Match Badge -->
+<div class="bg-surface-container p-space-sm rounded flex flex-col justify-between gap-space-xs">
+<span class="font-code-sm text-code-sm text-outline">Telemetry Pattern</span>
+<span class="font-label-caps text-label-caps text-primary bg-surface-container-highest px-space-xs py-0.5 rounded self-start">
+              Past incident match [CONFIRMED]
+            </span>
+</div>
+<!-- Reproducing Test Badge -->
+<div class="bg-surface-container p-space-sm rounded flex flex-col justify-between gap-space-xs">
+<span class="font-code-sm text-code-sm text-outline">Symbolic Execution</span>
+<span class="font-label-caps text-label-caps text-on-surface bg-surface-container-highest px-space-xs py-0.5 rounded self-start">
+              Reproducing test [PASSED]
+            </span>
+</div>
+</div>
+</section>
+<!-- Section 3: Historical Post-Mortems -->
+<section class="flex flex-col gap-space-sm">
+<div class="flex items-center justify-between">
+<h3 class="font-label-caps text-label-caps text-outline tracking-wider uppercase">Section 3: Historical Post-Mortems</h3>
+<span class="font-code-sm text-code-sm text-outline-variant">2 PRECEDENTS CATALOGUED</span>
+</div>
+<!-- Post-Mortem 1 -->
+<article class="bg-surface-container p-space-md rounded flex flex-col gap-space-sm">
+<div class="flex items-start justify-between gap-space-sm">
+<h4 class="font-headline-sm text-headline-sm text-on-surface">Euler Finance Liquidation Protocol Exploit</h4>
+<span class="font-label-caps text-label-caps text-error bg-surface-container-highest px-space-xs py-0.5 rounded flex-shrink-0">
+              LOSS: 197 Million USD
+            </span>
+</div>
+<div class="font-code-sm text-code-sm text-outline-variant">
+            Date: March 2023 | Ecosystem: Ethereum Mainnet
+          </div>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-normal">
+            Unrestricted external execution context enabled attacker to borrow and donate collateral without health check validation.
+          </p>
+<div class="pt-space-xs">
+<a class="font-code-sm text-code-sm text-primary hover:text-on-surface underline font-medium" href="#">
+              Read the Immunefi post-mortem
+            </a>
+</div>
+</article>
+<!-- Post-Mortem 2 -->
+<article class="bg-surface-container p-space-md rounded flex flex-col gap-space-sm">
+<div class="flex items-start justify-between gap-space-sm">
+<h4 class="font-headline-sm text-headline-sm text-on-surface">Grim Finance Reentrancy Vault Drain</h4>
+<span class="font-label-caps text-label-caps text-error bg-surface-container-highest px-space-xs py-0.5 rounded flex-shrink-0">
+              LOSS: 30 Million USD
+            </span>
+</div>
+<div class="font-code-sm text-code-sm text-outline-variant">
+            Date: December 2021 | Ecosystem: Fantom Opera
+          </div>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-normal">
+            Emergency withdrawal mechanism failed to guard raw call state change, allowing reentrant balance manipulation.
+          </p>
+<div class="pt-space-xs">
+<a class="font-code-sm text-code-sm text-primary hover:text-on-surface underline font-medium" href="#">
+              Read the DeFiHackLabs incident report
+            </a>
+</div>
+</article>
+</section>
+<!-- Section 4: Regulatory clause (SEBI & RBI Advisory Context) -->
+<section class="flex flex-col gap-space-sm">
+<div class="flex items-center justify-between">
+<h3 class="font-label-caps text-label-caps text-outline tracking-wider uppercase">Section 4: Regulatory Clause (SEBI & RBI Advisory Context)</h3>
+<span class="font-code-sm text-code-sm text-primary font-bold">CIS COMPLIANCE RISK</span>
+</div>
+<div class="bg-surface-container p-space-md rounded flex flex-col gap-space-sm">
+<div class="flex flex-col gap-space-xs">
+<span class="font-code-sm text-code-sm text-outline">Authority: Securities and Exchange Board of India (SEBI)</span>
+<span class="font-headline-sm text-headline-sm text-on-surface">SEBI Collective Investment Scheme Regulations, 1999</span>
+<span class="font-code-sm text-code-sm text-primary">Regulation 3(1) and Schedule II: Custodial Segregation</span>
+</div>
+<!-- Quoted Block -->
+<blockquote class="bg-surface-container-highest p-space-sm rounded font-body-sm text-body-sm text-on-surface italic leading-relaxed">
+            "No entity shall pool or manage investor capital with discretionary unilateral sweep rights unless such assets are held by an independent registered custodian with dual-authorization timelock protocols."
+          </blockquote>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+            Under Indian regulatory advisories concerning virtual digital asset pools (RBI Notification DPSS.CO.OD.No.498/06.11.001/2021-22 & SEBI Consultation Papers), centralized emergency sweep methods missing multi-signature thresholds are categorized as unsegregated custodial exposure.
+          </p>
+<div class="pt-space-xs">
+<a class="font-code-sm text-code-sm text-primary hover:text-on-surface underline font-medium" href="#">
+              Review SEBI CIS Regulatory Reference Text
+            </a>
+</div>
+</div>
+</section>
+<!-- Section 5: Confidence and limits -->
+<section class="flex flex-col gap-space-sm">
+<h3 class="font-label-caps text-label-caps text-outline tracking-wider uppercase">Section 5: Confidence and Limits</h3>
+<div class="bg-surface-container p-space-md rounded flex flex-col gap-space-md">
+<div class="flex flex-col gap-space-xs">
+<span class="font-label-caps text-label-caps text-on-surface bg-surface-container-highest px-space-xs py-0.5 rounded self-start">
+              What this proves
+            </span>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+              The AST confirms an unconstrained external call exists in compiled bytecode and transfers native ETH balance to arbitrary address arguments.
+            </p>
+</div>
+<div class="flex flex-col gap-space-xs">
+<span class="font-label-caps text-label-caps text-primary bg-surface-container-highest px-space-xs py-0.5 rounded self-start">
+              What this does not prove
+            </span>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+              Static analysis cannot determine whether deployer private keys are safeguarded by physical HSM hardware or off-chain multi-party computation.
+            </p>
+</div>
+</div>
+</section>
+<!-- Section 6: Action Footer inside Drawer -->
+<section class="flex flex-col gap-space-sm pt-space-xs pb-space-lg">
+<div class="flex items-center gap-space-sm">
+<button class="flex-1 bg-primary text-on-primary font-label-caps text-label-caps py-space-sm rounded hover:bg-primary-fixed hover:text-on-primary-fixed transition-colors font-bold text-center" type="button">
+            Run Verification Test
+          </button>
+<button class="bg-surface-container text-on-surface hover:bg-surface-container-highest font-label-caps text-label-caps px-space-md py-space-sm rounded transition-colors" type="button">
+            Copy Citation
+          </button>
+</div>
+<p class="font-disclaimer text-disclaimer text-outline text-center">
+          Automated advisory check. Not a formal audit. Not legal advice.
+        </p>
+</section>
+</div>
+<!-- Drawer Persistent Bottom Pin -->
+<footer class="p-space-sm bg-surface-container-lowest flex items-center justify-between flex-shrink-0">
+<span class="font-disclaimer text-disclaimer text-outline">CITATION REF: 0x8F32C01-DRAIN-041</span>
+<span class="font-code-sm text-code-sm text-primary font-bold">STATE: CONFIRMED VECTOR</span>
+</footer>
+</aside>
+</div>
+<script>
+  (function() {
+    const closeBtn = document.getElementById('close-drawer-btn');
+    const overlay = document.getElementById('drawer-overlay');
+    const drawer = document.getElementById('evidence-drawer');
+    const toggleEvidenceBtn = document.getElementById('toggle-evidence-btn');
+    const contentBody = document.getElementById('drawer-content-body');
+
+    let isExpanded = true;
+
+    function closeDrawer() {
+      drawer.classList.add('hidden');
+      overlay.classList.add('hidden');
+    }
+
+    if (closeBtn && overlay && drawer) {
+      closeBtn.addEventListener('click', closeDrawer);
+      overlay.addEventListener('click', closeDrawer);
+    }
+
+    if (toggleEvidenceBtn && contentBody) {
+      toggleEvidenceBtn.addEventListener('click', function() {
+        isExpanded = !isExpanded;
+        if (isExpanded) {
+          contentBody.classList.remove('hidden');
+          toggleEvidenceBtn.textContent = 'Hide Evidence';
+        } else {
+          contentBody.classList.add('hidden');
+          toggleEvidenceBtn.textContent = 'Show Evidence';
+        }
+      });
+    }
+  })();
+</script></main><footer class="w-full bg-surface-container-lowest py-space-md shadow-[0_-1px_8px_rgba(0,0,0,0.3)]"><div class="w-full px-margin flex items-center justify-between"><p class="font-disclaimer text-disclaimer text-outline">Automated advisory check. Not a formal audit. Not legal advice.</p><div class="flex items-center gap-space-md"><span class="font-code-sm text-code-sm text-outline-variant">CORE v2.4.0</span><span class="font-code-sm text-code-sm text-outline-variant">SOLIDITY 0.8.24</span></div></div></footer></body></html>

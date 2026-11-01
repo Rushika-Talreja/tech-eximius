@@ -8,7 +8,7 @@ import { ErrorDisplay } from "../../components/ErrorDisplay";
 import { RawJsonViewer } from "../../components/RawJsonViewer";
 import { AuditEventItem } from "../../types/backend";
 
-export default function EventsPage() {
+function EventsContent() {
   const searchParams = useSearchParams();
   const initialAuditId = searchParams.get("audit_id") || "";
 
@@ -268,6 +268,14 @@ export default function EventsPage() {
 
       <RawJsonViewer data={events} title="Raw Events JSON" />
     </div>
+  );
+}
+
+export default function EventsPage() {
+  return (
+    <React.Suspense fallback={<div style={{ padding: "20px" }}>Loading events...</div>}>
+      <EventsContent />
+    </React.Suspense>
   );
 }
 

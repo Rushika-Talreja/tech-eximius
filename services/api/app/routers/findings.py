@@ -16,7 +16,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.auth import Principal, get_principal
-from app.db import Audit, AuditFile, Finding, FindingEvidence, PrivilegeResult, get_db_session
+from app.db import Audit, AuditFile, Finding, FindingEvidence, Patch, PrivilegeResult, Proof, get_db_session
 from app.errors import AppError, audit_not_ready, audit_purged, not_found
 from auditor_core.scoring.heuristic import compute_heuristic_scores
 from auditor_schemas.constants import STANDARD_DISCLAIMER
@@ -96,6 +96,26 @@ async def list_findings(
     has_more = len(findings) > limit
     findings = findings[:limit]
 
+    verified_finding_ids = set()
+    proven_finding_ids = set()
+    if findings:
+        vp_res = await session.execute(
+            select(Patch.finding_id).where(
+                Patch.finding_id.in_([f.id for f in findings]),
+                Patch.status == "verified",
+            )
+        )
+        verified_finding_ids = set(vp_res.scalars().all())
+
+        proof_res = await session.execute(
+            select(Proof.finding_id).where(
+                Proof.finding_id.in_([f.id for f in findings]),
+                Proof.fails_on_original == True,
+                Proof.passes_on_patched == True,
+            )
+        )
+        proven_finding_ids = set(proof_res.scalars().all())
+
     items = []
     for f in findings:
         items.append({
@@ -109,8 +129,8 @@ async def list_findings(
             "file": files_by_id.get(f.file_id),
             "start_line": f.start_line,
             "end_line": f.end_line,
-            "has_patch": False,
-            "proven": False,
+            "has_patch": f.id in verified_finding_ids,
+            "proven": f.id in proven_finding_ids,
         })
 
     return {
@@ -140,6 +160,41 @@ async def get_finding(
 
     file_row = await session.get(AuditFile, finding.file_id) if finding.file_id else None
 
+    # Patches are offered only when status=verified
+    patch_result = await session.execute(
+        select(Patch)
+        .where(Patch.finding_id == finding_id, Patch.status == "verified")
+        .order_by(Patch.version.desc())
+        .limit(1)
+    )
+    verified_patch = patch_result.scalars().first()
+    patch_data = (
+        {"id": str(verified_patch.id), "status": "verified"}
+        if verified_patch
+        else None
+    )
+
+    proof_res = await session.execute(
+        select(Proof)
+        .where(
+            Proof.finding_id == finding_id,
+            Proof.fails_on_original == True,
+            Proof.passes_on_patched == True,
+        )
+        .order_by(Proof.created_at.desc())
+        .limit(1)
+    )
+    verified_proof = proof_res.scalars().first()
+    proof_data = (
+        {
+            "id": str(verified_proof.id),
+            "fails_on_original": verified_proof.fails_on_original,
+            "passes_on_patched": verified_proof.passes_on_patched,
+        }
+        if verified_proof
+        else None
+    )
+
     return {
         "id": str(finding.id),
         "title": finding.title,
@@ -158,8 +213,8 @@ async def get_finding(
         "description": finding.description,
         "scenario": finding.scenario,
         "evidence": [_format_evidence(e) for e in evidence],
-        "patch": None,
-        "proof": None,
+        "patch": patch_data,
+        "proof": proof_data,
         "status": finding.status,
         "disclaimer": STANDARD_DISCLAIMER,
     }

@@ -51,12 +51,14 @@ class SandboxRunner:
         max_output_bytes: int = 10 * 1024 * 1024,  # 10 MB
         cpu_limit: int = 2,
         mem_limit_mb: int = 2048,
+        image: str = "sandbox-analysis",
     ) -> None:
         self.runtime = runtime
         self.timeout_seconds = timeout_seconds
         self.max_output_bytes = max_output_bytes
         self.cpu_limit = cpu_limit
         self.mem_limit_mb = mem_limit_mb
+        self.image = image
 
     def _prepare_clean_env(self, allow_network: bool, extra_env: dict[str, str] | None = None) -> dict[str, str]:
         """Strip all secrets from the execution environment."""
@@ -111,7 +113,7 @@ class SandboxRunner:
             if cwd:
                 docker_cmd.extend(["-v", f"{cwd}:/work:ro", "-w", "/work"])
 
-            docker_cmd.append("sandbox-analysis")
+            docker_cmd.append(self.image)
             docker_cmd.extend(cmd)
             actual_cmd = docker_cmd
         else:

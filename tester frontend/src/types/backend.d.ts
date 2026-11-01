@@ -390,8 +390,60 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Verify Patch */
-        post: operations["verify_patch_v1_patches__patch_id__verify_post"];
+        /** Verify Patch Endpoint */
+        post: operations["verify_patch_endpoint_v1_patches__patch_id__verify_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/audits/{audit_id}/findings/{finding_id}/patches": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Patches */
+        get: operations["list_patches_audits__audit_id__findings__finding_id__patches_get"];
+        put?: never;
+        /** Generate Patch */
+        post: operations["generate_patch_audits__audit_id__findings__finding_id__patches_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/patches/{patch_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Patch */
+        get: operations["get_patch_patches__patch_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/patches/{patch_id}/verify": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Verify Patch Endpoint */
+        post: operations["verify_patch_endpoint_patches__patch_id__verify_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -405,7 +457,8 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get?: never;
+        /** Get Audit Finding Proof */
+        get: operations["get_audit_finding_proof_v1_audits__audit_id__findings__finding_id__proof_get"];
         put?: never;
         /** Generate Proof */
         post: operations["generate_proof_v1_audits__audit_id__findings__finding_id__proof_post"];
@@ -422,8 +475,25 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Get Proof */
-        get: operations["get_proof_v1_findings__finding_id__proof_get"];
+        /** Get Proof By Finding */
+        get: operations["get_proof_by_finding_v1_findings__finding_id__proof_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/audits/{audit_id}/proofs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Audit Proofs */
+        get: operations["list_audit_proofs_v1_audits__audit_id__proofs_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -444,6 +514,26 @@ export interface paths {
         put?: never;
         /** Start Invariant Run */
         post: operations["start_invariant_run_v1_audits__audit_id__invariant_runs_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/audits/{audit_id}/invariants": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Invariants Alias
+         * @description Alias for tester frontend compatibility.
+         */
+        get: operations["list_invariants_alias_v1_audits__audit_id__invariants_get"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -583,6 +673,15 @@ export interface components {
              */
             role_declarations: components["schemas"]["RoleDeclarationInput"][];
         };
+        /** CreateInvariantRunRequest */
+        CreateInvariantRunRequest: {
+            /** Contract Id */
+            contract_id?: string | null;
+            /** Contract Type Override */
+            contract_type_override?: string | null;
+            /** Templates */
+            templates?: string[];
+        };
         /** CreateProjectRequest */
         CreateProjectRequest: {
             /** Name */
@@ -662,6 +761,14 @@ export interface components {
             input?: unknown;
             /** Context */
             ctx?: Record<string, never>;
+        };
+        /** VerifyPatchRequest */
+        VerifyPatchRequest: {
+            /**
+             * Unified Diff
+             * @description User-edited unified diff to verify
+             */
+            unified_diff: string;
         };
     };
     responses: never;
@@ -1636,7 +1743,7 @@ export interface operations {
             };
         };
     };
-    verify_patch_v1_patches__patch_id__verify_post: {
+    verify_patch_endpoint_v1_patches__patch_id__verify_post: {
         parameters: {
             query?: never;
             header?: {
@@ -1648,7 +1755,11 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["VerifyPatchRequest"];
+            };
+        };
         responses: {
             /** @description Successful Response */
             202: {
@@ -1670,7 +1781,42 @@ export interface operations {
             };
         };
     };
-    generate_proof_v1_audits__audit_id__findings__finding_id__proof_post: {
+    list_patches_audits__audit_id__findings__finding_id__patches_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+                "X-API-Key"?: string | null;
+            };
+            path: {
+                audit_id: string;
+                finding_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    generate_patch_audits__audit_id__findings__finding_id__patches_post: {
         parameters: {
             query?: never;
             header?: {
@@ -1705,7 +1851,153 @@ export interface operations {
             };
         };
     };
-    get_proof_v1_findings__finding_id__proof_get: {
+    get_patch_patches__patch_id__get: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+                "X-API-Key"?: string | null;
+            };
+            path: {
+                patch_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    verify_patch_endpoint_patches__patch_id__verify_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+                "X-API-Key"?: string | null;
+            };
+            path: {
+                patch_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["VerifyPatchRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_audit_finding_proof_v1_audits__audit_id__findings__finding_id__proof_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+                "X-API-Key"?: string | null;
+            };
+            path: {
+                audit_id: string;
+                finding_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    generate_proof_v1_audits__audit_id__findings__finding_id__proof_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+                "X-API-Key"?: string | null;
+            };
+            path: {
+                audit_id: string;
+                finding_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["Principal"] | null;
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_proof_by_finding_v1_findings__finding_id__proof_get: {
         parameters: {
             query?: never;
             header?: {
@@ -1714,6 +2006,40 @@ export interface operations {
             };
             path: {
                 finding_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_audit_proofs_v1_audits__audit_id__proofs_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+                "X-API-Key"?: string | null;
+            };
+            path: {
+                audit_id: string;
             };
             cookie?: never;
         };
@@ -1785,10 +2111,48 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["CreateInvariantRunRequest"];
+            };
+        };
         responses: {
             /** @description Successful Response */
             202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_invariants_alias_v1_audits__audit_id__invariants_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+                "X-API-Key"?: string | null;
+            };
+            path: {
+                audit_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -1811,6 +2175,7 @@ export interface operations {
         parameters: {
             query?: {
                 format?: string;
+                include_tests?: boolean;
             };
             header?: {
                 authorization?: string | null;
@@ -1932,3 +2297,161 @@ export interface operations {
         };
     };
 }
+
+// ─── Convenient Model Aliases for Console Frontend ───────────────────────────
+export interface ApiKeyItem {
+  id: string;
+  name: string;
+  key_prefix: string;
+  scopes: string[];
+  created_at: string;
+  revoked_at?: string | null;
+  last_used_at?: string | null;
+}
+
+export interface AuditItem {
+  id: string;
+  project_id: string;
+  upload_id?: string | null;
+  status: string;
+  stage?: string | null;
+  options?: any;
+  compiler_version?: string | null;
+  toolchain?: any;
+  corpus_version?: string | null;
+  coverage?: any;
+  scores?: any;
+  counts?: { critical: number; high: number; medium: number; low: number; info: number };
+  error?: any;
+  created_at: string;
+  started_at?: string | null;
+  finished_at?: string | null;
+  purge_after?: string | null;
+  purged_at?: string | null;
+  disclaimer?: string;
+}
+
+export interface ProjectItem {
+  id: string;
+  name: string;
+  description?: string | null;
+  audit_count?: number;
+  created_at: string;
+  updated_at?: string;
+  [key: string]: any;
+}
+
+export interface PatchItem {
+  id: string;
+  finding_id?: string;
+  diff?: string;
+  unified_diff?: string;
+  version?: number | string;
+  rationale?: string;
+  status: string;
+  compiles?: boolean;
+  finding_cleared?: boolean;
+  tests_passed?: boolean;
+  explanation?: string;
+  verification_log?: any[];
+  created_at: string;
+  [key: string]: any;
+}
+
+export interface CorpusVersionsResponse {
+  current_version?: string;
+  document_count?: number;
+  versions?: Array<any>;
+  [key: string]: any;
+}
+
+export interface ProofItem {
+  id: string;
+  finding_id: string;
+  test_source: string;
+  fails_on_original: boolean;
+  passes_on_patched: boolean;
+  run_log?: any[];
+  created_at?: string;
+  [key: string]: any;
+}
+
+export interface InvariantItem {
+  id: string;
+  contract_id?: string;
+  template_id: string;
+  status: string;
+  counterexample?: any;
+  run_log?: any[];
+  [key: string]: any;
+}
+
+export interface UploadResult {
+  upload_id: string;
+  kind: string;
+  size_bytes: number;
+  sha256: string;
+  expires_at: string;
+  [key: string]: any;
+}
+
+export interface PrivilegeMapResponse {
+  audit_id: string;
+  roles?: any[];
+  results?: any[];
+  nodes?: any[];
+  actions?: any[];
+  declarations?: any[];
+  undetected_notes?: string[];
+  disclaimer?: string;
+  [key: string]: any;
+}
+export type PrivilegeResult = any;
+export type PrivilegedAction = any;
+
+export interface FindingItem {
+  id: string;
+  audit_id?: string;
+  source?: string;
+  detector?: string;
+  title: string;
+  severity: string;
+  confidence?: number;
+  description: string;
+  file_path?: string;
+  line_start?: number;
+  line_end?: number;
+  start_line?: number;
+  end_line?: number;
+  scenario?: string;
+  status: string;
+  scored?: boolean;
+  disclaimer?: string;
+  evidence?: any[];
+  [key: string]: any;
+}
+export type FindingEvidenceItem = any;
+
+export interface AuditFileItem {
+  id: string;
+  path: string;
+  sha256: string;
+  line_count: number;
+  is_dependency: boolean;
+  content?: string;
+  [key: string]: any;
+}
+
+export interface AuditEventItem {
+  id: string | number;
+  audit_id: string;
+  org_id?: string;
+  ts?: string;
+  stage?: string | null;
+  level: string;
+  message: string;
+  data?: any;
+  created_at?: string;
+  [key: string]: any;
+}
+

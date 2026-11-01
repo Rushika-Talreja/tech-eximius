@@ -16,7 +16,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.auth import Principal, get_principal
-from app.db import Audit, Finding, FindingEvidence, get_db_session
+from app.db import Audit, Finding, FindingEvidence, Proof, get_db_session
 from app.errors import AppError, audit_not_ready, audit_purged, not_found
 from auditor_schemas.constants import STANDARD_DISCLAIMER
 
@@ -29,6 +29,7 @@ CLEAN_VERDICT = "No verified issues detected by this analysis"
 async def export_audit(
     audit_id: uuid.UUID,
     format: str = Query(default="json", pattern="^(json|md|sarif|pdf)$"),
+    include_tests: bool = Query(default=False),
     principal: Principal = Depends(get_principal),
     session: AsyncSession = Depends(get_db_session),
 ):
@@ -46,10 +47,40 @@ async def export_audit(
     )
     findings = findings_result.scalars().all()
 
+    # Load proof tests if opted in
+    proof_tests: dict[uuid.UUID, str] = {}
+    if include_tests and findings:
+        proof_res = await session.execute(
+            select(Proof).where(
+                Proof.finding_id.in_([f.id for f in findings]),
+                Proof.fails_on_original == True,
+                Proof.passes_on_patched == True,
+            )
+        )
+        for p in proof_res.scalars().all():
+            proof_tests[p.finding_id] = p.test_source
+
     scores_obj = audit.scores or {}
     scoring_weights = scores_obj.get("weights")
     coverage_obj = audit.coverage or {"analyzed": {}, "not_analyzed": [], "out_of_scope": []}
     verdict = CLEAN_VERDICT if not findings else None
+
+    findings_data = []
+    for f in findings:
+        item: dict[str, Any] = {
+            "id": str(f.id),
+            "title": f.title,
+            "severity": f.severity,
+            "confidence": float(f.confidence),
+            "source": f.source,
+            "status": f.status,
+            "start_line": f.start_line,
+            "end_line": f.end_line,
+            "description": f.description,
+        }
+        if include_tests and f.id in proof_tests:
+            item["test_source"] = proof_tests[f.id]
+        findings_data.append(item)
 
     report = {
         "audit_id": str(audit_id),
@@ -60,20 +91,7 @@ async def export_audit(
         "coverage": coverage_obj,
         "scores": scores_obj,
         "scoring_weights": scoring_weights,
-        "findings": [
-            {
-                "id": str(f.id),
-                "title": f.title,
-                "severity": f.severity,
-                "confidence": float(f.confidence),
-                "source": f.source,
-                "status": f.status,
-                "start_line": f.start_line,
-                "end_line": f.end_line,
-                "description": f.description,
-            }
-            for f in findings
-        ],
+        "findings": findings_data,
     }
     if verdict:
         report["verdict"] = verdict

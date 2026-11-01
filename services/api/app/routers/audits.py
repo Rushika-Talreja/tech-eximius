@@ -29,10 +29,12 @@ from app.config import get_settings
 from app.db import Audit, AuditEvent, AuditFile, Project, Upload, get_db_session, get_session_factory
 from app.errors import AppError, audit_purged, not_found, feature_not_enabled
 from app.logging_config import get_logger
+from app.rate_limiter import rate_limit
 from auditor_schemas.constants import STANDARD_DISCLAIMER
 
 router = APIRouter(tags=["audits"])
 logger = get_logger(__name__)
+audit_create_rate_limiter = rate_limit(limit=30, window_seconds=60)
 
 ALLOWED_FEATURES = {"privilege_map", "findings", "rag", "patches"}
 FUTURE_FEATURES = {"proofs", "invariants"}
@@ -81,7 +83,7 @@ def _format_audit(audit: Audit) -> dict[str, Any]:
     }
 
 
-@router.post("/projects/{project_id}/audits", status_code=202)
+@router.post("/projects/{project_id}/audits", status_code=202, dependencies=[Depends(audit_create_rate_limiter)])
 async def create_audit(
     project_id: uuid.UUID,
     body: CreateAuditRequest,
@@ -91,10 +93,18 @@ async def create_audit(
     settings = get_settings()
 
     # Validate features
+    allowed_features = set(ALLOWED_FEATURES)
+    if settings.proofs_enabled:
+        allowed_features.add("proofs")
+    if settings.invariants_enabled:
+        allowed_features.add("invariants")
+
     for f in body.options.features:
-        if f in FUTURE_FEATURES:
-            raise feature_not_enabled(f)
-        if f not in ALLOWED_FEATURES:
+        if f == "proofs" and not settings.proofs_enabled:
+            raise feature_not_enabled("proofs")
+        if f == "invariants" and not settings.invariants_enabled:
+            raise feature_not_enabled("invariants")
+        if f not in allowed_features:
             raise AppError("VALIDATION_ERROR", f"Unknown feature: {f!r}", 422)
 
     # Check project exists and belongs to org

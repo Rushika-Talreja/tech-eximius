@@ -8,7 +8,7 @@ import { ErrorDisplay } from "../../components/ErrorDisplay";
 import { RawJsonViewer } from "../../components/RawJsonViewer";
 import { ProofItem, InvariantItem } from "../../types/backend";
 
-export default function ProofsPage() {
+function ProofsContent() {
   const searchParams = useSearchParams();
   const initialAuditId = searchParams.get("audit_id") || "";
 
@@ -150,6 +150,14 @@ export default function ProofsPage() {
 
       <RawJsonViewer data={{ proofs, invariants }} title="Raw Proofs & Invariants JSON" />
     </div>
+  );
+}
+
+export default function ProofsPage() {
+  return (
+    <React.Suspense fallback={<div style={{ padding: "20px" }}>Loading proofs...</div>}>
+      <ProofsContent />
+    </React.Suspense>
   );
 }
 

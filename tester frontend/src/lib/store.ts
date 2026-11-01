@@ -31,6 +31,10 @@ interface ConsoleContextType {
   setShowRawJson: (show: boolean) => void;
   isDrawerOpen: boolean;
   setIsDrawerOpen: (open: boolean) => void;
+  useRecordedFallback: boolean;
+  setUseRecordedFallback: (use: boolean) => void;
+  isRecordedActive: boolean;
+  setIsRecordedActive: (active: boolean) => void;
 }
 
 const ConsoleContext = createContext<ConsoleContextType | null>(null);
@@ -41,6 +45,16 @@ export function ConsoleProvider({ children }: { children: React.ReactNode }) {
   const [requestLogs, setRequestLogs] = useState<RequestLogEntry[]>([]);
   const [showRawJson, setShowRawJson] = useState<boolean>(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
+  const [useRecordedFallback, setUseRecordedFallback] = useState<boolean>(false);
+  const [isRecordedActive, setIsRecordedActive] = useState<boolean>(false);
+
+  useEffect(() => {
+    const handleFallback = () => setIsRecordedActive(true);
+    if (typeof window !== "undefined") {
+      window.addEventListener("demo-fallback-activated", handleFallback);
+      return () => window.removeEventListener("demo-fallback-activated", handleFallback);
+    }
+  }, []);
 
   const addLogEntry = (entry: RequestLogEntry) => {
     setRequestLogs((prev) => [entry, ...prev.slice(0, 99)]); // keep last 100
@@ -50,9 +64,10 @@ export function ConsoleProvider({ children }: { children: React.ReactNode }) {
     setRequestLogs([]);
   };
 
-  return (
-    <ConsoleContext.Provider
-      value={{
+  return React.createElement(
+    ConsoleContext.Provider,
+    {
+      value: {
         authMode,
         setAuthMode,
         apiKey,
@@ -64,10 +79,13 @@ export function ConsoleProvider({ children }: { children: React.ReactNode }) {
         setShowRawJson,
         isDrawerOpen,
         setIsDrawerOpen,
-      }}
-    >
-      {children}
-    </ConsoleContext.Provider>
+        useRecordedFallback,
+        setUseRecordedFallback,
+        isRecordedActive,
+        setIsRecordedActive,
+      },
+    },
+    children
   );
 }
 

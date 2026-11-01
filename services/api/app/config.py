@@ -59,6 +59,7 @@ class Settings(BaseSettings):
     llm_model_fast: str = "gpt-4o-mini"
     # HARD RULE: must be true in staging/prod; app refuses to start otherwise
     llm_zero_retention: bool = False
+    patch_mode: str = "verify"  # "verify" or "suggest_only"
 
     # Sandbox
     sandbox_runtime: str = "local"  # "local" (subprocess) or "docker"
@@ -68,6 +69,10 @@ class Settings(BaseSettings):
     dependency_fetch_allowlist: str = (
         "registry.npmjs.org,github.com,codeload.github.com"
     )
+
+    # Feature Flags
+    proofs_enabled: bool = False
+    invariants_enabled: bool = False
 
     # Limits
     max_upload_mb: int = 10

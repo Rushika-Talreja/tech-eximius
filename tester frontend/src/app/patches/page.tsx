@@ -8,7 +8,7 @@ import { ErrorDisplay } from "../../components/ErrorDisplay";
 import { RawJsonViewer } from "../../components/RawJsonViewer";
 import { PatchItem } from "../../types/backend";
 
-export default function PatchesPage() {
+function PatchesContent() {
   const searchParams = useSearchParams();
   const initialAuditId = searchParams.get("audit_id") || "";
   const initialFindingId = searchParams.get("finding_id") || "";
@@ -227,7 +227,7 @@ export default function PatchesPage() {
               padding: "8px",
             }}
           >
-            {renderDiffLines(patch.unified_diff)}
+            {renderDiffLines(patch.unified_diff || patch.diff || "")}
           </div>
 
           {/* Edit & Reverify Box */}
@@ -262,6 +262,14 @@ export default function PatchesPage() {
 
       <RawJsonViewer data={patch} title="Raw Patch JSON" />
     </div>
+  );
+}
+
+export default function PatchesPage() {
+  return (
+    <React.Suspense fallback={<div style={{ padding: "20px" }}>Loading patches...</div>}>
+      <PatchesContent />
+    </React.Suspense>
   );
 }
 

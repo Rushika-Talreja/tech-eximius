@@ -86,6 +86,7 @@ class PatchStatus(StrEnum):
     FAILED = "failed"
     REJECTED = "rejected"
     APPLIED = "applied"
+    UNVERIFIED = "unverified"
 
 
 class AuditStatus(StrEnum):
@@ -304,6 +305,28 @@ class Patch(BaseModel):
     gas_delta: dict[str, int] = {}
     verification_log: list[dict[str, Any]] = []
     disclaimer: str = ""
+
+
+# ─── Proofs & Invariants ───────────────────────────────────────────────────────
+
+
+class Proof(BaseModel):
+    id: UUID
+    finding_id: UUID
+    test_source: str
+    fails_on_original: bool | None = None
+    passes_on_patched: bool | None = None
+    run_log: list[dict[str, Any]] = []
+    disclaimer: str = ""
+
+
+class InvariantRun(BaseModel):
+    id: UUID
+    contract_id: UUID
+    template_id: str
+    status: Literal["passed", "violated", "error", "skipped"]
+    counterexample: dict[str, Any] | None = None
+    run_log: list[dict[str, Any]] = []
 
 
 # ─── Coverage ─────────────────────────────────────────────────────────────────

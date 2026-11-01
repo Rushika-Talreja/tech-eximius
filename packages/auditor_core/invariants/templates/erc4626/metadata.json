@@ -1,0 +1,21 @@
+[
+  {
+    "id": "erc4626_preview_redeem_deposit",
+    "description": "previewRedeem(previewDeposit(x)) <= x",
+    "applies_if": "contract_type == 'erc4626'",
+    "file": "erc4626_preview_redeem_deposit.sol"
+  },
+  {
+    "id": "erc4626_share_price_monotonic",
+    "description": "share price does not decrease on deposit/withdraw (excluding fees)",
+    "applies_if": "contract_type == 'erc4626'",
+    "file": "erc4626_share_price_monotonic.sol"
+  },
+  {
+    "id": "erc4626_no_excess_withdraw",
+    "description": "no user withdraws more than assets owned by shares",
+    "applies_if": "contract_type == 'erc4626'",
+    "file": "erc4626_no_excess_withdraw.sol"
+  }
+]
+

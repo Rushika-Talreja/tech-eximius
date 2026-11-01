@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_standard" name="shell-type"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{colors:{"surface-bright":"#3d3836","on-tertiary":"#003354","tertiary-fixed":"#cee5ff","on-primary-container":"#583a00","surface-tint":"#feba49","background":"#161311","primary-fixed-dim":"#feba49","on-surface":"#e9e1dd","secondary-fixed":"#ece1d4","surface-container-low":"#1e1b19","primary":"#ffbb49","tertiary-fixed-dim":"#98cbff","on-background":"#e9e1dd","on-primary":"#442c00","secondary":"#d0c5b9","tertiary":"#9accff","on-surface-variant":"#d5c4af","inverse-on-surface":"#34302d","surface":"#161311","on-primary-fixed":"#281800","on-tertiary-fixed-variant":"#004a77","on-secondary-fixed-variant":"#4d463d","on-error-container":"#ffdad6","secondary-container":"#4d463d","error-container":"#93000a","outline-variant":"#514535","tertiary-container":"#65b2f6","primary-container":"#e0a030","surface-container":"#221f1d","on-secondary-fixed":"#201b13","on-tertiary-fixed":"#001d33","on-primary-fixed-variant":"#614000","on-secondary-container":"#beb3a8","surface-dim":"#161311","on-secondary":"#362f27","outline":"#9d8e7c","surface-container-highest":"#383431","primary-fixed":"#ffddb0","inverse-primary":"#805600","error":"#ffb4ab","inverse-surface":"#e9e1dd","on-tertiary-container":"#00436c","surface-container-lowest":"#100e0c","on-error":"#690005","surface-variant":"#383431","secondary-fixed-dim":"#d0c5b9","surface-container-high":"#2d2927"},borderRadius:{DEFAULT:"0.25rem",lg:"0.5rem",xl:"0.75rem",full:"9999px"},spacing:{"space-lg":"1.5rem","space-sm":"0.5rem","space-xl":"2.5rem","gutter-mobile":"0.75rem","space-xs":"0.25rem",margin:"2rem",gutter:"1.5rem","space-md":"1rem","margin-mobile":"1rem"},fontFamily:{"headline-sm":["Inter"],"code-md":["JetBrains Mono"],"label-caps":["JetBrains Mono"],display:["Inter"],"body-md":["Inter"],"body-sm":["Inter"],"headline-lg":["Inter"],disclaimer:["JetBrains Mono"],"body-lg":["Inter"],"code-lg":["JetBrains Mono"],"headline-md":["Inter"],"code-sm":["JetBrains Mono"],"display-mobile":["Inter"],"headline-lg-mobile":["Inter"]},fontSize:{"headline-sm":["16px",{lineHeight:"24px",letterSpacing:"0em",fontWeight:"600"}],"code-md":["13px",{lineHeight:"20px",letterSpacing:"0em",fontWeight:"400"}],"label-caps":["11px",{lineHeight:"14px",letterSpacing:"0.08em",fontWeight:"500"}],display:["40px",{lineHeight:"48px",letterSpacing:"-0.02em",fontWeight:"600"}],"body-md":["14px",{lineHeight:"22px",letterSpacing:"0em",fontWeight:"400"}],"body-sm":["12px",{lineHeight:"18px",letterSpacing:"0.01em",fontWeight:"400"}],"headline-lg":["28px",{lineHeight:"36px",letterSpacing:"-0.015em",fontWeight:"600"}],disclaimer:["11px",{lineHeight:"16px",letterSpacing:"0.03em",fontWeight:"400"}],"body-lg":["16px",{lineHeight:"26px",letterSpacing:"0em",fontWeight:"400"}],"code-lg":["15px",{lineHeight:"24px",letterSpacing:"0em",fontWeight:"400"}],"headline-md":["20px",{lineHeight:"28px",letterSpacing:"-0.01em",fontWeight:"500"}],"code-sm":["11px",{lineHeight:"16px",letterSpacing:"0.02em",fontWeight:"400"}],"display-mobile":["30px",{lineHeight:"36px",letterSpacing:"-0.02em",fontWeight:"600"}],"headline-lg-mobile":["22px",{lineHeight:"28px",letterSpacing:"-0.015em",fontWeight:"600"}]}}}};</script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=JetBrains+Mono:wght@100..900&display=swap" rel="stylesheet"/></head><body class="bg-background font-body-md text-on-surface antialiased selection:bg-primary-container selection:text-on-primary-container"><header class="fixed top-0 w-full z-50 bg-surface-container-low/95 backdrop-blur-md shadow-[0_1px_8px_rgba(0,0,0,0.4)]"><div class="h-16 w-full px-margin flex items-center justify-between"><div class="flex items-center gap-space-md"><span class="font-headline-sm text-headline-sm text-on-surface tracking-tight">DeFi Contract Auditor</span><span class="font-label-caps text-label-caps text-on-primary-container bg-primary-container px-space-xs py-0.5 rounded">ADVISORY SUITE</span></div><nav class="hidden md:flex items-center gap-space-xs" data-active-classes="bg-surface-container text-primary font-code-md"><a class="font-code-md text-code-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container px-space-sm py-space-xs rounded transition-colors" data-path="workspace" href="#">Workspace</a><a class="font-code-md text-code-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container px-space-sm py-space-xs rounded transition-colors" data-path="live-run" href="#">Live Run</a><a aria-current="page" class="px-space-sm py-space-xs rounded transition-colors bg-surface-container text-primary font-code-md" data-path="report-summary" href="#">Report Summary</a><a class="font-code-md text-code-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container px-space-sm py-space-xs rounded transition-colors" data-path="patch-diff" href="#">Patch Diff</a><a class="font-code-md text-code-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container px-space-sm py-space-xs rounded transition-colors" data-path="evidence-drawer" href="#">Evidence Drawer</a></nav><div class="flex items-center gap-space-md"><button class="bg-primary-container text-on-primary-container font-label-caps text-label-caps px-space-lg py-space-sm rounded hover:bg-primary hover:text-on-primary transition-colors" type="button">New Audit</button><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center font-code-sm text-code-sm text-on-primary font-bold">SEC</div></div></div></header><main class="w-full pt-16 min-h-screen bg-background"><div class="flex flex-col w-full">
+<div class="w-full px-margin py-space-lg flex flex-col gap-space-xl">
+<!-- METADATA SUB-HEADER BAR -->
+<section class="w-full bg-surface-container-low p-space-md flex flex-col xl:flex-row xl:items-center justify-between gap-space-md shadow-sm">
+<div class="flex flex-wrap items-center gap-x-space-lg gap-y-space-xs font-code-sm text-code-sm">
+<div class="flex items-center gap-space-xs">
+<span class="text-outline uppercase font-label-caps text-label-caps tracking-wider">Contract:</span>
+<span class="text-on-surface font-semibold">YieldVault.sol</span>
+</div>
+<span class="text-outline-variant select-none hidden sm:inline">/</span>
+<div class="flex items-center gap-space-xs">
+<span class="text-outline uppercase font-label-caps text-label-caps tracking-wider">Run Date:</span>
+<span class="text-on-surface">2024-10-24 14:22 UTC</span>
+</div>
+<span class="text-outline-variant select-none hidden sm:inline">/</span>
+<div class="flex items-center gap-space-xs">
+<span class="text-outline uppercase font-label-caps text-label-caps tracking-wider">Jurisdiction:</span>
+<span class="text-primary-container font-medium">India: SEBI and RBI</span>
+</div>
+<span class="text-outline-variant select-none hidden sm:inline">/</span>
+<div class="flex items-center gap-space-xs">
+<span class="text-outline uppercase font-label-caps text-label-caps tracking-wider">Depth:</span>
+<span class="text-on-surface">Standard (Slither + AST + Incidents)</span>
+</div>
+</div>
+<div class="flex items-center gap-space-sm self-start xl:self-auto shrink-0">
+<button class="bg-surface-container hover:bg-surface-container-high text-on-surface hover:text-primary font-label-caps text-label-caps px-space-md py-space-sm uppercase tracking-wider transition-colors" type="button">
+          Re-run Analysis
+        </button>
+<button class="bg-primary-container hover:bg-primary text-on-primary-container hover:text-on-primary font-label-caps text-label-caps px-space-md py-space-sm uppercase tracking-wider transition-colors shadow-sm" type="button">
+          Export Report
+        </button>
+</div>
+</section>
+<!-- HEALTH SCORE AND SEVERITY BREAKDOWN -->
+<section class="grid grid-cols-1 lg:grid-cols-12 gap-space-md items-stretch">
+<!-- Health Score Card -->
+<div class="lg:col-span-4 bg-surface-container-low p-space-lg flex flex-col justify-between shadow-sm">
+<div>
+<div class="flex items-center justify-between pb-space-md">
+<span class="font-label-caps text-label-caps text-outline uppercase tracking-wider">Advisory Health Metric</span>
+<span class="font-code-sm text-code-sm text-primary-container bg-surface-container px-space-xs py-0.5">HEURISTIC EVAL</span>
+</div>
+<div class="flex items-center gap-space-lg my-space-md">
+<!-- Custom Amber Dial SVG (Zero blue/purple, strictly warm palette) -->
+<div class="relative w-28 h-28 shrink-0 flex items-center justify-center">
+<svg class="w-full h-full transform -rotate-90" viewbox="0 0 100 100">
+<circle cx="50" cy="50" fill="none" r="42" stroke="#2d2927" stroke-width="9"></circle>
+<circle cx="50" cy="50" fill="none" r="42" stroke="#e0a030" stroke-dasharray="264" stroke-dashoffset="100" stroke-linecap="butt" stroke-width="9"></circle>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center">
+<span class="font-display text-display text-on-surface leading-none">62</span>
+<span class="font-code-sm text-code-sm text-outline">/ 100</span>
+</div>
+</div>
+<div class="flex flex-col gap-space-xs">
+<span class="font-headline-sm text-headline-sm text-on-surface">Sub-optimal Posture</span>
+<p class="font-body-sm text-body-sm text-outline">A rough indicator, not a grade or certification.</p>
+</div>
+</div>
+</div>
+<div class="mt-space-md pt-space-md bg-surface-container-lowest/60 p-space-sm">
+<p class="font-disclaimer text-disclaimer text-outline">
+            Advisory score based on detected attack vectors and privileged key concentration.
+          </p>
+</div>
+</div>
+<!-- Severity Filter Cards -->
+<div class="lg:col-span-8 flex flex-col gap-space-sm justify-between">
+<div class="grid grid-cols-2 md:grid-cols-4 gap-space-sm h-full">
+<!-- Critical Card -->
+<div class="cursor-pointer bg-surface-container-low hover:bg-surface-container p-space-md flex flex-col justify-between transition-colors shadow-sm select-none" data-severity-filter="Critical" onclick="filterFindings('Critical')">
+<div class="flex items-center justify-between">
+<span class="font-label-caps text-label-caps px-space-xs py-0.5 bg-error-container/20 text-error uppercase font-medium">CRITICAL</span>
+<span class="font-code-sm text-code-sm text-outline">P0</span>
+</div>
+<div class="my-space-md">
+<span class="font-display text-display text-error font-semibold">1</span>
+</div>
+<div class="font-code-sm text-code-sm text-outline">
+              Immediate threat vector
+            </div>
+</div>
+<!-- High Card -->
+<div class="cursor-pointer bg-surface-container-low hover:bg-surface-container p-space-md flex flex-col justify-between transition-colors shadow-sm select-none" data-severity-filter="High" onclick="filterFindings('High')">
+<div class="flex items-center justify-between">
+<span class="font-label-caps text-label-caps px-space-xs py-0.5 bg-primary-container/20 text-primary-container uppercase font-medium">HIGH</span>
+<span class="font-code-sm text-code-sm text-outline">P1</span>
+</div>
+<div class="my-space-md">
+<span class="font-display text-display text-primary-container font-semibold">2</span>
+</div>
+<div class="font-code-sm text-code-sm text-outline">
+              Conditional execution breach
+            </div>
+</div>
+<!-- Medium Card -->
+<div class="cursor-pointer bg-surface-container-low hover:bg-surface-container p-space-md flex flex-col justify-between transition-colors shadow-sm select-none" data-severity-filter="Medium" onclick="filterFindings('Medium')">
+<div class="flex items-center justify-between">
+<span class="font-label-caps text-label-caps px-space-xs py-0.5 bg-surface-bright text-surface-tint uppercase font-medium">MEDIUM</span>
+<span class="font-code-sm text-code-sm text-outline">P2</span>
+</div>
+<div class="my-space-md">
+<span class="font-display text-display text-surface-tint font-semibold">3</span>
+</div>
+<div class="font-code-sm text-code-sm text-outline">
+              State logic inconsistency
+            </div>
+</div>
+<!-- Low Card -->
+<div class="cursor-pointer bg-surface-container-low hover:bg-surface-container p-space-md flex flex-col justify-between transition-colors shadow-sm select-none" data-severity-filter="Low" onclick="filterFindings('Low')">
+<div class="flex items-center justify-between">
+<span class="font-label-caps text-label-caps px-space-xs py-0.5 bg-surface-container-highest text-secondary uppercase font-medium">LOW</span>
+<span class="font-code-sm text-code-sm text-outline">P3</span>
+</div>
+<div class="my-space-md">
+<span class="font-display text-display text-secondary font-semibold">2</span>
+</div>
+<div class="font-code-sm text-code-sm text-outline">
+              Deviation from standard
+            </div>
+</div>
+</div>
+<div class="bg-surface-container-lowest px-space-md py-space-xs flex items-center justify-between">
+<span class="font-code-sm text-code-sm text-outline">Select any card to filter findings below.</span>
+<button class="font-code-sm text-code-sm text-primary hover:underline uppercase" onclick="filterFindings('All')" type="button">
+            Reset to All Findings
+          </button>
+</div>
+</div>
+</section>
+<!-- PRIVILEGE MAP SUMMARY PANEL -->
+<section class="flex flex-col gap-space-sm">
+<div class="flex items-center justify-between bg-surface-container-low px-space-md py-space-sm shadow-sm">
+<div class="flex items-center gap-space-sm">
+<span class="font-label-caps text-label-caps text-primary uppercase tracking-wider">SECTION 02</span>
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Privilege Map Summary</h2>
+</div>
+<span class="font-code-sm text-code-sm text-outline">3 Roles Identified</span>
+</div>
+<div class="overflow-x-auto shadow-sm">
+<table class="w-full text-left bg-surface-container-low">
+<thead>
+<tr class="bg-surface-container font-label-caps text-label-caps text-outline uppercase tracking-wider">
+<th class="py-space-sm px-space-md">Role</th>
+<th class="py-space-sm px-space-md">Powers Granted</th>
+<th class="py-space-sm px-space-md">Risk Score</th>
+<th class="py-space-sm px-space-md">Worst Case Scenario</th>
+<th class="py-space-sm px-space-md">Key Custody</th>
+</tr>
+</thead>
+<tbody class="divide-y-0 font-body-sm text-body-sm text-on-surface">
+<!-- Row 1 -->
+<tr class="hover:bg-surface-container/60 transition-colors">
+<td class="py-space-md px-space-md font-semibold text-on-surface whitespace-nowrap">
+                Owner (Deployer)
+              </td>
+<td class="py-space-md px-space-md font-code-sm text-code-sm text-primary">
+                emergencyDrain(), transferOwnership()
+              </td>
+<td class="py-space-md px-space-md whitespace-nowrap">
+<span class="font-label-caps text-label-caps px-space-xs py-0.5 bg-error-container/20 text-error uppercase font-semibold">HIGH (SCORE 88)</span>
+</td>
+<td class="py-space-md px-space-md text-on-surface-variant max-w-sm">
+                Single compromised private key drains all contract collateral in one transaction.
+              </td>
+<td class="py-space-md px-space-md font-code-sm text-code-sm text-outline whitespace-nowrap">
+                Declared (Multisig 2 of 3, 48h timelock)
+              </td>
+</tr>
+<!-- Row 2 -->
+<tr class="bg-surface-container-lowest/30 hover:bg-surface-container/60 transition-colors">
+<td class="py-space-md px-space-md font-semibold text-on-surface whitespace-nowrap">
+                Keeper Bot
+              </td>
+<td class="py-space-md px-space-md font-code-sm text-code-sm text-primary">
+                rebalanceVault()
+              </td>
+<td class="py-space-md px-space-md whitespace-nowrap">
+<span class="font-label-caps text-label-caps px-space-xs py-0.5 bg-surface-bright text-surface-tint uppercase font-semibold">MEDIUM (SCORE 44)</span>
+</td>
+<td class="py-space-md px-space-md text-on-surface-variant max-w-sm">
+                Compromised bot can trigger sub-optimal swap routing causing slippage losses.
+              </td>
+<td class="py-space-md px-space-md font-code-sm text-code-sm text-outline whitespace-nowrap">
+                Assumed (Single EOA)
+              </td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-surface-container/60 transition-colors">
+<td class="py-space-md px-space-md font-semibold text-on-surface whitespace-nowrap">
+                Public User
+              </td>
+<td class="py-space-md px-space-md font-code-sm text-code-sm text-primary">
+                deposit(), withdraw()
+              </td>
+<td class="py-space-md px-space-md whitespace-nowrap">
+<span class="font-label-caps text-label-caps px-space-xs py-0.5 bg-surface-container-highest text-secondary uppercase font-semibold">LOW (SCORE 12)</span>
+</td>
+<td class="py-space-md px-space-md text-on-surface-variant max-w-sm">
+                Normal user operations restricted to individual deposited principal.
+              </td>
+<td class="py-space-md px-space-md font-code-sm text-code-sm text-outline whitespace-nowrap">
+                Declared (Public caller)
+              </td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<!-- FINDINGS LIST WITH DYNAMIC CLIENT FILTERING -->
+<section class="flex flex-col gap-space-sm" id="findings-section">
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-space-md bg-surface-container-low px-space-md py-space-sm shadow-sm">
+<div class="flex items-center gap-space-sm">
+<span class="font-label-caps text-label-caps text-primary uppercase tracking-wider">SECTION 03</span>
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Security Findings (<span id="findings-count">6</span> Total)</h2>
+</div>
+<div class="flex flex-wrap items-center gap-space-xs font-label-caps text-label-caps">
+<button class="filter-tab px-space-sm py-space-xs uppercase bg-primary-container text-on-primary-container transition-colors" data-filter="All" onclick="filterFindings('All')" type="button">All</button>
+<button class="filter-tab px-space-sm py-space-xs uppercase bg-surface-container text-outline hover:text-on-surface transition-colors" data-filter="Critical" onclick="filterFindings('Critical')" type="button">Critical</button>
+<button class="filter-tab px-space-sm py-space-xs uppercase bg-surface-container text-outline hover:text-on-surface transition-colors" data-filter="High" onclick="filterFindings('High')" type="button">High</button>
+<button class="filter-tab px-space-sm py-space-xs uppercase bg-surface-container text-outline hover:text-on-surface transition-colors" data-filter="Medium" onclick="filterFindings('Medium')" type="button">Medium</button>
+<button class="filter-tab px-space-sm py-space-xs uppercase bg-surface-container text-outline hover:text-on-surface transition-colors" data-filter="Low" onclick="filterFindings('Low')" type="button">Low</button>
+</div>
+</div>
+<div class="overflow-x-auto shadow-sm">
+<table class="w-full text-left bg-surface-container-low">
+<thead>
+<tr class="bg-surface-container font-label-caps text-label-caps text-outline uppercase tracking-wider">
+<th class="py-space-sm px-space-md">Severity</th>
+<th class="py-space-sm px-space-md">Title</th>
+<th class="py-space-sm px-space-md">Location</th>
+<th class="py-space-sm px-space-md">Source Type</th>
+<th class="py-space-sm px-space-md text-right">Action</th>
+</tr>
+</thead>
+<tbody class="font-body-sm text-body-sm text-on-surface" id="findings-table-body">
+<!-- Row 1: Critical -->
+<tr class="finding-row hover:bg-surface-container/60 transition-colors" data-severity="Critical">
+<td class="py-space-md px-space-md whitespace-nowrap">
+<span class="font-label-caps text-label-caps px-space-xs py-0.5 bg-error-container/20 text-error uppercase font-medium">CRITICAL</span>
+</td>
+<td class="py-space-md px-space-md font-medium text-on-surface max-w-md">
+                Arbitrary external call allows unconstrained vault drainage in emergencyDrain()
+              </td>
+<td class="py-space-md px-space-md font-code-sm text-code-sm text-primary whitespace-nowrap">
+                YieldVault.sol: lines 14-18
+              </td>
+<td class="py-space-md px-space-md font-code-sm text-code-sm text-outline whitespace-nowrap">
+                Code fact
+              </td>
+<td class="py-space-md px-space-md text-right whitespace-nowrap">
+<button class="font-label-caps text-label-caps uppercase text-primary hover:underline" onclick="toggleDetails(this)" type="button">
+                  View Details
+                </button>
+</td>
+</tr>
+<tr class="hidden details-row bg-surface-container-lowest/50">
+<td class="p-space-md font-code-sm text-code-sm text-outline" colspan="5">
+<div class="flex flex-col gap-space-xs">
+<span class="text-on-surface font-semibold uppercase">Diagnostic Trace:</span>
+<p class="text-on-surface-variant font-body-sm text-body-sm">The routine executes a raw low-level call <code class="bg-surface-container px-1 py-0.5 text-primary">target.call{value: balance}(data)</code> without parameter sanitary checks or address allowlisting, yielding control to potential caller contracts.</p>
+<span class="text-primary mt-space-xs">Mitigation: Enforce hardcoded target recipient and utilize SafeERC20 sweeps without arbitrary calldata payloads.</span>
+</div>
+</td>
+</tr>
+<!-- Row 2: High -->
+<tr class="finding-row bg-surface-container-lowest/30 hover:bg-surface-container/60 transition-colors" data-severity="High">
+<td class="py-space-md px-space-md whitespace-nowrap">
+<span class="font-label-caps text-label-caps px-space-xs py-0.5 bg-primary-container/20 text-primary-container uppercase font-medium">HIGH</span>
+</td>
+<td class="py-space-md px-space-md font-medium text-on-surface max-w-md">
+                Missing reentrancy guard around raw call value transfer
+              </td>
+<td class="py-space-md px-space-md font-code-sm text-code-sm text-primary whitespace-nowrap">
+                YieldVault.sol: line 16
+              </td>
+<td class="py-space-md px-space-md font-code-sm text-code-sm text-outline whitespace-nowrap">
+                Past incident (Euler Finance)
+              </td>
+<td class="py-space-md px-space-md text-right whitespace-nowrap">
+<button class="font-label-caps text-label-caps uppercase text-primary hover:underline" onclick="toggleDetails(this)" type="button">
+                  View Details
+                </button>
+</td>
+</tr>
+<tr class="hidden details-row bg-surface-container-lowest/50">
+<td class="p-space-md font-code-sm text-code-sm text-outline" colspan="5">
+<div class="flex flex-col gap-space-xs">
+<span class="text-on-surface font-semibold uppercase">Diagnostic Trace:</span>
+<p class="text-on-surface-variant font-body-sm text-body-sm">State update to account balances occurs after native token dispatch. A malicious fallback can re-invoke liquidity settlement before state finality.</p>
+<span class="text-primary mt-space-xs">Mitigation: Apply ReentrancyGuard and comply with Checks-Effects-Interactions pattern strictly.</span>
+</div>
+</td>
+</tr>
+<!-- Row 3: High -->
+<tr class="finding-row hover:bg-surface-container/60 transition-colors" data-severity="High">
+<td class="py-space-md px-space-md whitespace-nowrap">
+<span class="font-label-caps text-label-caps px-space-xs py-0.5 bg-primary-container/20 text-primary-container uppercase font-medium">HIGH</span>
+</td>
+<td class="py-space-md px-space-md font-medium text-on-surface max-w-md">
+                Unprotected ownership transfer without two-step acceptance
+              </td>
+<td class="py-space-md px-space-md font-code-sm text-code-sm text-primary whitespace-nowrap">
+                YieldVault.sol: line 22
+              </td>
+<td class="py-space-md px-space-md font-code-sm text-code-sm text-outline whitespace-nowrap">
+                Code fact
+              </td>
+<td class="py-space-md px-space-md text-right whitespace-nowrap">
+<button class="font-label-caps text-label-caps uppercase text-primary hover:underline" onclick="toggleDetails(this)" type="button">
+                  View Details
+                </button>
+</td>
+</tr>
+<tr class="hidden details-row bg-surface-container-lowest/50">
+<td class="p-space-md font-code-sm text-code-sm text-outline" colspan="5">
+<div class="flex flex-col gap-space-xs">
+<span class="text-on-surface font-semibold uppercase">Diagnostic Trace:</span>
+<p class="text-on-surface-variant font-body-sm text-body-sm">Direct assignment of administrative authority can permanently lock governance if assigned to an incorrect or un-initialized address.</p>
+<span class="text-primary mt-space-xs">Mitigation: Implement Ownable2Step pattern requiring explicit claimOwnership() transaction.</span>
+</div>
+</td>
+</tr>
+<!-- Row 4: Medium -->
+<tr class="finding-row bg-surface-container-lowest/30 hover:bg-surface-container/60 transition-colors" data-severity="Medium">
+<td class="py-space-md px-space-md whitespace-nowrap">
+<span class="font-label-caps text-label-caps px-space-xs py-0.5 bg-surface-bright text-surface-tint uppercase font-medium">MEDIUM</span>
+</td>
+<td class="py-space-md px-space-md font-medium text-on-surface max-w-md">
+                Oracle staleness check omitted on asset pricing feed
+              </td>
+<td class="py-space-md px-space-md font-code-sm text-code-sm text-primary whitespace-nowrap">
+                YieldVault.sol: line 31
+              </td>
+<td class="py-space-md px-space-md font-code-sm text-code-sm text-outline whitespace-nowrap">
+                Reproducing test
+              </td>
+<td class="py-space-md px-space-md text-right whitespace-nowrap">
+<button class="font-label-caps text-label-caps uppercase text-primary hover:underline" onclick="toggleDetails(this)" type="button">
+                  View Details
+                </button>
+</td>
+</tr>
+<tr class="hidden details-row bg-surface-container-lowest/50">
+<td class="p-space-md font-code-sm text-code-sm text-outline" colspan="5">
+<div class="flex flex-col gap-space-xs">
+<span class="text-on-surface font-semibold uppercase">Diagnostic Trace:</span>
+<p class="text-on-surface-variant font-body-sm text-body-sm">Chainlink latestRoundData return value updatedAt is unused. Stale quotes during L2 sequencer uptime delays may misprice collateral.</p>
+<span class="text-primary mt-space-xs">Mitigation: Validate updatedAt >= block.timestamp - MAX_ORACLE_DELAY and roundId matching answeredInRound.</span>
+</div>
+</td>
+</tr>
+<!-- Row 5: Medium -->
+<tr class="finding-row hover:bg-surface-container/60 transition-colors" data-severity="Medium">
+<td class="py-space-md px-space-md whitespace-nowrap">
+<span class="font-label-caps text-label-caps px-space-xs py-0.5 bg-surface-bright text-surface-tint uppercase font-medium">MEDIUM</span>
+</td>
+<td class="py-space-md px-space-md font-medium text-on-surface max-w-md">
+                Unbounded slippage tolerance in keeper rebalance routine
+              </td>
+<td class="py-space-md px-space-md font-code-sm text-code-sm text-primary whitespace-nowrap">
+                YieldVault.sol: line 44
+              </td>
+<td class="py-space-md px-space-md font-code-sm text-code-sm text-outline whitespace-nowrap">
+                AST pattern
+              </td>
+<td class="py-space-md px-space-md text-right whitespace-nowrap">
+<button class="font-label-caps text-label-caps uppercase text-primary hover:underline" onclick="toggleDetails(this)" type="button">
+                  View Details
+                </button>
+</td>
+</tr>
+<tr class="hidden details-row bg-surface-container-lowest/50">
+<td class="p-space-md font-code-sm text-code-sm text-outline" colspan="5">
+<div class="flex flex-col gap-space-xs">
+<span class="text-on-surface font-semibold uppercase">Diagnostic Trace:</span>
+<p class="text-on-surface-variant font-body-sm text-body-sm">AmountOutMinimum is passed as 0 during Uniswap router call, exposing automated trades to maximal MEV sandwich exploitation.</p>
+<span class="text-primary mt-space-xs">Mitigation: Compute minAmountOut on-chain via TWAP or off-chain signed price proofs.</span>
+</div>
+</td>
+</tr>
+<!-- Row 6: Low -->
+<tr class="finding-row bg-surface-container-lowest/30 hover:bg-surface-container/60 transition-colors" data-severity="Low">
+<td class="py-space-md px-space-md whitespace-nowrap">
+<span class="font-label-caps text-label-caps px-space-xs py-0.5 bg-surface-container-highest text-secondary uppercase font-medium">LOW</span>
+</td>
+<td class="py-space-md px-space-md font-medium text-on-surface max-w-md">
+                Missing indexed parameters in critical VaultRebalanced event
+              </td>
+<td class="py-space-md px-space-md font-code-sm text-code-sm text-primary whitespace-nowrap">
+                YieldVault.sol: line 8
+              </td>
+<td class="py-space-md px-space-md font-code-sm text-code-sm text-outline whitespace-nowrap">
+                Code fact
+              </td>
+<td class="py-space-md px-space-md text-right whitespace-nowrap">
+<button class="font-label-caps text-label-caps uppercase text-primary hover:underline" onclick="toggleDetails(this)" type="button">
+                  View Details
+                </button>
+</td>
+</tr>
+<tr class="hidden details-row bg-surface-container-lowest/50">
+<td class="p-space-md font-code-sm text-code-sm text-outline" colspan="5">
+<div class="flex flex-col gap-space-xs">
+<span class="text-on-surface font-semibold uppercase">Diagnostic Trace:</span>
+<p class="text-on-surface-variant font-body-sm text-body-sm">Absence of index attributes on strategy address impairs off-chain filtering and telemetry indexing efficiency.</p>
+<span class="text-primary mt-space-xs">Mitigation: Mark strategy and caller address fields as indexed in event declaration.</span>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<!-- REGULATORY COMPLIANCE SECTION -->
+<section class="flex flex-col gap-space-sm">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-space-xs bg-surface-container-low px-space-md py-space-sm shadow-sm">
+<div class="flex items-center gap-space-sm">
+<span class="font-label-caps text-label-caps text-primary uppercase tracking-wider">SECTION 04</span>
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Regulatory Compliance Warnings</h2>
+</div>
+<span class="font-disclaimer text-disclaimer text-outline">
+          These are questions for a lawyer, not legal conclusions.
+        </span>
+</div>
+<!-- Authority Text Tabs -->
+<div class="flex items-center gap-space-md bg-surface-container px-space-md py-space-xs">
+<button class="font-label-caps text-label-caps uppercase pb-1 text-primary border-b-2 border-primary" id="reg-tab-SEBI" onclick="switchRegTab('SEBI')" type="button">SEBI</button>
+<button class="font-label-caps text-label-caps uppercase pb-1 text-outline hover:text-on-surface" id="reg-tab-RBI" onclick="switchRegTab('RBI')" type="button">RBI</button>
+<button class="font-label-caps text-label-caps uppercase pb-1 text-outline hover:text-on-surface" id="reg-tab-SEC" onclick="switchRegTab('SEC')" type="button">SEC</button>
+</div>
+<!-- SEBI Content Cards -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-space-md" id="reg-content-SEBI">
+<!-- Card 1 -->
+<div class="bg-surface-container-low p-space-md flex flex-col justify-between shadow-sm">
+<div>
+<div class="flex items-center justify-between pb-space-sm">
+<span class="font-label-caps text-label-caps text-primary uppercase tracking-wider">AUTHORITY: SEBI</span>
+<span class="font-label-caps text-label-caps px-space-xs py-0.5 bg-primary-container/20 text-primary-container uppercase font-semibold">PRIORITY: HIGH</span>
+</div>
+<div class="my-space-sm">
+<span class="font-code-sm text-code-sm text-outline uppercase block mb-1">Contract Feature:</span>
+<p class="font-code-md text-code-md text-on-surface bg-surface-container p-space-xs">emergencyDrain() unilateral admin sweep</p>
+</div>
+<div class="my-space-md">
+<span class="font-label-caps text-label-caps text-outline uppercase block mb-1">Question for lawyer:</span>
+<p class="font-body-md text-body-md text-on-surface-variant">
+                Does emergencyDrain create an unregulated custodial relationship or collective investment scheme under SEBI (CIS) Regulations 1999?
+              </p>
+</div>
+</div>
+<div class="flex justify-between items-center pt-space-md bg-surface-container-lowest/40 p-space-xs">
+<span class="font-code-sm text-code-sm text-outline">Ref: CIS Regs Cl. 3(1)</span>
+<button class="font-label-caps text-label-caps uppercase text-primary hover:underline" type="button">View Clause</button>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="bg-surface-container-low p-space-md flex flex-col justify-between shadow-sm">
+<div>
+<div class="flex items-center justify-between pb-space-sm">
+<span class="font-label-caps text-label-caps text-primary uppercase tracking-wider">AUTHORITY: SEBI</span>
+<span class="font-label-caps text-label-caps px-space-xs py-0.5 bg-surface-bright text-surface-tint uppercase font-semibold">PRIORITY: MEDIUM</span>
+</div>
+<div class="my-space-sm">
+<span class="font-code-sm text-code-sm text-outline uppercase block mb-1">Contract Feature:</span>
+<p class="font-code-md text-code-md text-on-surface bg-surface-container p-space-xs">Yield distribution via rebalanceVault()</p>
+</div>
+<div class="my-space-md">
+<span class="font-label-caps text-label-caps text-outline uppercase block mb-1">Question for lawyer:</span>
+<p class="font-body-md text-body-md text-on-surface-variant">
+                Could automated yield aggregation be categorized as portfolio management services requiring SEBI registration?
+              </p>
+</div>
+</div>
+<div class="flex justify-between items-center pt-space-md bg-surface-container-lowest/40 p-space-xs">
+<span class="font-code-sm text-code-sm text-outline">Ref: PMS Regs 2020</span>
+<button class="font-label-caps text-label-caps uppercase text-primary hover:underline" type="button">View Clause</button>
+</div>
+</div>
+</div>
+<!-- RBI Placeholder Content (hidden initially) -->
+<div class="hidden grid grid-cols-1 md:grid-cols-2 gap-space-md" id="reg-content-RBI">
+<div class="bg-surface-container-low p-space-md flex flex-col justify-between shadow-sm">
+<div>
+<div class="flex items-center justify-between pb-space-sm">
+<span class="font-label-caps text-label-caps text-primary uppercase tracking-wider">AUTHORITY: RBI</span>
+<span class="font-label-caps text-label-caps px-space-xs py-0.5 bg-primary-container/20 text-primary-container uppercase font-semibold">PRIORITY: HIGH</span>
+</div>
+<div class="my-space-sm">
+<span class="font-code-sm text-code-sm text-outline uppercase block mb-1">Contract Feature:</span>
+<p class="font-code-md text-code-md text-on-surface bg-surface-container p-space-xs">crossBorderYieldRelay() cross-chain settlement</p>
+</div>
+<div class="my-space-md">
+<span class="font-label-caps text-label-caps text-outline uppercase block mb-1">Question for lawyer:</span>
+<p class="font-body-md text-body-md text-on-surface-variant">
+                Does outbound transmission of tokenized yields violate FEMA guidelines regarding unauthorized overseas capital account transactions?
+              </p>
+</div>
+</div>
+<div class="flex justify-between items-center pt-space-md bg-surface-container-lowest/40 p-space-xs">
+<span class="font-code-sm text-code-sm text-outline">Ref: FEMA 1999 Sec. 3</span>
+<button class="font-label-caps text-label-caps uppercase text-primary hover:underline" type="button">View Clause</button>
+</div>
+</div>
+</div>
+<!-- SEC Placeholder Content (hidden initially) -->
+<div class="hidden grid grid-cols-1 md:grid-cols-2 gap-space-md" id="reg-content-SEC">
+<div class="bg-surface-container-low p-space-md flex flex-col justify-between shadow-sm">
+<div>
+<div class="flex items-center justify-between pb-space-sm">
+<span class="font-label-caps text-label-caps text-primary uppercase tracking-wider">AUTHORITY: SEC</span>
+<span class="font-label-caps text-label-caps px-space-xs py-0.5 bg-primary-container/20 text-primary-container uppercase font-semibold">PRIORITY: HIGH</span>
+</div>
+<div class="my-space-sm">
+<span class="font-code-sm text-code-sm text-outline uppercase block mb-1">Contract Feature:</span>
+<p class="font-code-md text-code-md text-on-surface bg-surface-container p-space-xs">Manager-driven rebalanceVault() optimization</p>
+</div>
+<div class="my-space-md">
+<span class="font-label-caps text-label-caps text-outline uppercase block mb-1">Question for lawyer:</span>
+<p class="font-body-md text-body-md text-on-surface-variant">
+                Does the ongoing entrepreneurial effort of keeper bot operators fulfill the fourth prong of the Howey Test regarding profit expectations?
+              </p>
+</div>
+</div>
+<div class="flex justify-between items-center pt-space-md bg-surface-container-lowest/40 p-space-xs">
+<span class="font-code-sm text-code-sm text-outline">Ref: Securities Act 1933</span>
+<button class="font-label-caps text-label-caps uppercase text-primary hover:underline" type="button">View Clause</button>
+</div>
+</div>
+</div>
+</section>
+<!-- COVERAGE STATEMENT PANEL -->
+<section class="flex flex-col gap-space-sm">
+<div class="bg-surface-container-low px-space-md py-space-sm shadow-sm flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<span class="font-label-caps text-label-caps text-primary uppercase tracking-wider">SECTION 05</span>
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Coverage Statement & Verification Scope</h2>
+</div>
+<span class="font-code-sm text-code-sm text-outline">Deterministic Envelope</span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-space-md">
+<!-- Column 1: Checked -->
+<div class="bg-surface-container-low p-space-md flex flex-col justify-between shadow-sm">
+<div>
+<div class="flex items-center justify-between pb-space-sm">
+<span class="font-label-caps text-label-caps text-secondary font-semibold uppercase tracking-wider">Checked</span>
+<span class="font-code-sm text-code-sm text-secondary bg-surface-container-highest px-space-xs py-0.5">5/5 DOMAINS</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-space-sm">
+              Solidity 0.8.20 AST structure, Slither 42 standard detectors, privilege escalation entrypoints, Immunefi 2023-2024 post-mortem signatures, SEBI & RBI checklist items.
+            </p>
+</div>
+<div class="pt-space-md mt-space-md font-code-sm text-code-sm text-outline">
+            STATUS: EVALUATED
+          </div>
+</div>
+<!-- Column 2: Could not be checked -->
+<div class="bg-surface-container-low p-space-md flex flex-col justify-between shadow-sm">
+<div>
+<div class="flex items-center justify-between pb-space-sm">
+<span class="font-label-caps text-label-caps text-surface-tint font-semibold uppercase tracking-wider">Could not be checked</span>
+<span class="font-code-sm text-code-sm text-surface-tint bg-surface-bright px-space-xs py-0.5">OFF-CHAIN</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-space-sm">
+              Off-chain bot automation logic, compiler optimization zero-day edge cases, economic sandwich attack profitability under varying gas conditions.
+            </p>
+</div>
+<div class="pt-space-md mt-space-md font-code-sm text-code-sm text-outline">
+            STATUS: UNVERIFIABLE STATICALLY
+          </div>
+</div>
+<!-- Column 3: Outside any tool's reach -->
+<div class="bg-surface-container-low p-space-md flex flex-col justify-between shadow-sm">
+<div>
+<div class="flex items-center justify-between pb-space-sm">
+<span class="font-label-caps text-label-caps text-error font-semibold uppercase tracking-wider">Outside any tool's reach</span>
+<span class="font-code-sm text-code-sm text-error bg-error-container/20 px-space-xs py-0.5">HUMAN / PHYSICAL</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-space-sm">
+              Founder social engineering, developer machine compromise, collusion between multisig keyholders, unexpected hard-fork state changes.
+            </p>
+</div>
+<div class="pt-space-md mt-space-md font-code-sm text-code-sm text-outline">
+            STATUS: BEYOND SCOPE
+          </div>
+</div>
+</div>
+</section>
+<!-- PERSISTENT FOOTER NOTICE (MANDATORY TEXT) -->
+<div class="w-full bg-surface-container-lowest p-space-md text-center">
+<p class="font-disclaimer text-disclaimer text-outline uppercase tracking-wider">
+        Automated advisory check. Not a formal audit. Not legal advice.
+      </p>
+</div>
+</div>
+</div>
+<script>
+  function toggleDetails(btn) {
+    const parentRow = btn.closest('tr');
+    const detailsRow = parentRow.nextElementSibling;
+    if (detailsRow && detailsRow.classList.contains('details-row')) {
+      if (detailsRow.classList.contains('hidden')) {
+        detailsRow.classList.remove('hidden');
+        btn.textContent = 'Hide Details';
+      } else {
+        detailsRow.classList.add('hidden');
+        btn.textContent = 'View Details';
+      }
+    }
+  }
+
+  function filterFindings(severity) {
+    const rows = document.querySelectorAll('.finding-row');
+    const tabs = document.querySelectorAll('.filter-tab');
+    let visibleCount = 0;
+
+    tabs.forEach(tab => {
+      if (tab.getAttribute('data-filter') === severity) {
+        tab.className = 'filter-tab px-space-sm py-space-xs uppercase bg-primary-container text-on-primary-container transition-colors';
+      } else {
+        tab.className = 'filter-tab px-space-sm py-space-xs uppercase bg-surface-container text-outline hover:text-on-surface transition-colors';
+      }
+    });
+
+    rows.forEach(row => {
+      const detailsRow = row.nextElementSibling;
+      const rowSev = row.getAttribute('data-severity');
+      if (severity === 'All' || rowSev === severity) {
+        row.classList.remove('hidden');
+        visibleCount++;
+      } else {
+        row.classList.add('hidden');
+        if (detailsRow && detailsRow.classList.contains('details-row')) {
+          detailsRow.classList.add('hidden');
+          const btn = row.querySelector('button');
+          if (btn) btn.textContent = 'View Details';
+        }
+      }
+    });
+
+    const countElem = document.getElementById('findings-count');
+    if (countElem) {
+      countElem.textContent = visibleCount;
+    }
+  }
+
+  function switchRegTab(authority) {
+    const authorities = ['SEBI', 'RBI', 'SEC'];
+    authorities.forEach(auth => {
+      const tab = document.getElementById('reg-tab-' + auth);
+      const content = document.getElementById('reg-content-' + auth);
+      if (auth === authority) {
+        tab.className = 'font-label-caps text-label-caps uppercase pb-1 text-primary border-b-2 border-primary';
+        if (content) content.classList.remove('hidden');
+      } else {
+        tab.className = 'font-label-caps text-label-caps uppercase pb-1 text-outline hover:text-on-surface';
+        if (content) content.classList.add('hidden');
+      }
+    });
+  }
+</script></main><footer class="w-full bg-surface-container-lowest py-space-md shadow-[0_-1px_8px_rgba(0,0,0,0.3)]"><div class="w-full px-margin flex items-center justify-between"><p class="font-disclaimer text-disclaimer text-outline">Automated advisory check. Not a formal audit. Not legal advice.</p><div class="flex items-center gap-space-md"><span class="font-code-sm text-code-sm text-outline-variant">CORE v2.4.0</span><span class="font-code-sm text-code-sm text-outline-variant">SOLIDITY 0.8.24</span></div></div></footer></body></html>

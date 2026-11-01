@@ -10,7 +10,7 @@ import { DisclaimerBox } from "../../components/DisclaimerBox";
 import { RawJsonViewer } from "../../components/RawJsonViewer";
 import { FindingItem, FindingEvidenceItem } from "../../types/backend";
 
-export default function FindingsPage() {
+function FindingsContent() {
   const searchParams = useSearchParams();
   const initialAuditId = searchParams.get("audit_id") || "";
 
@@ -219,7 +219,7 @@ export default function FindingsPage() {
                   {f.source}
                 </td>
                 <td style={{ padding: "6px 8px", border: "1px solid #ddd" }}>
-                  {Math.round(f.confidence * 100)}%
+                  {Math.round((f.confidence ?? 0) * 100)}%
                 </td>
                 <td style={{ padding: "6px 8px", border: "1px solid #ddd" }}>
                   {f.status}
@@ -354,6 +354,14 @@ export default function FindingsPage() {
 
       <RawJsonViewer data={findings} title="Raw Findings List JSON" />
     </div>
+  );
+}
+
+export default function FindingsPage() {
+  return (
+    <React.Suspense fallback={<div style={{ padding: "20px" }}>Loading findings...</div>}>
+      <FindingsContent />
+    </React.Suspense>
   );
 }
 

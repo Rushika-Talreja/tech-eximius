@@ -1,0 +1,21 @@
+[
+  {
+    "id": "erc20_supply_sum",
+    "description": "total supply equals sum of balances (bounded accounts)",
+    "applies_if": "contract_type == 'erc20'",
+    "file": "erc20_supply_sum.sol"
+  },
+  {
+    "id": "erc20_transfer_sender_balance",
+    "description": "transfer cannot increase sender balance",
+    "applies_if": "contract_type == 'erc20'",
+    "file": "erc20_transfer_sender_balance.sol"
+  },
+  {
+    "id": "erc20_no_unauthorized_mint",
+    "description": "no unauthorized mint",
+    "applies_if": "contract_type == 'erc20'",
+    "file": "erc20_no_unauthorized_mint.sol"
+  }
+]
+

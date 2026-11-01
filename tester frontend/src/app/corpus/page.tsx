@@ -69,8 +69,8 @@ export default function CorpusPage() {
             <div>Document Count: <strong>{corpusData.document_count ?? 0}</strong></div>
             <div style={{ marginTop: "10px" }}>Available Versions:</div>
             <ul style={{ margin: "4px 0", paddingLeft: "20px" }}>
-              {corpusData.versions?.map((v, i) => (
-                <li key={i}>{v}</li>
+              {corpusData.versions?.map((v: any, i: number) => (
+                <li key={i}>{typeof v === "object" ? (v?.version || JSON.stringify(v)) : String(v)}</li>
               ))}
             </ul>
           </div>

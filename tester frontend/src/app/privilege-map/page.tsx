@@ -10,7 +10,7 @@ import { DisclaimerBox } from "../../components/DisclaimerBox";
 import { RawJsonViewer } from "../../components/RawJsonViewer";
 import { PrivilegeMapResponse, PrivilegeResult, PrivilegedAction } from "../../types/backend";
 
-export default function PrivilegeMapPage() {
+function PrivilegeMapContent() {
   const searchParams = useSearchParams();
   const initialAuditId = searchParams.get("audit_id") || "";
 
@@ -45,8 +45,8 @@ export default function PrivilegeMapPage() {
         onLog: addLogEntry,
       });
       setPrivData(res.data);
-      if (res.data?.results?.length > 0 && !selectedRole) {
-        setSelectedRole(res.data.results[0].role_key);
+      if ((res.data?.results?.length ?? 0) > 0 && !selectedRole) {
+        setSelectedRole(res.data?.results?.[0]?.role_key || null);
       }
     } catch (err) {
       setError(err);
@@ -64,6 +64,7 @@ export default function PrivilegeMapPage() {
     const oldScore = privData?.results?.find((r) => r.role_key === selectedRole)?.blast_score;
 
     const params: any = {};
+    const delayH = Number(delaySeconds) / 3600;
     if (holderType === "multisig") {
       params.threshold = Number(threshold);
       params.signers = Number(signers);
@@ -71,6 +72,7 @@ export default function PrivilegeMapPage() {
       params.threshold = Number(threshold);
       params.signers = Number(signers);
       params.delay_seconds = Number(delaySeconds);
+      params.delay_hours = delayH;
     }
 
     try {
@@ -81,6 +83,9 @@ export default function PrivilegeMapPage() {
             {
               role_key: selectedRole,
               holder_type: holderType,
+              threshold: holderType.includes("multisig") ? Number(threshold) : undefined,
+              signers: holderType.includes("multisig") ? Number(signers) : undefined,
+              delay_hours: holderType === "timelock_multisig" ? delayH : undefined,
               params,
             },
           ],
@@ -333,13 +338,18 @@ export default function PrivilegeMapPage() {
 
               {holderType === "timelock_multisig" && (
                 <div>
-                  <label style={{ fontSize: "12px", display: "block" }}>Delay (seconds):</label>
+                  <label style={{ fontSize: "12px", display: "block" }}>Delay (seconds, e.g. 172800 for 48h):</label>
                   <input
                     type="number"
                     value={delaySeconds}
                     onChange={(e) => setDelaySeconds(Number(e.target.value))}
                     style={{ width: "100%", padding: "6px" }}
                   />
+                  <div style={{ fontSize: "11px", color: "#666", marginTop: "3px", display: "flex", gap: "8px" }}>
+                    <span>= {(delaySeconds / 3600).toFixed(1)}h</span>
+                    <button type="button" onClick={() => setDelaySeconds(172800)} style={{ fontSize: "10px", padding: "1px 4px", cursor: "pointer" }}>Set 48h</button>
+                    <button type="button" onClick={() => setDelaySeconds(86400)} style={{ fontSize: "10px", padding: "1px 4px", cursor: "pointer" }}>Set 24h</button>
+                  </div>
                 </div>
               )}
 
@@ -380,6 +390,14 @@ export default function PrivilegeMapPage() {
 
       <RawJsonViewer data={privData} title="Raw Privilege Map JSON" />
     </div>
+  );
+}
+
+export default function PrivilegeMapPage() {
+  return (
+    <React.Suspense fallback={<div style={{ padding: "20px" }}>Loading privilege map...</div>}>
+      <PrivilegeMapContent />
+    </React.Suspense>
   );
 }
 

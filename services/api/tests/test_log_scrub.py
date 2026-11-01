@@ -99,3 +99,74 @@ async def test_integration_logs_and_errors_do_not_echo_payloads(
         # Ensure logs during 422 do not leak the marker
         for record in caplog.records:
             assert marker not in record.getMessage(), "Customer payload leaked in error log"
+
+
+@pytest.mark.asyncio
+async def test_fixture_run_logs_scrubbed_for_fixture_unique_strings(
+    async_client: AsyncClient,
+    auth_a: dict[str, str],
+    caplog: pytest.LogCaptureFixture,
+) -> None:
+    """
+    Automated check: run an audit against a fixture with unique strings
+    and verify that none of the fixture-unique strings leak into any logs.
+    """
+    import asyncio
+    import io
+
+    canary = "CANARY_FIXTURE_TOKEN_SECRET_987654321"
+
+    contract_code = f"""// SPDX-License-Identifier: MIT
+pragma solidity 0.8.24;
+
+// Canary unique marker: {canary}
+contract LogSafeVault {{
+    string public constant CANARY_ID = "{canary}";
+    mapping(address => uint256) public balances;
+
+    function deposit() external payable {{
+        balances[msg.sender] += msg.value;
+    }}
+}}
+"""
+
+    with caplog.at_level(logging.DEBUG):
+        # 1. Create project
+        proj_resp = await async_client.post(
+            "/v1/projects",
+            json={"name": "Log Scrub Project"},
+            headers=auth_a,
+        )
+        assert proj_resp.status_code == 201
+        project_id = proj_resp.json()["id"]
+
+        # 2. Upload contract with canary
+        files = {"file": ("LogSafeVault.sol", io.BytesIO(contract_code.encode()), "text/plain")}
+        up_resp = await async_client.post("/v1/uploads", files=files, headers=auth_a)
+        assert up_resp.status_code == 201
+        upload_id = up_resp.json()["upload_id"]
+
+        # 3. Create audit
+        audit_resp = await async_client.post(
+            f"/v1/projects/{project_id}/audits",
+            json={"upload_id": upload_id},
+            headers=auth_a,
+        )
+        assert audit_resp.status_code == 202
+        audit_id = audit_resp.json()["audit_id"]
+
+        # 4. Wait for audit completion
+        for _ in range(40):
+            status_resp = await async_client.get(f"/v1/audits/{audit_id}", headers=auth_a)
+            st = status_resp.json().get("status")
+            if st in ("complete", "failed"):
+                break
+            await asyncio.sleep(0.1)
+
+        assert status_resp.json().get("status") == "complete"
+
+        # 5. Check all captured logs: canary MUST NOT appear in any record
+        for record in caplog.records:
+            msg = record.getMessage()
+            assert canary not in msg, f"Fixture-unique canary string leaked into log: {msg!r}"
+
