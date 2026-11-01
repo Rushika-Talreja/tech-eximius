@@ -27,6 +27,7 @@ import logging
 from dataclasses import dataclass
 from functools import lru_cache
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 from fastembed import SparseTextEmbedding, TextEmbedding
 from qdrant_client import QdrantClient, models
@@ -40,6 +41,9 @@ from auditor_core.rag.ingest import (
     SPARSE_VECTOR_NAME,
 )
 
+if TYPE_CHECKING:
+    from auditor_core.interfaces import CandidateSummary
+    from auditor_core.interfaces import RetrievalResult as IfaceResult
 logger = logging.getLogger(__name__)
 
 __all__ = ["Evidence", "RetrievalResult", "retrieve_evidence"]
@@ -87,7 +91,7 @@ class RetrievalResult:
     corpus_version: str = "1.0.0"
 
 
-def retrieve_evidence(
+def search_evidence(
     query: str,
     vuln_classes: list[str] | None = None,
     swc_ids: list[str] | None = None,
@@ -213,7 +217,7 @@ def _build_filter(
     swc_ids: list[str] | None,
 ) -> models.Filter | None:
     """Build the payload filter, or ``None`` when no filter was requested."""
-    conditions: list[models.FieldCondition] = []
+    conditions: list[models.Condition] = []
     if vuln_classes:
         conditions.append(
             models.FieldCondition(
@@ -356,4 +360,44 @@ def _to_evidence(
         level=str(payload.get("level") or ""),
         similarity=similarity,
         rrf_score=raw,
+    )
+
+
+async def retrieve_evidence(candidate: CandidateSummary) -> IfaceResult:
+    """Interface entry point: adapts search_evidence to interfaces.py."""
+    import asyncio
+
+    from auditor_schemas.models import Evidence as IfaceEvidence
+
+    from auditor_core.interfaces import RetrievalResult as IfaceResult
+
+    query = " ".join([*candidate.vuln_classes, *candidate.structural_facts])
+    if not query.strip():
+        return IfaceResult(evidence=[], degraded=False, corpus_version=None)
+    res = await asyncio.to_thread(
+        search_evidence,
+        query,
+        vuln_classes=candidate.vuln_classes or None,
+    )
+    items = []
+    for e in res.evidence:
+        kind = "swc" if e.doc_id.lower().startswith("swc") else "postmortem"
+        try:
+            items.append(
+                IfaceEvidence(
+                    kind=kind,
+                    title=e.title,
+                    locator=e.doc_id,
+                    source_url=e.source_url or None,
+                    chunk_id=e.chunk_id,
+                    quote=e.exact_quote[:500] or None,
+                    retrieval_score=max(0.0, min(1.0, e.score)),
+                )
+            )
+        except ValueError:
+            continue
+    return IfaceResult(
+        evidence=items,
+        degraded=res.degraded,
+        corpus_version=res.corpus_version,
     )

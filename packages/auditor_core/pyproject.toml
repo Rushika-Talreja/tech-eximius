@@ -14,6 +14,8 @@ dependencies = [
     "tree-sitter>=0.21.3",
     "tree-sitter-solidity>=1.2.0",
     "PyYAML>=6.0",
+    "fastembed==0.9.1",
+    "qdrant-client==1.20.0",
     "structlog>=24.1.0",
 ]
 
