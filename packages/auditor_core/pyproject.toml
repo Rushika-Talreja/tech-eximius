@@ -11,6 +11,10 @@ dependencies = [
     "auditor-schemas",
     "pydantic>=2.7,<3",
     "pydantic-settings>=2.3,<3",
+    "tree-sitter>=0.21.3",
+    "tree-sitter-solidity>=1.2.0",
+    "PyYAML>=6.0",
+    "structlog>=24.1.0",
 ]
 
 [project.optional-dependencies]
