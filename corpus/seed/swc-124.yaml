@@ -1,0 +1,22 @@
+doc_id: swc-124
+kind: swc
+title: Write to Arbitrary Storage Location
+vuln_class: [arbitrary-storage-write]
+swc_ids: [SWC-124]
+cwe_ids: [CWE-123]
+source_url: https://swcregistry.io/docs/SWC-124
+license: MIT
+date: null
+loss_usd: null
+summary: >
+  If an attacker can control the index or length used when writing to a storage array or
+  mapping, they may be able to write to a storage slot of their choosing. This can
+  overwrite sensitive variables such as the contract owner.
+root_cause: >
+  Storage slot addresses are computed from attacker-influenced values without bounds
+  checks, and the contract allows writes that are not restricted to the intended data
+  structure.
+exploit_pattern: >
+  The attacker first grows or wraps an array length, then writes to a computed index that
+  maps onto a protected variable, for example the owner slot, and so takes control.
+

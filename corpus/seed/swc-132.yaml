@@ -1,0 +1,23 @@
+doc_id: swc-132
+kind: swc
+title: Unexpected Ether balance
+vuln_class: [unexpected-balance]
+swc_ids: [SWC-132]
+cwe_ids: [CWE-667]
+source_url: https://swcregistry.io/docs/SWC-132
+license: MIT
+date: null
+loss_usd: null
+summary: >
+  Logic that assumes a contract holds exactly a certain amount of ether can be broken,
+  because anyone can force ether into a contract. Checks that compare the contract balance
+  to an expected value may then fail or be bypassed.
+root_cause: >
+  The code uses the contract balance as a trusted record of deposits, although ether can
+  arrive without calling any function, for example through selfdestruct from another
+  contract.
+exploit_pattern: >
+  An attacker sends ether to the target by forcing it in. The balance no longer matches
+  the expected value, so a strict equality check fails and can lock the contract or unlock
+  a payout.
+

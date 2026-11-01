@@ -1,0 +1,21 @@
+doc_id: swc-130
+kind: swc
+title: Right-To-Left-Override control character
+vuln_class: [unicode-spoofing]
+swc_ids: [SWC-130]
+cwe_ids: [CWE-451]
+source_url: https://swcregistry.io/docs/SWC-130
+license: MIT
+date: null
+loss_usd: null
+summary: >
+  The Unicode right-to-left override character reverses how following text is displayed.
+  Hidden inside a string or file name, it can make code or a label look different from
+  what is actually stored, which misleads reviewers.
+root_cause: >
+  Interfaces and editors render the control character instead of showing it, so the
+  visible text no longer matches the underlying bytes.
+exploit_pattern: >
+  An attacker inserts the control character into a name or string so that a harmful value
+  appears harmless to a reader. The victim trusts what they see and approves the wrong
+  thing.

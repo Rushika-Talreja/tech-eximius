@@ -1,0 +1,20 @@
+doc_id: swc-131
+kind: swc
+title: Presence of unused variables
+vuln_class: [code-quality]
+swc_ids: [SWC-131]
+cwe_ids: [CWE-1164]
+source_url: https://swcregistry.io/docs/SWC-131
+license: MIT
+date: null
+loss_usd: null
+summary: >
+  Variables that are declared but never used are not a direct attack path. They often show
+  leftover code or unfinished logic, which makes the contract harder to review and can
+  hide real mistakes.
+root_cause: >
+  Code was changed or partly removed without cleaning up, leaving declarations that serve
+  no purpose and that may signal missing checks.
+exploit_pattern: >
+  No direct exploit. A reviewer should treat the unused variable as a hint to check
+  whether some intended logic was left out.

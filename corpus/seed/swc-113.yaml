@@ -1,0 +1,22 @@
+doc_id: swc-113
+kind: swc
+title: DoS with Failed Call
+vuln_class: [denial-of-service]
+swc_ids: [SWC-113]
+cwe_ids: [CWE-703]
+source_url: https://swcregistry.io/docs/SWC-113
+license: MIT
+date: null
+loss_usd: null
+summary: >
+  A contract that treats the success of an external call as a requirement for its own
+  progress can be blocked by a callee that always reverts. If one failing call stops a
+  whole function, that function becomes unusable for everyone.
+root_cause: >
+  External calls to untrusted addresses are made inside logic that must complete, and a
+  failure is handled by reverting instead of isolating that single recipient.
+exploit_pattern: >
+  An attacker becomes one of the recipients, for example a bidder or refund target, using
+  a contract whose receive logic always reverts. Every later attempt to pay out then
+  fails.
+

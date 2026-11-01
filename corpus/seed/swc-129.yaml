@@ -1,0 +1,21 @@
+doc_id: swc-129
+kind: swc
+title: Typographical Error
+vuln_class: [logic-error]
+swc_ids: [SWC-129]
+cwe_ids: [CWE-480]
+source_url: https://swcregistry.io/docs/SWC-129
+license: MIT
+date: null
+loss_usd: null
+summary: >
+  A small typing mistake, such as writing =+ instead of += or using the wrong operator,
+  can quietly change what the code does. The contract compiles and runs, but its
+  accounting or checks behave differently from what the author intended.
+root_cause: >
+  The wrong operator or symbol is valid Solidity, so the compiler gives no error, and the
+  mistake survives unless tests or review catch it.
+exploit_pattern: >
+  An attacker looks for operations where the mistaken operator overwrites a balance or
+  skips a check, then repeats the action to gain value or bypass a limit.
+

@@ -1,0 +1,20 @@
+doc_id: swc-111
+kind: swc
+title: Use of Deprecated Solidity Functions
+vuln_class: [deprecated-functions]
+swc_ids: [SWC-111]
+cwe_ids: [CWE-477]
+source_url: https://swcregistry.io/docs/SWC-111
+license: MIT
+date: null
+loss_usd: null
+summary: >
+  Contracts that use keywords and built-ins which Solidity has deprecated or removed, such
+  as suicide, throw, sha3, callcode or msg.gas, rely on behaviour that newer compilers
+  reject or change. This usually points to unmaintained code.
+root_cause: >
+  The code was written for an old language version and was never updated, so it depends on
+  features whose semantics or safety properties have since been replaced.
+exploit_pattern: >
+  Rarely exploited directly. The risk is that deprecated constructs hide weaker checks, or
+  break when the contract is rebuilt with a newer compiler.

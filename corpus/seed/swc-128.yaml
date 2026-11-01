@@ -1,0 +1,21 @@
+doc_id: swc-128
+kind: swc
+title: DoS With Block Gas Limit
+vuln_class: [denial-of-service]
+swc_ids: [SWC-128]
+cwe_ids: [CWE-400]
+source_url: https://swcregistry.io/docs/SWC-128
+license: MIT
+date: null
+loss_usd: null
+summary: >
+  A function that loops over a data structure which can grow without limit may eventually
+  need more gas than a single block allows. At that point the function can never succeed
+  again, which blocks the feature or locks funds.
+root_cause: >
+  Work done in one transaction scales with a collection that users can enlarge, and there
+  is no cap or way to split the work across several transactions.
+exploit_pattern: >
+  An attacker adds many entries to the array or mapping. Once iterating over all of them
+  exceeds the block gas limit, any call that needs the full loop fails permanently.
+

@@ -1,0 +1,21 @@
+doc_id: swc-136
+kind: swc
+title: Unencrypted Private Data On-Chain
+vuln_class: [private-data-exposure]
+swc_ids: [SWC-136]
+cwe_ids: [CWE-767]
+source_url: https://swcregistry.io/docs/SWC-136
+license: MIT
+date: null
+loss_usd: null
+summary: >
+  Variables marked private in Solidity only restrict access from other contracts. Their
+  values are still stored on the public chain and anyone can read them by inspecting
+  contract storage, so secrets are not protected.
+root_cause: >
+  The private keyword is mistaken for confidentiality, while storage contents are visible
+  to every node and every observer.
+exploit_pattern: >
+  An attacker reads the storage slot that holds the supposed secret, such as a password or
+  a game answer, and uses it to win a game or authorise an action.
+

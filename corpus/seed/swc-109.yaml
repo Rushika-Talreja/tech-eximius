@@ -1,0 +1,22 @@
+doc_id: swc-109
+kind: swc
+title: Uninitialized Storage Pointer
+vuln_class: [uninitialized-storage]
+swc_ids: [SWC-109]
+cwe_ids: [CWE-824]
+source_url: https://swcregistry.io/docs/SWC-109
+license: MIT
+date: null
+loss_usd: null
+summary: >
+  In older Solidity versions, a local variable of struct or array type that is declared
+  without being assigned a location can silently point at storage slot zero. Later writes
+  through that variable then overwrite unrelated state variables stored at the start of
+  storage.
+root_cause: >
+  The compiler treats an unassigned local reference as a storage pointer instead of a
+  fresh memory object, so the pointer is never initialised to a safe location.
+exploit_pattern: >
+  An attacker calls a function that writes into the uninitialised local struct. The write
+  lands on slot zero and changes values such as an owner address or a balance counter.
+
