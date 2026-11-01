@@ -21,6 +21,9 @@ dependencies = [
     "greenlet>=3.0",
 ]
 
+[project.scripts]
+auditor-corpus = "auditor_core.rag.corpus_cli:main"
+
 [project.optional-dependencies]
 dev = ["pytest>=8", "pytest-asyncio>=0.23", "mypy>=1.10"]
 
