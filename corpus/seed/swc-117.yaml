@@ -1,0 +1,21 @@
+doc_id: swc-117
+kind: swc
+title: Signature Malleability
+vuln_class: [signature-malleability]
+swc_ids: [SWC-117]
+cwe_ids: [CWE-347]
+source_url: https://swcregistry.io/docs/SWC-117
+license: MIT
+date: null
+loss_usd: null
+summary: >
+  A single valid signature can often be rewritten into a different but still
+  valid one. If the signature itself is used as a unique ID, that assumption
+  breaks.
+root_cause: >
+  The contract treats the signature bytes as proof that an action was done
+  once, but the elliptic curve math allows a second encoding of the same
+  signature.
+exploit_pattern: >
+  An attacker takes a valid signature, produces an alternate valid form, and
+  submits it to bypass a check that blocks reuse of the original bytes.

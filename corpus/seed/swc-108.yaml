@@ -1,0 +1,20 @@
+doc_id: swc-108
+kind: swc
+title: State Variable Default Visibility
+vuln_class: [variable-visibility]
+swc_ids: [SWC-108]
+cwe_ids: [CWE-710]
+source_url: https://swcregistry.io/docs/SWC-108
+license: MIT
+date: null
+loss_usd: null
+summary: >
+  State variables without an explicit visibility are given a default one,
+  which can hide the fact that data is more exposed than intended.
+root_cause: >
+  The author does not choose visibility on purpose, so readers and tools
+  cannot tell whether a variable was meant to be readable or internal only.
+exploit_pattern: >
+  A reviewer or integrator assumes a variable is private and builds logic on
+  that belief, while the variable can in fact be read or used in ways the
+  author did not plan.

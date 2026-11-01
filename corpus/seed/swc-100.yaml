@@ -1,0 +1,22 @@
+doc_id: swc-100
+kind: swc
+title: Function Default Visibility
+vuln_class: [function-visibility]
+swc_ids: [SWC-100]
+cwe_ids: [CWE-710]
+source_url: https://swcregistry.io/docs/SWC-100
+license: MIT
+date: null
+loss_usd: null
+summary: >
+  Functions that do not declare a visibility keyword were public by default in
+  older Solidity versions. A function meant for internal use can then be
+  called by anyone.
+root_cause: >
+  The developer relies on the compiler default instead of stating visibility,
+  so an internal helper or sensitive routine becomes part of the public
+  interface.
+exploit_pattern: >
+  An attacker calls a function that was never meant to be external, for
+  example one that moves funds or changes ownership, directly from their own
+  account.

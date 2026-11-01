@@ -1,0 +1,19 @@
+doc_id: swc-118
+kind: swc
+title: Incorrect Constructor Name
+vuln_class: [constructor-naming]
+swc_ids: [SWC-118]
+cwe_ids: [CWE-665]
+source_url: https://swcregistry.io/docs/SWC-118
+license: MIT
+date: null
+loss_usd: null
+summary: >
+  In old Solidity, a constructor was a function with the same name as the
+  contract. A misspelled name turns it into an ordinary public function.
+root_cause: >
+  The function intended to run once at deployment does not match the contract
+  name, so it is never run as a constructor and stays callable by anyone.
+exploit_pattern: >
+  An attacker calls the would-be constructor after deployment and sets
+  themselves as owner or sets critical settings.

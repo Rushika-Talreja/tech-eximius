@@ -1,0 +1,19 @@
+doc_id: swc-123
+kind: swc
+title: Requirement Violation
+vuln_class: [requirement-violation]
+swc_ids: [SWC-123]
+cwe_ids: [CWE-573]
+source_url: https://swcregistry.io/docs/SWC-123
+license: MIT
+date: null
+loss_usd: null
+summary: >
+  A function is called with inputs or in a state that its callee does not
+  allow, so a require condition fails and the call reverts.
+root_cause: >
+  A caller does not respect the preconditions of the function it uses, or the
+  contract allows external input that cannot satisfy those conditions.
+exploit_pattern: >
+  External input that always fails a requirement inside a shared flow causes
+  the whole operation to revert, blocking users or other logic.

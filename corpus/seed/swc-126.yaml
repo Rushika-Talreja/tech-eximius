@@ -1,0 +1,20 @@
+doc_id: swc-126
+kind: swc
+title: Insufficient Gas Griefing
+vuln_class: [gas-griefing]
+swc_ids: [SWC-126]
+cwe_ids: [CWE-691]
+source_url: https://swcregistry.io/docs/SWC-126
+license: MIT
+date: null
+loss_usd: null
+summary: >
+  A relayer or caller forwards a transaction with just enough gas that the
+  outer call succeeds while the inner call fails, which leaves the action half
+  done.
+root_cause: >
+  The contract does not confirm that the inner call received enough gas or
+  that it succeeded before marking the request as handled.
+exploit_pattern: >
+  A malicious relayer submits the transaction with limited gas so the target
+  call fails, but the request is recorded as processed and cannot be retried.

@@ -1,0 +1,20 @@
+doc_id: swc-125
+kind: swc
+title: Incorrect Inheritance Order
+vuln_class: [inheritance-order]
+swc_ids: [SWC-125]
+cwe_ids: [CWE-696]
+source_url: https://swcregistry.io/docs/SWC-125
+license: MIT
+date: null
+loss_usd: null
+summary: >
+  With multiple inheritance, the order of parent contracts decides which
+  version of a function or variable is used, and a wrong order selects the
+  wrong one.
+root_cause: >
+  Solidity resolves conflicts using a fixed linearization rule, and listing
+  parents in the wrong order silently picks an unintended implementation.
+exploit_pattern: >
+  A function that the author expected to override another does not, so a
+  safety check in one parent is skipped or a wrong version of logic runs.

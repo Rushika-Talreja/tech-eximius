@@ -1,0 +1,19 @@
+doc_id: swc-121
+kind: swc
+title: Missing Protection against Signature Replay Attacks
+vuln_class: [signature-replay]
+swc_ids: [SWC-121]
+cwe_ids: [CWE-347]
+source_url: https://swcregistry.io/docs/SWC-121
+license: MIT
+date: null
+loss_usd: null
+summary: >
+  A signed message that can be submitted more than once lets someone repeat
+  the signed action again and again.
+root_cause: >
+  The signed data does not include a nonce, a used-message record, or a chain
+  and contract identifier, so nothing stops reuse.
+exploit_pattern: >
+  An attacker resubmits a previously valid signed message, possibly on another
+  contract or chain, to repeat a payment or permission.

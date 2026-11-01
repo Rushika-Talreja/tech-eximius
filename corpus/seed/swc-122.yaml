@@ -1,0 +1,19 @@
+doc_id: swc-122
+kind: swc
+title: Lack of Proper Signature Verification
+vuln_class: [signature-verification]
+swc_ids: [SWC-122]
+cwe_ids: [CWE-345]
+source_url: https://swcregistry.io/docs/SWC-122
+license: MIT
+date: null
+loss_usd: null
+summary: >
+  Relying on data that looks signed without correctly checking the signature,
+  or accepting unsigned input, lets forged messages pass.
+root_cause: >
+  The contract trusts off-chain authorization but verifies it incorrectly, for
+  example accepting an empty or zero recovery result as valid.
+exploit_pattern: >
+  An attacker crafts a message with an invalid or missing signature that the
+  flawed check accepts, and gains an action reserved for the signer.

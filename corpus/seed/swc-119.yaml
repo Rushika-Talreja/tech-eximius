@@ -1,0 +1,19 @@
+doc_id: swc-119
+kind: swc
+title: Shadowing State Variables
+vuln_class: [variable-shadowing]
+swc_ids: [SWC-119]
+cwe_ids: [CWE-710]
+source_url: https://swcregistry.io/docs/SWC-119
+license: MIT
+date: null
+loss_usd: null
+summary: >
+  A variable in a child contract can reuse the name of one in a parent
+  contract, so two different storage slots hold values under the same name.
+root_cause: >
+  Inheritance combined with repeated variable names makes code read from or
+  write to a different variable than the author expected.
+exploit_pattern: >
+  Logic updates the child copy while checks read the parent copy, so a guard
+  or balance appears unchanged and a rule can be bypassed.

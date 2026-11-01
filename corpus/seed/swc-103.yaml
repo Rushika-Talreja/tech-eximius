@@ -1,0 +1,20 @@
+doc_id: swc-103
+kind: swc
+title: Floating Pragma
+vuln_class: [floating-pragma]
+swc_ids: [SWC-103]
+cwe_ids: [CWE-664]
+source_url: https://swcregistry.io/docs/SWC-103
+license: MIT
+date: null
+loss_usd: null
+summary: >
+  A pragma that allows a range of compiler versions means the contract may be
+  built with a different version than the one it was tested with.
+root_cause: >
+  Version ranges such as caret notation let deployment use a newer or older
+  compiler than the audited one, so tested behavior and deployed behavior can
+  differ.
+exploit_pattern: >
+  The contract is deployed with a compiler version that contains a defect or
+  changed behavior that testing never covered.

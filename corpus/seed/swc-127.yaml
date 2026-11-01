@@ -1,0 +1,21 @@
+doc_id: swc-127
+kind: swc
+title: Arbitrary Jump with Function Type Variable
+vuln_class: [arbitrary-jump]
+swc_ids: [SWC-127]
+cwe_ids: [CWE-695]
+source_url: https://swcregistry.io/docs/SWC-127
+license: MIT
+date: null
+loss_usd: null
+summary: >
+  Solidity function-type variables can be overwritten, and in assembly this
+  can make execution jump to an unintended location in the code.
+root_cause: >
+  A function pointer stored in a variable can be changed by attacker-
+  controlled data, so a later call runs code the author never meant to be
+  reachable.
+exploit_pattern: >
+  An attacker overwrites a function-type variable, for example through an
+  unchecked write, and then triggers the call so execution continues at a
+  chosen place.
