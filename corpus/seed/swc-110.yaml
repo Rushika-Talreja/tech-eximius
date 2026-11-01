@@ -1,7 +1,7 @@
 doc_id: swc-110
 kind: swc
 title: Assert Violation
-vuln_class: [assertion-failure]   # provisional, needs agreed class
+vuln_class: [assertion-failure]
 swc_ids: [SWC-110]
 cwe_ids: [CWE-670]
 source_url: https://swcregistry.io/docs/SWC-110

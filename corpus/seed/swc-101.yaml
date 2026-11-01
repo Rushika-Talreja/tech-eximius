@@ -1,7 +1,7 @@
 doc_id: swc-101
 kind: swc
 title: Integer Overflow and Underflow
-vuln_class: [integer-overflow]   # provisional
+vuln_class: [integer-overflow]
 swc_ids: [SWC-101]
 cwe_ids: [CWE-682]
 source_url: https://swcregistry.io/docs/SWC-101

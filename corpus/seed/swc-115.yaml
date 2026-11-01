@@ -1,7 +1,7 @@
 doc_id: swc-115
 kind: swc
 title: Authorization through tx.origin
-vuln_class: [access-control]   # provisional
+vuln_class: [access-control]
 swc_ids: [SWC-115]
 cwe_ids: [CWE-477]
 source_url: https://swcregistry.io/docs/SWC-115

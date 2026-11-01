@@ -1,7 +1,7 @@
 doc_id: swc-106
 kind: swc
 title: Unprotected SELFDESTRUCT Instruction
-vuln_class: [access-control]   # provisional
+vuln_class: [access-control]
 swc_ids: [SWC-106]
 cwe_ids: [CWE-284]
 source_url: https://swcregistry.io/docs/SWC-106

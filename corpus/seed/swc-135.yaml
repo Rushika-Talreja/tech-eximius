@@ -1,7 +1,7 @@
 doc_id: swc-135
 kind: swc
 title: Code With No Effects
-vuln_class: [dead-code]   # provisional, needs agreed class
+vuln_class: [dead-code]
 swc_ids: [SWC-135]
 cwe_ids: [CWE-1164] 
 source_url: https://swcregistry.io/docs/SWC-135

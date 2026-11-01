@@ -1,7 +1,7 @@
 doc_id: swc-120
 kind: swc
 title: Weak Sources of Randomness from Chain Attributes
-vuln_class: [weak-randomness]   # provisional, needs agreed class
+vuln_class: [weak-randomness]
 swc_ids: [SWC-120]
 cwe_ids: [CWE-330]
 source_url: https://swcregistry.io/docs/SWC-120
