@@ -5,8 +5,8 @@ role escalation, and determinism by shuffling input order.
 from __future__ import annotations
 
 import random
+
 import pytest
-from auditor_schemas.models import PowerCategory
 from auditor_core.privilege_map.scoring import (
     compute_action_score,
     compute_role_scores_with_escalation,
@@ -14,6 +14,7 @@ from auditor_core.privilege_map.scoring import (
     get_holder_multiplier,
     get_tier,
 )
+from auditor_schemas.models import PowerCategory
 
 
 @pytest.mark.parametrize(

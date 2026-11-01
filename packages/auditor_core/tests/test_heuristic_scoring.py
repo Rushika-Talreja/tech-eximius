@@ -1,7 +1,5 @@
-import pytest
 from auditor_core.scoring.heuristic import (
     SCORE_LABEL,
-    SCORING_WEIGHTS,
     compute_heuristic_scores,
 )
 

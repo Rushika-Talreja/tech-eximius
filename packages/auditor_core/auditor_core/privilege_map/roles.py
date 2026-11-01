@@ -11,10 +11,9 @@ Handles:
 from __future__ import annotations
 
 import re
-from typing import Any
 import uuid
+from typing import Any
 
-from auditor_schemas.models import PowerCategory
 from auditor_core.privilege_map.matchers import classify_power
 from auditor_core.privilege_map.mitigations import (
     detect_cap,
@@ -22,7 +21,11 @@ from auditor_core.privilege_map.mitigations import (
     detect_reversibility,
     detect_two_step_transfer,
 )
-from auditor_core.privilege_map.semantic import ContractSemanticModel, FunctionSemantic, ModifierSemantic
+from auditor_core.privilege_map.semantic import (
+    ContractSemanticModel,
+    ModifierSemantic,
+)
+from auditor_schemas.models import PowerCategory
 
 
 def format_role_display_name(role_key: str) -> str:

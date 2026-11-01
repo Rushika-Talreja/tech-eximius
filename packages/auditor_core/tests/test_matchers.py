@@ -17,8 +17,6 @@ Ambiguous cases fall to OTHER_PRIVILEGED.
 """
 from __future__ import annotations
 
-import pytest
-from auditor_schemas.models import PowerCategory
 from auditor_core.privilege_map.matchers import (
     BASE_SCORES,
     classify_power,
@@ -29,12 +27,12 @@ from auditor_core.privilege_map.matchers import (
     match_change_parameter,
     match_grant_role,
     match_mint,
-    match_other_privileged,
     match_pause,
     match_selfdestruct_or_delegatecall,
     match_upgrade,
     match_withdraw_funds,
 )
+from auditor_schemas.models import PowerCategory
 
 
 def test_base_scores_table() -> None:

@@ -7,7 +7,6 @@ from __future__ import annotations
 
 from typing import Any
 
-
 CATEGORY_TEMPLATES = {
     "MINT": "{role} can mint {cap_text} tokens to any address {delay_clause}.",
     "WITHDRAW_FUNDS": "{role} can withdraw funds from {contract} {delay_clause}.",

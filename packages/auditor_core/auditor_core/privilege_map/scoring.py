@@ -5,13 +5,12 @@ Calculates action scores, role scores with escalation, tiers, and per-action bre
 """
 from __future__ import annotations
 
-import math
+import uuid
 from pathlib import Path
 from typing import Any
-import uuid
 
 import yaml
-from sqlalchemy import select, update
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 CONFIG_PATH = Path(__file__).parent / "scoring_config.yaml"
@@ -202,7 +201,8 @@ async def recompute_scores(
     Updates privileged_actions and privilege_results in place.
     Target: < 300ms.
     """
-    from app.db import PrivilegeResult, PrivilegedAction as PrivilegedActionDB, RoleDeclaration, RoleNode
+    from app.db import PrivilegedAction as PrivilegedActionDB
+    from app.db import PrivilegeResult, RoleDeclaration, RoleNode
     from auditor_core.privilege_map.templates import render_worst_case_sentence
 
     # Load declarations

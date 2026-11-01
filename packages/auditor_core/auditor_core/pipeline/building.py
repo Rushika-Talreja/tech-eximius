@@ -137,14 +137,7 @@ def select_solc_version(
             continue
 
         # Check basic compatibility
-        if "0.7" in pragma and not chosen_version.startswith("0.7"):
-            not_analyzed.append({
-                "file": path,
-                "reason": "incompatible_pragma",
-                "pragma": pragma,
-                "message": f"Pragma '{pragma}' incompatible with selected compiler '{chosen_version}'",
-            })
-        elif "0.8" in pragma and chosen_version.startswith("0.7"):
+        if "0.7" in pragma and not chosen_version.startswith("0.7") or "0.8" in pragma and chosen_version.startswith("0.7"):
             not_analyzed.append({
                 "file": path,
                 "reason": "incompatible_pragma",

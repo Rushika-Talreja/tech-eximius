@@ -13,7 +13,6 @@ from __future__ import annotations
 
 import json
 import os
-import re
 import subprocess
 import tempfile
 import uuid
@@ -22,7 +21,6 @@ from pathlib import Path
 from typing import Any
 
 import yaml
-
 from auditor_core.pipeline.building import locate_solc_binary
 from auditor_core.privilege_map.mitigations import detect_cap
 from auditor_core.privilege_map.semantic import ContractSemanticModel
@@ -174,7 +172,7 @@ def run_slither_curated_scan(
 
         detectors_arg = ",".join(CURATED_SLITHER_DETECTORS)
 
-        for rel_path in sources.keys():
+        for rel_path in sources:
             if not rel_path.endswith(".sol"):
                 continue
             target_path = Path(tmpdir) / rel_path
@@ -395,7 +393,7 @@ def run_custom_detectors(
                         start_line=fn.span.start_line,
                         end_line=fn.span.end_line,
                         description=desc,
-                        scenario=f"Authorized or unauthorized callers could inflate token supply without restriction.",
+                        scenario="Authorized or unauthorized callers could inflate token supply without restriction.",
                         status="open",
                         scored=True,
                         evidence=[ev],
@@ -546,9 +544,7 @@ def deduplicate_and_filter_findings(
         else:
             existing = seen[key]
             # Keep higher severity or higher confidence
-            if severity_order.get(cand.severity.lower(), 0) > severity_order.get(existing.severity.lower(), 0):
-                seen[key] = cand
-            elif (
+            if severity_order.get(cand.severity.lower(), 0) > severity_order.get(existing.severity.lower(), 0) or (
                 severity_order.get(cand.severity.lower(), 0) == severity_order.get(existing.severity.lower(), 0)
                 and cand.confidence > existing.confidence
             ):
@@ -573,8 +569,13 @@ async def run_scanning_stage(
     Runs curated Slither + custom detectors + maps privilege candidates.
     Persists findings and finding_evidence rows to DB.
     """
-    from sqlalchemy import select, delete
-    from app.db import AuditFile, Finding, FindingEvidence, validate_finding_has_evidence
+    from app.db import (
+        AuditFile,
+        Finding,
+        FindingEvidence,
+        validate_finding_has_evidence,
+    )
+    from sqlalchemy import delete, select
 
     # Load file mapping
     file_rows = (await session.execute(

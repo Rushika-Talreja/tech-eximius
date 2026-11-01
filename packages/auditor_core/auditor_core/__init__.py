@@ -12,13 +12,6 @@ from auditor_core.interfaces import (
     retrieve_evidence,
     verify_draft,
 )
-
-from auditor_core.pipeline.building import (
-    BuildFailedError,
-    BuildingResult,
-    run_building_stage,
-)
-from auditor_core.sandbox.runner import ExecutionResult, SandboxRunner
 from auditor_core.patching import (
     PatchHunk,
     PatchPlan,
@@ -30,6 +23,12 @@ from auditor_core.patching import (
     render_unified_diff,
     verify_patch,
 )
+from auditor_core.pipeline.building import (
+    BuildFailedError,
+    BuildingResult,
+    run_building_stage,
+)
+from auditor_core.sandbox.runner import ExecutionResult, SandboxRunner
 
 __version__ = "0.1.0"
 
