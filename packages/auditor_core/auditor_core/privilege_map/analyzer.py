@@ -13,17 +13,17 @@ from __future__ import annotations
 import uuid
 from typing import Any
 
-from sqlalchemy import delete, select
-from sqlalchemy.ext.asyncio import AsyncSession
-
 from app.db import (
-    Audit,
     AuditFile,
-    Contract as ContractDB,
     PrivilegeResult,
-    PrivilegedAction as PrivilegedActionDB,
     RoleDeclaration,
     RoleNode,
+)
+from app.db import (
+    Contract as ContractDB,
+)
+from app.db import (
+    PrivilegedAction as PrivilegedActionDB,
 )
 from app.logging_config import get_logger
 from auditor_core.privilege_map.roles import resolve_roles_and_actions
@@ -37,6 +37,8 @@ from auditor_core.privilege_map.semantic import (
     build_semantic_models_for_project,
 )
 from auditor_core.privilege_map.templates import render_worst_case_sentence
+from sqlalchemy import delete, select
+from sqlalchemy.ext.asyncio import AsyncSession
 
 logger = get_logger(__name__)
 

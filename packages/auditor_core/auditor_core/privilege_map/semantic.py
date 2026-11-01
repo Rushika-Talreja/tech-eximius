@@ -19,11 +19,10 @@ import re
 from pathlib import Path
 from typing import Any
 
-from pydantic import BaseModel, Field
 import tree_sitter_solidity as tssolidity
-from tree_sitter import Language, Parser
-
 from app.logging_config import get_logger
+from pydantic import BaseModel, Field
+from tree_sitter import Language, Parser
 
 logger = get_logger(__name__)
 
@@ -492,9 +491,10 @@ def build_semantic_models_for_project(
 
         # Run Slither on sources
         # We can run Slither on individual contracts or directory
-        from slither import Slither
         # For in-memory sources, write temporary files or check if file exists
         import tempfile
+
+        from slither import Slither
         with tempfile.TemporaryDirectory() as tmp_dir:
             tmp_path = Path(tmp_dir)
             for rel_path, content in sources.items():
@@ -503,7 +503,7 @@ def build_semantic_models_for_project(
                 target.write_text(content, encoding="utf-8")
 
             # Run slither on each .sol file
-            for rel_path in sources.keys():
+            for rel_path in sources:
                 target = tmp_path / rel_path
                 try:
                     slither_obj = Slither(str(target), solc=solc_bin)
@@ -526,7 +526,7 @@ def build_semantic_models_for_project(
     except Exception as exc:
         logger.info("slither_ir_degraded", error=str(exc))
         # Record limitation in coverage.not_analyzed
-        for path in sources.keys():
+        for path in sources:
             not_analyzed.append({
                 "file": path,
                 "reason": "slither_analysis_degraded",

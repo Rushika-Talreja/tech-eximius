@@ -1,13 +1,12 @@
 import uuid
-import pytest
+
 from auditor_core.detectors.scanner import (
-    CandidateFinding,
     CandidateEvidence,
+    CandidateFinding,
     convert_privilege_candidates_to_findings,
     deduplicate_and_filter_findings,
     run_custom_detectors,
     run_slither_curated_scan,
-    load_detector_metadata,
 )
 from auditor_core.privilege_map.semantic import build_semantic_models_for_project
 

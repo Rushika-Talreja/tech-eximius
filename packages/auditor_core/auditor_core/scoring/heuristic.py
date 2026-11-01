@@ -76,8 +76,7 @@ def compute_heuristic_scores(
         for pr in privilege_results:
             tier = getattr(pr, "tier", "none") if not isinstance(pr, dict) else pr.get("tier", "none")
             penalty = priv_weights.get(str(tier).lower(), 0)
-            if penalty > privilege_penalty:
-                privilege_penalty = penalty
+            privilege_penalty = max(privilege_penalty, penalty)
 
     # Bounded saturating penalty curve
     # 0 penalty -> score 100

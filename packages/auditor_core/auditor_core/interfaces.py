@@ -5,6 +5,7 @@ Real implementation is owned by the evidence workstream (Milestone M4).
 from __future__ import annotations
 
 from typing import Any
+
 from pydantic import BaseModel, Field, field_validator
 
 try:

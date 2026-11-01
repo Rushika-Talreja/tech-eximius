@@ -19,6 +19,7 @@ from __future__ import annotations
 
 import re
 from typing import Any
+
 from auditor_schemas.models import PowerCategory
 
 BASE_SCORES: dict[str, int] = {

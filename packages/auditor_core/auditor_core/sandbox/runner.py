@@ -17,7 +17,6 @@ import subprocess
 import time
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any
 
 from app.logging_config import get_logger
 
