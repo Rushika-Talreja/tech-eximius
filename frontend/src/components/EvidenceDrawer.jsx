@@ -2,7 +2,7 @@ import React from 'react';
 
 /**
  * EvidenceDrawer component.
- * Sliding / contextual drawer detailing diagnostic evidence,
+ * Sliding contextual drawer detailing diagnostic evidence,
  * AST control-flow traces, historical exploit post-mortems, and regulatory clauses.
  */
 export function EvidenceDrawer({ isOpen, onClose, evidenceData, onDismiss }) {
@@ -13,7 +13,7 @@ export function EvidenceDrawer({ isOpen, onClose, evidenceData, onDismiss }) {
     title: 'State Modification Following External Low-Level Call',
     severity: 'CRITICAL',
     status: 'open',
-    location: 'Contract.sol:58:9',
+    location: 'YieldVault.sol:58:9',
     method: 'withdraw(uint256)',
     sections: [],
     rawEvidence: [],
@@ -27,31 +27,32 @@ export function EvidenceDrawer({ isOpen, onClose, evidenceData, onDismiss }) {
         {/* Drawer Header */}
         <div className="p-5 bg-[#14110F] border-b border-[#3A332D] flex items-start justify-between gap-3">
           <div>
-            <div className="flex items-center gap-2 mb-1">
-              <span className="font-label-caps text-xs text-[#D6403A] border border-[#D6403A] bg-[#D6403A]/10 px-2 py-0.5 font-bold uppercase">
+            <div className="flex items-center gap-2 mb-1.5">
+              <span className="font-label-caps text-xs text-[#D6403A] border border-[#D6403A] bg-[#D6403A]/10 px-2 py-0.5 font-bold uppercase rounded-xs">
                 {data.severity}
               </span>
               <span className="font-label-caps text-xs text-primary font-mono font-bold">
-                [{data.findingId?.slice(0, 11)}]
+                {data.findingId?.slice(0, 11)}
               </span>
-              <span className="font-label-caps text-[10px] text-outline uppercase border border-[#3A332D] px-1.5 py-0.5">
-                {data.status}
+              <span className="font-label-caps text-[10px] text-outline uppercase border border-[#3A332D] px-1.5 py-0.5 rounded-xs">
+                Status: {data.status}
               </span>
             </div>
             <h2 className="font-headline-sm text-sm text-on-surface font-semibold leading-snug">
               {data.title}
             </h2>
             <div className="font-code-sm text-[11px] text-outline mt-1">
-              Target: <span className="text-on-surface">{data.location}</span>
+              Location: <span className="text-on-surface font-mono">{data.location}</span>
             </div>
           </div>
 
           <button
             type="button"
             onClick={onClose}
-            className="font-label-caps text-xs text-on-surface-variant hover:text-primary border border-[#3A332D] hover:border-primary px-3 py-1.5 transition-colors uppercase font-bold shrink-0"
+            className="text-on-surface-variant hover:text-on-surface text-sm px-2 py-1 rounded transition-colors"
+            aria-label="Close drawer"
           >
-            [ Close ]
+            ✕
           </button>
         </div>
 
@@ -68,20 +69,20 @@ export function EvidenceDrawer({ isOpen, onClose, evidenceData, onDismiss }) {
             </div>
           ))}
 
-          {/* Raw Evidence Items from DB */}
+          {/* Attached Artifacts & Grounding Evidence */}
           {(data.rawEvidence || []).length > 0 && (
             <div className="pt-5 flex flex-col gap-3">
               <div className="font-label-caps text-[11px] text-outline uppercase font-bold tracking-wider">
-                Attached Artifacts & Quotes ({data.rawEvidence.length})
+                Attached Artifacts & Grounding ({data.rawEvidence.length})
               </div>
               {data.rawEvidence.map((ev, idx) => (
-                <div key={idx} className="p-3 bg-[#14110F] border border-[#3A332D] flex flex-col gap-1">
+                <div key={idx} className="p-3.5 bg-[#14110F] border border-[#3A332D] rounded flex flex-col gap-1">
                   <div className="flex items-center justify-between text-[11px] font-mono">
                     <span className="text-primary font-bold">{ev.title}</span>
                     <span className="text-outline">{ev.kind}</span>
                   </div>
-                  {ev.locator && <div className="text-[10px] text-outline">Locator: {ev.locator}</div>}
-                  {ev.quote && <p className="text-[11px] text-on-surface-variant font-mono mt-1">{ev.quote}</p>}
+                  {ev.locator && <div className="text-[10px] text-outline font-mono">Locator: {ev.locator}</div>}
+                  {ev.quote && <p className="text-[11px] text-on-surface-variant font-mono mt-1 leading-relaxed">{ev.quote}</p>}
                 </div>
               ))}
             </div>
@@ -90,23 +91,23 @@ export function EvidenceDrawer({ isOpen, onClose, evidenceData, onDismiss }) {
 
         {/* Drawer Footer Actions */}
         <div className="p-4 bg-[#14110F] border-t border-[#3A332D] flex items-center justify-between">
-          <span className="font-disclaimer text-[10px] text-outline">
-            Automated advisory check. Not legal advice.
+          <span className="font-body-sm text-[10px] text-outline">
+            Automated advisory check.
           </span>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             <button
               type="button"
               onClick={() => onDismiss && onDismiss(data.findingId, data.status)}
-              className="font-label-caps text-xs text-[#E8782A] border border-[#E8782A] px-3.5 py-1.5 hover:bg-[#E8782A]/10 transition-colors uppercase font-bold"
+              className="font-label-caps text-xs text-[#E8782A] border border-[#E8782A] px-3.5 py-1.5 hover:bg-[#E8782A]/10 transition-colors uppercase font-bold rounded"
             >
-              {isDismissed ? '[ Reopen Finding ]' : '[ Dismiss Finding ]'}
+              {isDismissed ? 'Reopen Finding' : 'Dismiss Finding'}
             </button>
             <button
               type="button"
               onClick={onClose}
-              className="font-label-caps text-xs text-primary border border-primary px-3.5 py-1.5 hover:bg-primary hover:text-[#14110F] transition-colors uppercase font-bold"
+              className="font-label-caps text-xs bg-primary text-[#14110F] hover:bg-[#FFBB49] px-4 py-1.5 transition-colors uppercase font-bold rounded"
             >
-              [ Close Drawer ]
+              Done
             </button>
           </div>
         </div>

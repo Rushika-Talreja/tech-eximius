@@ -147,7 +147,7 @@ async def test_export_formats_and_clean_verdict(
     assert props["verdict"] == "No verified issues detected by this analysis"
     assert "coverage" in props
 
-    # 5. PDF export
+    # 5. PDF export with WeasyPrint mock
     import sys
     import unittest.mock as mock
 
@@ -159,5 +159,15 @@ async def test_export_formats_and_clean_verdict(
         assert pdf_resp.headers["Content-Type"] == "application/pdf"
         assert "audit-" in pdf_resp.headers["Content-Disposition"]
         assert pdf_resp.content.startswith(b"%PDF")
+
+    # 6. PDF export with detailed pure-Python generator (fallback when WeasyPrint unavailable)
+    with mock.patch.dict(sys.modules, {"weasyprint": None}):
+        fallback_resp = await async_client.get(f"/v1/audits/{audit.id}/export?format=pdf", headers=auth_a)
+        assert fallback_resp.status_code == 200
+        assert fallback_resp.headers["Content-Type"] == "application/pdf"
+        assert fallback_resp.content.startswith(b"%PDF-1.4")
+        assert b"%%EOF" in fallback_resp.content
+        assert len(fallback_resp.content) > 1000
+
 
 

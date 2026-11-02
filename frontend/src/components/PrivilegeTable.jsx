@@ -3,7 +3,6 @@ import React from 'react';
 /**
  * PrivilegeTable component.
  * Displays access control topologies, role delegations, and worst-case blast radii.
- * Replaces all visual glyphs with explicit textual telemetry.
  */
 export function PrivilegeTable({ privileges = [], onSelectRole }) {
   const getRiskBadge = (level) => {
@@ -20,19 +19,19 @@ export function PrivilegeTable({ privileges = [], onSelectRole }) {
   };
 
   return (
-    <div className="w-full bg-[#1D1916] border border-[#3A332D] flex flex-col">
+    <div className="w-full bg-[#1D1916] border border-[#3A332D] rounded-md flex flex-col shadow-sm">
       <div className="p-4 border-b border-[#3A332D] flex flex-col sm:flex-row sm:items-center justify-between gap-2">
         <div>
           <h3 className="font-headline-sm text-sm text-on-surface font-semibold">
-            Privilege Map Summary & Custody Topology
+            Privilege & Key Custody Topology
           </h3>
-          <p className="font-disclaimer text-[11px] text-on-surface-variant">
-            Evaluates key holder centralization and unmitigated protocol draining powers.
+          <p className="font-body-sm text-[11px] text-on-surface-variant">
+            Evaluates key holder centralization and protocol drain authority.
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <span className="font-label-caps text-[10px] text-outline uppercase">Custody Standard:</span>
-          <span className="font-label-caps text-[10px] text-primary border border-primary px-2 py-0.5">
+          <span className="font-label-caps text-[10px] text-outline uppercase">Standard:</span>
+          <span className="font-label-caps text-[10px] text-primary border border-primary/50 px-2 py-0.5 rounded-xs">
             SEBI Annexure 4
           </span>
         </div>
@@ -42,11 +41,11 @@ export function PrivilegeTable({ privileges = [], onSelectRole }) {
         <table className="w-full text-left border-collapse text-xs">
           <thead>
             <tr className="bg-[#14110F] border-b border-[#3A332D] text-outline font-label-caps text-[10px] uppercase tracking-wider">
-              <th className="py-2.5 px-4">Role Identifier</th>
-              <th className="py-2.5 px-4">Powers Granted</th>
-              <th className="py-2.5 px-4">Risk Score</th>
-              <th className="py-2.5 px-4">Worst Case Scenario</th>
-              <th className="py-2.5 px-4">Key Custody</th>
+              <th className="py-2.5 px-4">Role</th>
+              <th className="py-2.5 px-4">Granted Authority</th>
+              <th className="py-2.5 px-4">Risk Level</th>
+              <th className="py-2.5 px-4">Worst-Case Impact</th>
+              <th className="py-2.5 px-4">Custody Scheme</th>
               <th className="py-2.5 px-4 text-right">Action</th>
             </tr>
           </thead>
@@ -63,7 +62,7 @@ export function PrivilegeTable({ privileges = [], onSelectRole }) {
                   {item.powersGranted}
                 </td>
                 <td className="py-3 px-4">
-                  <span className={`inline-block font-label-caps text-[10px] font-bold px-2 py-0.5 border ${getRiskBadge(item.riskLevel)}`}>
+                  <span className={`inline-block font-label-caps text-[10px] font-bold px-2 py-0.5 border rounded-xs ${getRiskBadge(item.riskLevel)}`}>
                     {item.riskScore} - {item.riskLevel}
                   </span>
                 </td>
@@ -77,9 +76,9 @@ export function PrivilegeTable({ privileges = [], onSelectRole }) {
                   <button
                     type="button"
                     onClick={() => onSelectRole && onSelectRole(item)}
-                    className="font-label-caps text-[10px] text-primary hover:text-on-primary hover:bg-primary border border-primary px-2.5 py-1 transition-colors uppercase font-bold"
+                    className="font-label-caps text-[10px] text-primary hover:text-[#14110F] hover:bg-primary border border-primary/60 px-2.5 py-1 transition-colors uppercase font-bold rounded"
                   >
-                    [ Inspect ]
+                    Inspect Role
                   </button>
                 </td>
               </tr>
@@ -88,11 +87,10 @@ export function PrivilegeTable({ privileges = [], onSelectRole }) {
         </table>
       </div>
 
-      <div className="p-3 bg-[#161311] border-t border-[#3A332D] flex items-center justify-between text-[10px] font-disclaimer text-outline">
-        <span>Undetected Notes: Off-chain multisig signers assumed uncompromised.</span>
-        <span>Table view compliant with text-first accessibility</span>
+      <div className="p-3 bg-[#161311] border-t border-[#3A332D] flex items-center justify-between text-[10px] font-body-sm text-outline">
+        <span>Off-chain multisig signers assumed uncompromised.</span>
+        <span>Click "Inspect Role" to adjust key custody declarations and recompute risk scores.</span>
       </div>
     </div>
   );
 }
-

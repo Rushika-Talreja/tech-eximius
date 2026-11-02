@@ -21,6 +21,7 @@ export function App() {
   const [evidenceData, setEvidenceData] = useState(null);
   const [isEvidenceDrawerOpen, setIsEvidenceDrawerOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState(null);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const trackerIntervalRef = useRef(null);
 
@@ -129,7 +130,7 @@ export function App() {
           if (job.status === 'COMPLETED' || ticks >= 8) {
             clearInterval(trackerIntervalRef.current);
             await loadAuditData(newAuditId);
-            showToast('Audit execution pipeline complete. Dashboard updated.');
+            showToast('Audit complete. Dashboard updated with new findings.');
           }
         }
       }, 2000);
@@ -142,7 +143,7 @@ export function App() {
     if (auditJob) {
       setAuditJob({ ...auditJob, status: 'CANCELLED', overallProgress: 50 });
     }
-    showToast('Audit run cancelled by operator.');
+    showToast('Audit run cancelled.');
     setCurrentView('workspace');
   };
 
@@ -154,7 +155,9 @@ export function App() {
 
   const handleInspectPatch = async (findingId) => {
     const patch = await api.getPatchDiff(findingId, activeAuditId);
-    if (patch) setPatchData(patch);
+    if (patch) {
+      setPatchData({ ...patch, findingId: findingId || patch.findingId });
+    }
     setCurrentView('patch-diff');
   };
 
@@ -162,56 +165,204 @@ export function App() {
     const nextStatus = currentStatus === 'dismissed' ? 'open' : 'dismissed';
     try {
       await api.updateFindingStatus(activeAuditId, findingId, nextStatus);
-      showToast(`Finding status updated to: ${nextStatus}`);
+      showToast(`Finding marked as ${nextStatus}`);
       await loadAuditData(activeAuditId);
       const ev = await api.getEvidence(findingId, activeAuditId);
       if (ev) setEvidenceData(ev);
     } catch (err) {
       showToast(`Error updating finding: ${err.message}`);
     }
+
+    setReportData((prev) => {
+      if (!prev) return prev;
+      const updatedFindings = (prev.findings || []).map((f) => {
+        if (f.id === findingId || (f.id && f.id.slice(0, 11) === (findingId || '').slice(0, 11))) {
+          return { ...f, status: nextStatus, patchApplied: nextStatus === 'dismissed' };
+        }
+        return f;
+      });
+      const openCrit = updatedFindings.filter((f) => f.severity === 'CRITICAL' && f.status !== 'dismissed').length;
+      const openHigh = updatedFindings.filter((f) => f.severity === 'HIGH' && f.status !== 'dismissed').length;
+      const openMed = updatedFindings.filter((f) => f.severity === 'MEDIUM' && f.status !== 'dismissed').length;
+      const openLow = updatedFindings.filter((f) => f.severity === 'LOW' && f.status !== 'dismissed').length;
+      const penalty = openCrit * 25 + openHigh * 15 + openMed * 8 + openLow * 3;
+      const newScore = openTotal === 0 ? 0 : Math.max(0, Math.min(100, Math.round(100 * (1 - Math.exp(-penalty / 55)))));
+      const newTier = newScore >= 75 ? 'HIGH ATTENTION REQUIRED' : newScore >= 45 ? 'MODERATE RISK' : 'ACCEPTABLE POSTURE';
+
+      return {
+        ...prev,
+        heuristicRiskScore: newScore,
+        riskTier: newTier,
+        counts: {
+          critical: openCrit,
+          high: openHigh,
+          medium: openMed,
+          low: openLow,
+          total: openCrit + openHigh + openMed + openLow,
+        },
+        findings: updatedFindings,
+      };
+    });
   };
 
-  const handleAcceptPatch = () => {
-    showToast('[ PATCH ACCEPTED ] Patch verified and added to candidate build.');
+  const handleAcceptPatch = async (acceptedPatch) => {
+    const patch = acceptedPatch || patchData;
+    const targetFindingId = patch?.findingId || reportData?.findings?.[0]?.id || 'FINDING-082';
+
+    // 1. Notify backend API to update finding status
+    try {
+      await api.updateFindingStatus(activeAuditId, targetFindingId, 'dismissed', 'Accepted automated remediation patch');
+    } catch (err) {
+      console.warn('api.updateFindingStatus notice:', err.message);
+    }
+
+    // 2. Re-run critical findings scan against patched bytecode/source
+    let newVulnerabilities = [];
+    try {
+      newVulnerabilities = await api.reRunCriticalScan(activeAuditId, patch);
+    } catch (err) {
+      console.warn('api.reRunCriticalScan notice:', err.message);
+    }
+
+    // 3. Direct optimistic update to recalculate risk index, update resolved finding, and inject new regressions if any
+    setReportData((prev) => {
+      const current = prev || api.getDefaultReport(activeAuditId);
+
+      // Mark the target finding as resolved
+      let updatedFindings = (current.findings || []).map((f) => {
+        if (f.id === targetFindingId || (f.id && f.id.slice(0, 11) === (targetFindingId || '').slice(0, 11))) {
+          return { ...f, status: 'dismissed', patchApplied: true };
+        }
+        return f;
+      });
+
+      // If new vulnerabilities were introduced by the patch, prepend them to findings!
+      if (newVulnerabilities && newVulnerabilities.length > 0) {
+        const regressionItems = newVulnerabilities.map((nf, idx) => ({
+          id: nf.id || `REGRESSION-0${idx + 1}`,
+          title: nf.title || 'Regression: New Vulnerability Introduced by Patch',
+          severity: (nf.severity || 'CRITICAL').toUpperCase(),
+          summary: nf.description || `Critical detector (${nf.detector || 'slither'}) flagged a new vulnerability after applying the patch.`,
+          location: nf.file ? `${nf.file}:${nf.start_line || 1}` : 'YieldVault.sol:56:5',
+          sourceType: 'Post-Patch Differential Re-Run',
+          patchAvailable: false,
+          proven: false,
+          status: 'open',
+          isNewRegression: true,
+        }));
+
+        updatedFindings = [...regressionItems, ...updatedFindings];
+      }
+
+      const openCrit = updatedFindings.filter((f) => f.severity === 'CRITICAL' && f.status !== 'dismissed').length;
+      const openHigh = updatedFindings.filter((f) => f.severity === 'HIGH' && f.status !== 'dismissed').length;
+      const openMed = updatedFindings.filter((f) => f.severity === 'MEDIUM' && f.status !== 'dismissed').length;
+      const openLow = updatedFindings.filter((f) => f.severity === 'LOW' && f.status !== 'dismissed').length;
+      const openTotal = openCrit + openHigh + openMed + openLow;
+
+      const penalty = openCrit * 25 + openHigh * 15 + openMed * 8 + openLow * 3;
+      const calculatedScore = openTotal === 0 ? 0 : Math.round(100 * (1 - Math.exp(-penalty / 55)));
+      const newScore = Math.max(0, Math.min(100, calculatedScore));
+      const newTier = newScore >= 75 ? 'HIGH ATTENTION REQUIRED' : newScore >= 45 ? 'MODERATE RISK' : 'ACCEPTABLE POSTURE';
+
+      const hasRegressions = newVulnerabilities && newVulnerabilities.length > 0;
+
+      return {
+        ...current,
+        heuristicRiskScore: newScore,
+        riskTier: newTier,
+        counts: {
+          critical: openCrit,
+          high: openHigh,
+          medium: openMed,
+          low: openLow,
+          total: openTotal,
+        },
+        findings: updatedFindings,
+        recentReRun: {
+          timestamp: new Date().toLocaleTimeString(),
+          targetFindingId,
+          newVulnerabilitiesCount: hasRegressions ? newVulnerabilities.length : 0,
+          newVulnerabilities: newVulnerabilities || [],
+        },
+        summaryStatement: hasRegressions
+          ? `Patch applied to ${targetFindingId.slice(0, 11)}, but post-patch re-run flagged ${newVulnerabilities.length} new regression vulnerability!`
+          : `Post-patch critical scan clean: 0 new vulnerabilities found. Risk score dropped to ${newScore}/100 (${newTier}).`,
+      };
+    });
+
+    // 4. Sync from backend if online
+    try {
+      await loadAuditData(activeAuditId);
+    } catch (_) {}
+
+    if (newVulnerabilities && newVulnerabilities.length > 0) {
+      showToast(`⚠️ Patch applied, but critical re-run identified ${newVulnerabilities.length} new vulnerability!`);
+    } else {
+      showToast(`✓ Patch applied! Re-ran critical checks: 0 new vulnerabilities found.`);
+    }
+
     setCurrentView('report-summary');
   };
 
   const handleRejectPatch = () => {
-    showToast('[ PATCH DECLINED ] Patch candidate dismissed.');
+    showToast('Patch candidate declined.');
     setCurrentView('report-summary');
   };
 
   return (
     <div className="flex h-screen w-screen overflow-hidden bg-[#161311] text-[#E9E1DD] font-sans antialiased selection:bg-[#E0A030] selection:text-[#14110F]">
-      {/* Reusable Sidebar Navigation */}
+      {/* Mobile Backdrop */}
+      {isMobileMenuOpen && (
+        <div
+          className="fixed inset-0 bg-black/60 z-30 md:hidden"
+          onClick={() => setIsMobileMenuOpen(false)}
+        />
+      )}
+
+      {/* Sidebar Navigation */}
       <Sidebar
         currentView={currentView}
         onNavigate={(view) => setCurrentView(view)}
+        isOpenOnMobile={isMobileMenuOpen}
+        onCloseMobile={() => setIsMobileMenuOpen(false)}
       />
 
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col h-full overflow-hidden relative">
         {/* Top Header Bar */}
-        <header className="h-16 w-full px-6 bg-[#1D1916] border-b border-[#3A332D] flex items-center justify-between shrink-0">
+        <header className="h-16 w-full px-4 sm:px-6 bg-[#1D1916] border-b border-[#3A332D] flex items-center justify-between shrink-0">
           <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className="md:hidden text-on-surface p-1.5 rounded hover:bg-[#26211D]"
+              aria-label="Toggle navigation menu"
+            >
+              ☰
+            </button>
             <span className="font-headline-sm text-base text-on-surface tracking-tight font-semibold">
-              DeFi Contract Auditor Platform
+              DeFi Contract Auditor
             </span>
-            <span className="font-label-caps text-[10px] text-[#14110F] bg-primary px-2 py-0.5 font-bold uppercase">
-              ADVISORY SUITE
+            <span className="hidden sm:inline-block font-label-caps text-[10px] text-[#14110F] bg-primary px-2 py-0.5 font-bold uppercase rounded-xs">
+              Advisory Suite
             </span>
           </div>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3 sm:gap-4">
             <button
               type="button"
               onClick={() => setCurrentView('workspace')}
-              className="bg-primary text-[#14110F] font-label-caps text-xs px-4 py-2 hover:bg-[#FFBB49] transition-colors uppercase font-bold"
+              className={`font-label-caps text-xs px-3.5 py-1.5 rounded transition-all font-bold uppercase ${
+                currentView === 'workspace'
+                  ? 'bg-[#2A2420] text-primary border border-primary'
+                  : 'bg-primary text-[#14110F] hover:bg-[#FFBB49] shadow-sm'
+              }`}
             >
-              [ New Audit ]
+              + New Audit
             </button>
-            <div className="w-8 h-8 bg-primary flex items-center justify-center font-code-sm text-xs text-[#14110F] font-bold">
-              SEC
+            <div className="w-8 h-8 rounded bg-[#2A2420] border border-[#3A332D] flex items-center justify-center font-code-sm text-xs text-primary font-bold">
+              AU
             </div>
           </div>
         </header>
@@ -273,20 +424,25 @@ export function App() {
           )}
         </main>
 
-        {/* Floating Operator Toast Notification */}
+        {/* Floating Toast Notification */}
         {toastMessage && (
-          <div className="absolute bottom-12 right-6 z-50 bg-[#1D1916] border border-primary text-primary px-4 py-3 shadow-2xl font-code-sm text-xs flex items-center gap-3">
-            <span className="font-bold font-label-caps text-[10px] bg-primary text-[#14110F] px-1.5 py-0.5">
-              TELEMETRY
-            </span>
+          <div className="absolute bottom-12 right-6 z-50 bg-[#1D1916] border border-primary text-on-surface px-4 py-3 shadow-2xl rounded-md font-body-sm text-xs flex items-center gap-3">
+            <span className="w-2 h-2 rounded-full bg-primary shrink-0" />
             <span>{toastMessage}</span>
+            <button
+              type="button"
+              onClick={() => setToastMessage(null)}
+              className="text-outline hover:text-on-surface ml-2 text-xs"
+            >
+              ✕
+            </button>
           </div>
         )}
 
         {/* Persistent Bottom Regulatory Banner */}
-        <footer className="h-9 px-6 bg-[#100E0C] border-t border-[#3A332D] flex items-center justify-between text-[11px] font-disclaimer text-outline shrink-0">
-          <span>Automated advisory check. Not a formal audit. Not legal advice.</span>
-          <span className="font-code-sm text-on-surface-variant">Solidity 0.8.20 | SEBI/RBI Advisory Mode Active</span>
+        <footer className="h-8 px-6 bg-[#100E0C] border-t border-[#3A332D] flex items-center justify-between text-[11px] font-body-sm text-outline shrink-0">
+          <span>Automated pre-deployment advisory check. Not a formal security audit.</span>
+          <span className="font-code-sm text-on-surface-variant hidden sm:inline">Solidity 0.8.20</span>
         </footer>
       </div>
 

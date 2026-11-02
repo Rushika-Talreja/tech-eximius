@@ -62,9 +62,16 @@ class CreateAuditRequest(BaseModel):
 
 
 def _format_audit(audit: Audit) -> dict[str, Any]:
+    coverage = audit.coverage or {}
+    analyzed = coverage.get("analyzed", {})
+    files = analyzed.get("files", [])
+    contracts = analyzed.get("contracts", [])
+    contract_name = files[0] if files else (f"{contracts[0]}.sol" if contracts else "YieldVault.sol")
+
     return {
         "id": str(audit.id),
         "project_id": str(audit.project_id),
+        "contract_name": contract_name,
         "status": audit.status,
         "stage": audit.stage,
         "options": audit.options,

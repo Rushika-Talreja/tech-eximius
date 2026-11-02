@@ -3,14 +3,13 @@ import React from 'react';
 /**
  * SeverityCards component.
  * Displays finding breakdown across Critical, High, Medium, and Low tiers.
- * Strictly adheres to warm color diagnostic codes with zero icons or alert shields.
  */
 export function SeverityCards({ counts = { critical: 2, high: 2, medium: 1, low: 1, total: 6 }, onSelectSeverity, selectedSeverity }) {
   const cards = [
     {
       level: 'CRITICAL',
       count: counts.critical || 0,
-      label: 'Critical Findings',
+      label: 'Critical',
       desc: 'Immediate fund drain, reentrancy vectors, or self-destruct pathways.',
       borderColor: 'border-[#D6403A]',
       textColor: 'text-[#D6403A]',
@@ -19,7 +18,7 @@ export function SeverityCards({ counts = { critical: 2, high: 2, medium: 1, low:
     {
       level: 'HIGH',
       count: counts.high || 0,
-      label: 'High Severity',
+      label: 'High',
       desc: 'Privilege escalation, unchecked token transfers, oracle staleness.',
       borderColor: 'border-[#E8782A]',
       textColor: 'text-[#E8782A]',
@@ -28,7 +27,7 @@ export function SeverityCards({ counts = { critical: 2, high: 2, medium: 1, low:
     {
       level: 'MEDIUM',
       count: counts.medium || 0,
-      label: 'Medium Severity',
+      label: 'Medium',
       desc: 'Front-running exposure, unbounded slippage, sandwich hazards.',
       borderColor: 'border-[#E3B73C]',
       textColor: 'text-[#E3B73C]',
@@ -37,7 +36,7 @@ export function SeverityCards({ counts = { critical: 2, high: 2, medium: 1, low:
     {
       level: 'LOW',
       count: counts.low || 0,
-      label: 'Low Severity',
+      label: 'Low',
       desc: 'Floating compiler pragmas, dead code branches, code hygiene.',
       borderColor: 'border-[#8FA84A]',
       textColor: 'text-[#8FA84A]',
@@ -54,12 +53,12 @@ export function SeverityCards({ counts = { critical: 2, high: 2, medium: 1, low:
             key={c.level}
             type="button"
             onClick={() => onSelectSeverity && onSelectSeverity(isSelected ? null : c.level)}
-            className={`text-left p-4 bg-[#1D1916] border ${c.borderColor} transition-all ${
-              isSelected ? 'ring-1 ring-primary bg-[#26211D]' : 'hover:bg-[#221F1D]'
+            className={`text-left p-4 bg-[#1D1916] rounded-md border ${c.borderColor} transition-all ${
+              isSelected ? 'ring-2 ring-primary bg-[#26211D] shadow-md' : 'hover:bg-[#221F1D]'
             }`}
           >
             <div className="flex items-center justify-between mb-2">
-              <span className={`font-label-caps text-xs font-bold uppercase px-2 py-0.5 border ${c.borderColor} ${c.textColor} ${c.bgColor}`}>
+              <span className={`font-label-caps text-xs font-bold uppercase px-2 py-0.5 rounded-xs border ${c.borderColor} ${c.textColor} ${c.bgColor}`}>
                 {c.level}
               </span>
               <span className={`font-code-lg text-2xl font-bold ${c.textColor}`}>
@@ -68,7 +67,7 @@ export function SeverityCards({ counts = { critical: 2, high: 2, medium: 1, low:
             </div>
 
             <div className="font-headline-sm text-xs font-semibold text-on-surface mb-1">
-              {c.label}
+              {c.label} Findings
             </div>
 
             <p className="font-body-sm text-[11px] text-on-surface-variant leading-snug">
@@ -76,9 +75,9 @@ export function SeverityCards({ counts = { critical: 2, high: 2, medium: 1, low:
             </p>
 
             <div className="mt-3 pt-2 border-t border-[#3A332D] flex items-center justify-between text-[10px] font-code-sm">
-              <span className="text-outline">Filter State:</span>
+              <span className="text-outline">Filter:</span>
               <span className={isSelected ? 'text-primary font-bold' : 'text-on-surface-variant'}>
-                {isSelected ? '[ Selected ]' : '[ Click to Filter ]'}
+                {isSelected ? 'Active (Click to clear)' : 'Click to filter'}
               </span>
             </div>
           </button>
@@ -87,4 +86,3 @@ export function SeverityCards({ counts = { critical: 2, high: 2, medium: 1, low:
     </div>
   );
 }
-

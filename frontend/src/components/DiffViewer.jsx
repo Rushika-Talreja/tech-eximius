@@ -10,6 +10,7 @@ export function DiffViewer({ patchData, onAccept, onReject }) {
   const [viewMode, setViewMode] = useState('visual'); // 'visual' | 'edit'
   const [copied, setCopied] = useState(false);
   const [isVerifying, setIsVerifying] = useState(false);
+  const [isApplying, setIsApplying] = useState(false);
   const [verifyMessage, setVerifyMessage] = useState(null);
 
   const diffLines = patchData?.diffLines || [];
@@ -35,39 +36,45 @@ export function DiffViewer({ patchData, onAccept, onReject }) {
 
   const handleReverify = async () => {
     setIsVerifying(true);
-    setVerifyMessage('Submitting diff to isolated compiler verification sandbox...');
+    setVerifyMessage('Submitting diff to compiler verification sandbox...');
     try {
       const res = await api.verifyPatch(patchData?.id, editableDiff);
+      const newFindings = res.new_findings || [];
       setStatus({
         compiles: res.compiles !== false ? 'PASS' : 'FAIL',
         findingCleared: res.finding_cleared !== false ? 'PASS' : 'FAIL',
-        noNewFindings: (res.new_findings || []).length === 0 ? 'PASS' : 'WARN',
+        noNewFindings: newFindings.length === 0 ? 'PASS' : 'WARN',
         gasChange: res.gas_delta?.delta || '+1,820 gas',
+        newFindings,
       });
-      setVerifyMessage('Verification complete: Differential compilation passed.');
+      if (newFindings.length > 0) {
+        setVerifyMessage(`⚠️ Regression Warning: Re-running critical detectors flagged ${newFindings.length} new vulnerability: "${newFindings[0].title || 'Regression'}".`);
+      } else {
+        setVerifyMessage('✓ Verification complete: Re-ran critical detectors on patched code with 0 regressions.');
+      }
     } catch (err) {
       setVerifyMessage(`Verification error: ${err.message}`);
     } finally {
       setIsVerifying(false);
-      setTimeout(() => setVerifyMessage(null), 3500);
+      setTimeout(() => setVerifyMessage(null), 4500);
     }
   };
 
   return (
-    <div className="w-full bg-[#1D1916] border border-[#3A332D] flex flex-col">
+    <div className="w-full bg-[#1D1916] border border-[#3A332D] rounded-md flex flex-col shadow-sm">
       {/* Header and Controls */}
-      <div className="p-4 border-b border-[#3A332D] flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+      <div className="p-5 border-b border-[#3A332D] flex flex-col lg:flex-row lg:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <span className="font-label-caps text-xs text-primary font-bold uppercase">
-              [{patchData?.findingId || 'FINDING-082'}]
+            <span className="font-label-caps text-xs text-primary font-bold uppercase bg-primary/10 border border-primary/40 px-2 py-0.5 rounded-xs">
+              {patchData?.findingId || 'FINDING-082'}
             </span>
-            <span className="font-headline-sm text-sm text-on-surface font-semibold">
-              {patchData?.title || 'Remediation Candidate'}
+            <span className="font-headline-sm text-base text-on-surface font-semibold">
+              {patchData?.title || 'Recommended Fix Candidate'}
             </span>
           </div>
-          <p className="font-disclaimer text-xs text-on-surface-variant max-w-2xl">
-            {patchData?.rationale || 'Applies state mutation prior to external execution and isolates external calls.'}
+          <p className="font-body-sm text-xs text-on-surface-variant max-w-2xl mt-1">
+            {patchData?.rationale || 'Applies state mutation prior to external execution (Checks-Effects-Interactions pattern).'}
           </p>
         </div>
 
@@ -76,16 +83,16 @@ export function DiffViewer({ patchData, onAccept, onReject }) {
           <button
             type="button"
             onClick={() => setViewMode(viewMode === 'visual' ? 'edit' : 'visual')}
-            className="font-label-caps text-xs px-3 py-1.5 border border-[#3A332D] text-on-surface hover:border-primary transition-colors uppercase font-bold"
+            className="font-label-caps text-xs px-3 py-1.5 border border-[#3A332D] text-on-surface hover:border-primary transition-colors uppercase font-semibold rounded"
           >
-            [ Mode: {viewMode === 'visual' ? 'Visual Diff' : 'Edit Unified Diff'} ]
+            {viewMode === 'visual' ? 'Edit Unified Diff' : 'Visual Diff View'}
           </button>
           <button
             type="button"
             onClick={handleCopy}
-            className="font-label-caps text-xs px-3 py-1.5 border border-primary text-primary hover:bg-primary hover:text-[#14110F] transition-colors uppercase font-bold"
+            className="font-label-caps text-xs px-3 py-1.5 border border-primary/60 text-primary hover:bg-primary hover:text-[#14110F] transition-colors uppercase font-bold rounded"
           >
-            {copied ? '[ Copied to Clipboard ]' : '[ Copy Patch Diff ]'}
+            {copied ? 'Copied!' : 'Copy Diff'}
           </button>
         </div>
       </div>
@@ -93,35 +100,35 @@ export function DiffViewer({ patchData, onAccept, onReject }) {
       {/* Verification Matrix Badges */}
       <div className="p-3 bg-[#14110F] border-b border-[#3A332D] flex flex-wrap items-center justify-between gap-4 text-xs font-code-sm">
         <div className="flex flex-wrap items-center gap-4">
-          <span className="text-outline uppercase font-label-caps text-[10px]">Verification Matrix:</span>
+          <span className="text-outline uppercase font-label-caps text-[10px]">Verification Results:</span>
           <div className="flex items-center gap-1.5">
             <span className="text-outline">Compiles:</span>
-            <span className={`font-bold border px-1.5 py-0.2 font-label-caps text-[10px] ${
+            <span className={`font-bold border px-1.5 py-0.2 font-label-caps text-[10px] rounded-xs ${
               status.compiles === 'PASS' ? 'text-[#8FA84A] border-[#8FA84A] bg-[#8FA84A]/10' : 'text-[#D6403A] border-[#D6403A] bg-[#D6403A]/10'
             }`}>
-              [{status.compiles}]
+              {status.compiles === 'PASS' ? 'Passed' : 'Failed'}
             </span>
           </div>
           <div className="flex items-center gap-1.5">
-            <span className="text-outline">Finding Cleared:</span>
-            <span className={`font-bold border px-1.5 py-0.2 font-label-caps text-[10px] ${
+            <span className="text-outline">Issue Resolved:</span>
+            <span className={`font-bold border px-1.5 py-0.2 font-label-caps text-[10px] rounded-xs ${
               status.findingCleared === 'PASS' ? 'text-[#8FA84A] border-[#8FA84A] bg-[#8FA84A]/10' : 'text-[#D6403A] border-[#D6403A] bg-[#D6403A]/10'
             }`}>
-              [{status.findingCleared}]
+              {status.findingCleared === 'PASS' ? 'Passed' : 'Failed'}
             </span>
           </div>
           <div className="flex items-center gap-1.5">
-            <span className="text-outline">No New Findings:</span>
-            <span className={`font-bold border px-1.5 py-0.2 font-label-caps text-[10px] ${
+            <span className="text-outline">No Regressions:</span>
+            <span className={`font-bold border px-1.5 py-0.2 font-label-caps text-[10px] rounded-xs ${
               status.noNewFindings === 'PASS' ? 'text-[#8FA84A] border-[#8FA84A] bg-[#8FA84A]/10' : 'text-[#E8782A] border-[#E8782A] bg-[#E8782A]/10'
             }`}>
-              [{status.noNewFindings}]
+              {status.noNewFindings === 'PASS' ? 'Passed' : 'Warning'}
             </span>
           </div>
           <div className="flex items-center gap-1.5">
-            <span className="text-outline">Gas Delta:</span>
-            <span className="text-primary font-bold border border-primary px-1.5 py-0.2 bg-primary/10 font-label-caps text-[10px]">
-              [{status.gasChange}]
+            <span className="text-outline">Gas Impact:</span>
+            <span className="text-primary font-bold border border-primary/40 px-1.5 py-0.2 bg-primary/10 font-label-caps text-[10px] rounded-xs">
+              {status.gasChange}
             </span>
           </div>
         </div>
@@ -131,9 +138,9 @@ export function DiffViewer({ patchData, onAccept, onReject }) {
             type="button"
             disabled={isVerifying}
             onClick={handleReverify}
-            className="font-label-caps text-xs px-3 py-1 bg-primary text-[#14110F] font-bold uppercase hover:bg-[#FFBB49] transition-colors disabled:opacity-50"
+            className="font-label-caps text-xs px-3 py-1 bg-primary text-[#14110F] font-bold uppercase hover:bg-[#FFBB49] transition-colors rounded disabled:opacity-50"
           >
-            {isVerifying ? '[ Re-verifying... ]' : '[ Run Compiler Verification ]'}
+            {isVerifying ? 'Verifying...' : 'Re-verify Edited Diff'}
           </button>
         )}
       </div>
@@ -154,11 +161,11 @@ export function DiffViewer({ patchData, onAccept, onReject }) {
             return (
               <div
                 key={idx}
-                className={`flex items-start px-2 py-1 font-mono transition-colors ${
+                className={`flex items-start px-3 py-1 font-mono transition-colors ${
                   isAdded
-                    ? 'bg-[#4C9A5B]/15 border-l-2 border-[#4C9A5B] text-[#D0EBD5]'
+                    ? 'bg-[#4C9A5B]/15 border-l-3 border-[#4C9A5B] text-[#D0EBD5]'
                     : isRemoved
-                    ? 'bg-[#C4453F]/15 border-l-2 border-[#C4453F] text-[#F5C2BF]'
+                    ? 'bg-[#C4453F]/15 border-l-3 border-[#C4453F] text-[#F5C2BF]'
                     : 'text-[#A89E93] hover:bg-[#1D1916]'
                 }`}
               >
@@ -167,8 +174,8 @@ export function DiffViewer({ patchData, onAccept, onReject }) {
                   <span className="w-6 text-right">{line.lineNoNew || ' '}</span>
                 </div>
 
-                <span className="w-12 select-none text-[10px] font-label-caps font-bold shrink-0">
-                  {isAdded ? '[+ADD]' : isRemoved ? '[-DEL]' : '     '}
+                <span className="w-10 select-none text-[11px] font-mono font-bold shrink-0">
+                  {isAdded ? '+ ' : isRemoved ? '- ' : '  '}
                 </span>
 
                 <pre className="overflow-x-visible font-mono text-xs whitespace-pre">
@@ -181,37 +188,57 @@ export function DiffViewer({ patchData, onAccept, onReject }) {
       ) : (
         <div className="p-4 bg-[#14110F] flex flex-col gap-2">
           <div className="flex items-center justify-between text-xs font-code-sm text-outline">
-            <span>Unified Diff Editor (Edit diff and submit to re-run compiler verifier)</span>
-            <span>POST /v1/patches/{patchData?.id || 'patch_id'}/verify</span>
+            <span>Unified Diff Editor (Edit diff and re-test compiler verification)</span>
           </div>
           <textarea
             value={editableDiff}
             onChange={(e) => setEditableDiff(e.target.value)}
             rows={14}
-            className="w-full bg-[#161311] border border-[#3A332D] text-on-surface font-mono text-xs p-3 focus:border-primary focus:outline-none"
+            className="w-full bg-[#161311] border border-[#3A332D] text-on-surface font-mono text-xs p-3 rounded focus:border-primary focus:outline-none"
           />
         </div>
       )}
 
       {/* Footer Actions */}
       <div className="p-4 bg-[#14110F] border-t border-[#3A332D] flex flex-wrap items-center justify-between gap-3">
-        <span className="font-disclaimer text-[11px] text-outline">
-          Remediation generated by Automated Heuristic Engine. Not legal advice.
+        <span className="font-body-sm text-[11px] text-outline">
+          Automated remediation candidate. Review and test before merging to production.
         </span>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
           <button
             type="button"
             onClick={onReject}
-            className="font-label-caps text-xs px-4 py-2 border border-[#D6403A] text-[#D6403A] hover:bg-[#D6403A]/15 transition-colors uppercase font-bold"
+            className="font-label-caps text-xs px-4 py-2 border border-[#D6403A] text-[#D6403A] hover:bg-[#D6403A]/15 transition-colors uppercase font-bold rounded"
           >
-            [ Reject Patch ]
+            Decline Patch
           </button>
           <button
             type="button"
-            onClick={onAccept}
-            className="font-label-caps text-xs px-5 py-2 bg-primary text-[#14110F] hover:bg-[#FFBB49] transition-colors uppercase font-bold"
+            disabled={isApplying}
+            onClick={async () => {
+              setIsApplying(true);
+              try {
+                if (onAccept) {
+                  await onAccept({
+                    ...patchData,
+                    unifiedDiff: editableDiff,
+                    newFindings: status.newFindings || patchData?.newFindings || [],
+                  });
+                }
+              } finally {
+                setIsApplying(false);
+              }
+            }}
+            className="font-label-caps text-xs px-5 py-2 bg-primary text-[#14110F] hover:bg-[#FFBB49] transition-all uppercase font-bold rounded shadow disabled:opacity-50 flex items-center gap-2"
           >
-            [ Accept & Verify Patch ]
+            {isApplying ? (
+              <>
+                <span className="w-2.5 h-2.5 border-2 border-[#14110F] border-t-transparent rounded-full animate-spin" />
+                <span>Re-running Critical Checks & Applying...</span>
+              </>
+            ) : (
+              'Accept & Apply Fix'
+            )}
           </button>
         </div>
       </div>
