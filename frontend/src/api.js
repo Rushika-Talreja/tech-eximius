@@ -1182,11 +1182,11 @@ contract YieldVault {
               title: 'Section 3: Historical Post-Mortems (RAG Precedents)',
               content: ragPrecedents.length > 0
                 ? ragPrecedents.map((r) => `[${r.title || 'Incident'}] ${r.quote || ''} (Score: ${r.retrieval_score ? r.retrieval_score.toFixed(3) : 'N/A'})`).join('\n\n')
-                : 'Parallels Euler Finance and Grim Finance reentrancy patterns where state synchronization delays permitted recursive draining.',
+                : 'No retrieved historical precedents for this finding.',
             },
             {
               title: 'Section 4: Confidence & Verification Bounds',
-              content: `Confidence score: ${((f.confidence || 0.98) * 100).toFixed(1)}%. Automated advisory check. Not a formal audit. Not legal advice.`,
+              content: `Confidence score: ${typeof f.confidence === 'number' ? (f.confidence * 100).toFixed(1) + '%' : 'Not available'}. Automated advisory check. Not a formal audit. Not legal advice.`,
             },
           ],
         };
@@ -1196,18 +1196,18 @@ contract YieldVault {
     }
 
     return {
-      findingId: findingId || 'FINDING-082',
-      title: 'State Modification Following External Low-Level Call (Reentrancy)',
-      severity: 'CRITICAL',
+      findingId: findingId || 'DEMO-FALLBACK',
+      title: 'Demo Finding',
+      severity: 'UNKNOWN',
       status: 'open',
-      location: 'YieldVault.sol:58:9',
-      method: 'withdraw(uint256)',
-      confidence: 0.98,
+      location: 'Demo Contract.sol',
+      method: 'demo()',
+      confidence: null,
       rawEvidence: [],
       sections: [
         {
           title: 'Section 1: Why This Was Flagged',
-          content: 'Control flow graph analysis revealed that msg.sender.call transfers execution flow to an arbitrary address while contract storage balances[msg.sender] remains unmodified.',
+          content: 'DEMO/FALLBACK DATA- live evidence lookup failed or returned nothing. Control flow graph analysis revealed that msg.sender.call transfers execution flow to an arbitrary address while contract storage balances[msg.sender] remains unmodified.',
         },
         {
           title: 'Section 2: Evidence Type',
@@ -1215,11 +1215,11 @@ contract YieldVault {
         },
         {
           title: 'Section 3: Historical Post-Mortems',
-          content: 'Parallels Euler Finance ($197M lost) and Grim Finance ($30M lost) vault drain incidents.',
+          content: 'No retrieved historical precedents for this finding.',
         },
         {
           title: 'Section 4: Confidence & Verification Bounds',
-          content: 'Static heuristic analysis confidence: 99.2%. Automated advisory check. Not a formal audit. Not legal advice.',
+          content: 'Confidence score: Not available. Automated advisory check. Not a formal audit. Not legal advice.',
         },
       ],
     };

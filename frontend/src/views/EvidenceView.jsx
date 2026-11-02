@@ -2,13 +2,13 @@ import React from 'react';
 
 export function EvidenceView({ evidenceData, onBackToDashboard }) {
   const data = evidenceData || {
-    findingId: 'FINDING-082',
-    title: 'State Modification Following External Low-Level Call',
-    severity: 'CRITICAL',
+    findingId: 'DEMO-FALLBACK',
+    title: 'Demo Finding',
+    severity: 'UNKNOWN',
     status: 'open',
-    location: 'YieldVault.sol:58:9',
-    method: 'withdraw(uint256)',
-    confidence: 0.98,
+    location: 'Demo Contract.sol',
+    method: 'demo()',
+    confidence: null,
     sections: [],
     rawEvidence: [],
   };
