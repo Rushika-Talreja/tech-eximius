@@ -6,6 +6,8 @@ description: >
   retriever is expected to return no evidence at all.
 queries:
   # --- positives: the target document should appear in the top 5 ---
+
+  # q01-q14: original queries (preserved)
   - id: "q01"
     query: "reentrancy withdraw re-enters before the balance is updated"
     targets: ["swc-107"]
@@ -48,7 +50,7 @@ queries:
   - id: "q14"
     query: "statement has no effect because the comparison result is discarded"
     targets: ["swc-135"]
-  # --- negatives: no document answers these, evidence must be empty ---
+  # q15-q18: original negatives (preserved)
   - id: "q15"
     query: "how to write a unit test for a React component"
     targets: []
@@ -60,4 +62,378 @@ queries:
     targets: null
   - id: "q18"
     query: "how to brew a good cup of espresso"
+    targets: []
+
+  # --- new positives (q19 onward) ---
+
+  # SWC-100: Function Default Visibility
+  - id: "q19"
+    query: "function visibility not specified defaults to public in older Solidity"
+    targets: ["swc-100"]
+  - id: "q20"
+    query: "unintended public function exposed because visibility keyword was omitted"
+    targets: ["swc-100"]
+  - id: "q21"
+    query: "missing visibility specifier on internal helper allows external callers"
+    targets: ["swc-100"]
+
+  # SWC-101: Integer Overflow and Underflow
+  - id: "q22"
+    query: "uint256 addition wraps to zero when summing two large token balances"
+    targets: ["swc-101"]
+  - id: "q23"
+    query: "unchecked arithmetic causes token supply to underflow on burn"
+    targets: ["swc-101"]
+
+  # SWC-102: Outdated Compiler Version
+  - id: "q24"
+    query: "contract compiled with an old Solidity version containing known bugs"
+    targets: ["swc-102"]
+  - id: "q25"
+    query: "pragma statement pins a compiler version that has unpatched vulnerabilities"
+    targets: ["swc-102"]
+  - id: "q26"
+    query: "using a stale compiler release introduces security issues fixed in later versions"
+    targets: ["swc-102"]
+
+  # SWC-103: Floating Pragma
+  - id: "q27"
+    query: "caret in pragma allows any minor version of the compiler to be used"
+    targets: ["swc-103"]
+  - id: "q28"
+    query: "floating pragma means different developers compile with different Solidity versions"
+    targets: ["swc-103"]
+  - id: "q29"
+    query: "unlocked compiler version via ^0.8.0 pragma makes builds non-deterministic"
+    targets: ["swc-103"]
+
+  # SWC-104: Unchecked Call Return Value
+  - id: "q30"
+    query: "return value of address.call not stored so revert on recipient is silently swallowed"
+    targets: ["swc-104"]
+  - id: "q31"
+    query: "send() return value discarded, failed ether transfer goes unnoticed"
+    targets: ["swc-104"]
+
+  # SWC-105: Unprotected Ether Withdrawal
+  - id: "q32"
+    query: "withdraw function lacks access control and any user can drain the contract"
+    targets: ["swc-105"]
+  - id: "q33"
+    query: "no owner check on payout function allows arbitrary callers to steal ETH"
+    targets: ["swc-105"]
+
+  # SWC-106: Unprotected SELFDESTRUCT Instruction
+  - id: "q34"
+    query: "selfdestruct call is reachable without an ownership guard"
+    targets: ["swc-106"]
+  - id: "q35"
+    query: "missing modifier on suicide function lets attacker permanently destroy contract"
+    targets: ["swc-106"]
+
+  # SWC-107: Reentrancy
+  - id: "q36"
+    query: "ETH transferred before internal accounting updated enabling reentrancy"
+    targets: ["swc-107"]
+  - id: "q37"
+    query: "cross-function reentrancy via shared state not protected by mutex"
+    targets: ["swc-107"]
+
+  # SWC-108: State Variable Default Visibility
+  - id: "q38"
+    query: "state variable declared without visibility modifier is unexpectedly public"
+    targets: ["swc-108"]
+  - id: "q39"
+    query: "sensitive storage slot exposed because visibility keyword omitted on state var"
+    targets: ["swc-108"]
+  - id: "q40"
+    query: "contract storage field defaults to internal visibility when specifier is absent"
+    targets: ["swc-108"]
+
+  # SWC-109: Uninitialized Storage Pointer
+  - id: "q41"
+    query: "local storage pointer declared without assignment aliases slot zero"
+    targets: ["swc-109"]
+  - id: "q42"
+    query: "uninitialized struct in storage overwrites owner variable at slot 0"
+    targets: ["swc-109"]
+  - id: "q43"
+    query: "dangling storage reference corrupts state because pointer is never set"
+    targets: ["swc-109"]
+
+  # SWC-110: Assert Violation
+  - id: "q44"
+    query: "assert used to validate external input instead of require burns remaining gas"
+    targets: ["swc-110"]
+  - id: "q45"
+    query: "invariant check with assert fails on reachable path and reverts with no refund"
+    targets: ["swc-110"]
+
+  # SWC-111: Use of Deprecated Solidity Functions
+  - id: "q46"
+    query: "contract uses throw keyword removed in Solidity 0.5"
+    targets: ["swc-111"]
+  - id: "q47"
+    query: "sha3 called instead of keccak256 which is the current recommended hash function"
+    targets: ["swc-111"]
+  - id: "q48"
+    query: "suicide alias used instead of selfdestruct, a deprecated function in modern Solidity"
+    targets: ["swc-111"]
+
+  # SWC-112: Delegatecall to Untrusted Callee
+  - id: "q49"
+    query: "proxy uses delegatecall with an address taken from calldata without validation"
+    targets: ["swc-112"]
+  - id: "q50"
+    query: "attacker controls implementation address passed to delegatecall gaining code execution"
+    targets: ["swc-112"]
+
+  # SWC-113: DoS with Failed Call
+  - id: "q51"
+    query: "loop sends ETH to each recipient and one reverting recipient halts all payouts"
+    targets: ["swc-113"]
+  - id: "q52"
+    query: "contract becomes stuck when a single external call in a batch fails and blocks progress"
+    targets: ["swc-113"]
+  - id: "q53"
+    query: "denial of service when malicious contract rejects ETH causing distribution to fail"
+    targets: ["swc-113"]
+
+  # SWC-114: Transaction Order Dependence
+  - id: "q54"
+    query: "race condition between approve and transferFrom allows allowance to be spent twice"
+    targets: ["swc-114"]
+  - id: "q55"
+    query: "miner or bot observes pending game move and submits winning counter before it mines"
+    targets: ["swc-114"]
+
+  # SWC-115: Authorization Through tx.origin
+  - id: "q56"
+    query: "phishing contract tricks victim into calling it which passes tx.origin check"
+    targets: ["swc-115"]
+  - id: "q57"
+    query: "tx.origin used instead of msg.sender for access control bypassed via intermediary"
+    targets: ["swc-115"]
+
+  # SWC-116: Block Values as Proxy for Time
+  - id: "q58"
+    query: "time-locked release uses block.timestamp that validators can manipulate within bounds"
+    targets: ["swc-116"]
+  - id: "q59"
+    query: "now keyword used as expiry timestamp susceptible to minor miner manipulation"
+    targets: ["swc-116"]
+
+  # SWC-117: Signature Malleability
+  - id: "q60"
+    query: "ECDSA signature verification does not reject the malleable s value form"
+    targets: ["swc-117"]
+  - id: "q61"
+    query: "same message signed once can produce two valid signatures due to elliptic curve symmetry"
+    targets: ["swc-117"]
+  - id: "q62"
+    query: "signature malleability allows replaying a valid signature with flipped S component"
+    targets: ["swc-117"]
+
+  # SWC-118: Incorrect Constructor Name
+  - id: "q63"
+    query: "constructor defined as a regular function with the contract name in Solidity 0.4"
+    targets: ["swc-118"]
+  - id: "q64"
+    query: "ownership never set because constructor function name does not match contract name"
+    targets: ["swc-118"]
+  - id: "q65"
+    query: "old-style constructor is callable by anyone because it became a public function"
+    targets: ["swc-118"]
+
+  # SWC-119: Shadowing State Variables
+  - id: "q66"
+    query: "local variable in function shadows state variable causing write to be lost"
+    targets: ["swc-119"]
+  - id: "q67"
+    query: "parameter name matches storage variable so the state variable is never updated"
+    targets: ["swc-119"]
+  - id: "q68"
+    query: "derived contract redefines parent state variable creating two separate slots"
+    targets: ["swc-119"]
+
+  # SWC-120: Weak Sources of Randomness from Chain Attributes
+  - id: "q69"
+    query: "winner selection based on blockhash predictable by miner who mines the block"
+    targets: ["swc-120"]
+  - id: "q70"
+    query: "block.number used as entropy source in a gambling contract miners can influence"
+    targets: ["swc-120"]
+
+  # SWC-121: Missing Protection Against Signature Replay Attacks
+  - id: "q71"
+    query: "signed message executed multiple times because nonce or chain id is not included"
+    targets: ["swc-121"]
+  - id: "q72"
+    query: "off-chain authorization replayed on a different contract without domain binding"
+    targets: ["swc-121"]
+  - id: "q73"
+    query: "replay attack possible because signature does not commit to a unique request id"
+    targets: ["swc-121"]
+
+  # SWC-122: Lack of Proper Signature Verification
+  - id: "q74"
+    query: "ecrecover returns address zero on invalid signature which is not checked"
+    targets: ["swc-122"]
+  - id: "q75"
+    query: "signature verification skipped allowing unsigned messages to be accepted"
+    targets: ["swc-122"]
+  - id: "q76"
+    query: "recovered signer not compared to expected address so any signature passes"
+    targets: ["swc-122"]
+
+  # SWC-123: Requirement Violation
+  - id: "q77"
+    query: "require condition can be triggered by normal user input violating assumed invariant"
+    targets: ["swc-123"]
+  - id: "q78"
+    query: "strict precondition in require reverts on legitimate edge-case transaction"
+    targets: ["swc-123"]
+
+  # SWC-124: Write to Arbitrary Storage Location
+  - id: "q79"
+    query: "user-controlled index used in array write overwrites critical storage slot"
+    targets: ["swc-124"]
+  - id: "q80"
+    query: "attacker passes crafted offset to mapping write targeting owner slot"
+    targets: ["swc-124"]
+  - id: "q81"
+    query: "unchecked storage index lets attacker corrupt arbitrary state variables"
+    targets: ["swc-124"]
+
+  # SWC-125: Incorrect Inheritance Order
+  - id: "q82"
+    query: "diamond inheritance ambiguity due to wrong order of base contracts in is clause"
+    targets: ["swc-125"]
+  - id: "q83"
+    query: "C3 linearization resolves overridden function from wrong parent due to ordering"
+    targets: ["swc-125"]
+
+  # SWC-126: Insufficient Gas Griefing
+  - id: "q84"
+    query: "relayer forwards call with just enough gas to fail the subcall silently"
+    targets: ["swc-126"]
+  - id: "q85"
+    query: "stipend passed to external call is too low causing it to revert unexpectedly"
+    targets: ["swc-126"]
+  - id: "q86"
+    query: "griefing attack where caller provides insufficient gas to nested call"
+    targets: ["swc-126"]
+
+  # SWC-127: Arbitrary Jump with Function Type Variable
+  - id: "q87"
+    query: "function pointer stored in storage is overwritten allowing jump to arbitrary code"
+    targets: ["swc-127"]
+  - id: "q88"
+    query: "attacker modifies function type variable to redirect execution to malicious target"
+    targets: ["swc-127"]
+
+  # SWC-128: DoS With Block Gas Limit
+  - id: "q89"
+    query: "unbounded loop over growing array eventually exceeds block gas limit"
+    targets: ["swc-128"]
+  - id: "q90"
+    query: "iterating all token holders in a single transaction runs out of gas as list grows"
+    targets: ["swc-128"]
+  - id: "q91"
+    query: "refund loop processes unlimited entries and gets stuck when array is too large"
+    targets: ["swc-128"]
+
+  # SWC-129: Typographical Error
+  - id: "q92"
+    query: "off-by-one in loop boundary condition causes last element to be skipped"
+    targets: ["swc-129"]
+  - id: "q93"
+    query: "typo in comparison operator uses assignment instead of equality check"
+    targets: ["swc-129"]
+
+  # SWC-130: Right-To-Left-Override Control Character
+  - id: "q94"
+    query: "RTL override Unicode character in source code disguises malicious identifier"
+    targets: ["swc-130"]
+  - id: "q95"
+    query: "hidden bidirectional control character reverses displayed variable name in editor"
+    targets: ["swc-130"]
+  - id: "q96"
+    query: "source file contains U+202E to make auditors read function name backwards"
+    targets: ["swc-130"]
+
+  # SWC-131: Presence of Unused Variables
+  - id: "q97"
+    query: "local variable declared but never read or written in the function body"
+    targets: ["swc-131"]
+  - id: "q98"
+    query: "unused parameter in function signature suggests incomplete implementation"
+    targets: ["swc-131"]
+
+  # SWC-132: Unexpected Ether Balance
+  - id: "q99"
+    query: "contract logic breaks when ETH is force-sent via selfdestruct bypassing receive"
+    targets: ["swc-132"]
+  - id: "q100"
+    query: "strict equality on address(this).balance fails when ETH pre-loaded before deployment"
+    targets: ["swc-132"]
+  - id: "q101"
+    query: "invariant assumes contract balance can only grow through payable calls but SELFDESTRUCT breaks it"
+    targets: ["swc-132"]
+
+  # SWC-135: Code With No Effects
+  - id: "q102"
+    query: "arithmetic expression computed but result is never stored or returned"
+    targets: ["swc-135"]
+  - id: "q103"
+    query: "dead code branch executes but produces no observable state change"
+    targets: ["swc-135"]
+
+  # SWC-136: Unencrypted Private Data On-Chain
+  - id: "q104"
+    query: "secret password stored in a private state variable readable from chain storage"
+    targets: ["swc-136"]
+  - id: "q105"
+    query: "sensitive value marked private is still visible by reading raw contract storage"
+    targets: ["swc-136"]
+  - id: "q106"
+    query: "encryption key committed to blockchain state can be extracted by any node operator"
+    targets: ["swc-136"]
+
+  # --- new negatives (q107-q118, plus existing q15-q18) ---
+  - id: "q107"
+    query: "how to configure webpack for a production Next.js build"
+    targets: []
+  - id: "q108"
+    query: "SQL injection prevention in a PostgreSQL Express application"
+    targets: []
+  - id: "q109"
+    query: "Kubernetes horizontal pod autoscaler configuration for a Node.js service"
+    targets: []
+  - id: "q110"
+    query: "how to center a div vertically and horizontally in Tailwind CSS"
+    targets: []
+  - id: "q111"
+    query: "machine learning model evaluation metrics precision recall F1"
+    targets: []
+  - id: "q112"
+    query: "how to set up OAuth2 login with Google in a React app"
+    targets: []
+  - id: "q113"
+    query: "Python asyncio event loop best practices for high throughput services"
+    targets: []
+  - id: "q114"
+    query: "the rules of chess and how the knight moves"
+    targets: []
+  - id: "q115"
+    query: "GraphQL subscription implementation with websockets in Apollo Server"
+    targets: []
+  - id: "q116"
+    query: "how to reduce Docker image size with multi-stage builds"
+    targets: []
+  - id: "q117"
+    query: "merge sort algorithm time complexity and space complexity analysis"
+    targets: []
+  - id: "q118"
+    query: "how to write a Rust macro for compile-time string formatting"
     targets: []

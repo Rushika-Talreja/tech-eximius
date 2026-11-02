@@ -1,0 +1,42 @@
+doc_id: incident-indexed-finance
+kind: postmortem
+title: "Indexed Finance AMM Oracle Manipulation"
+vuln_class:
+  - price-oracle-manipulation
+  - logic-error
+swc_ids: []
+cwe_ids:
+  - CWE-682
+source_url: https://rekt.news/indexed-finance-rekt/
+license: CC-BY-4.0
+date: "2021-10-14"
+loss_usd: 16000000
+summary: >
+  Indexed Finance, a DeFi index protocol, was exploited for approximately $16M in October 2021.
+  The attacker exploited a flaw in Indexed Finance's rebalancing mechanism, which used an AMM-based
+  price oracle that could be manipulated. By pumping the price of low-value tokens that were
+  targets for inclusion in the index, the attacker forced the index to buy these worthless tokens
+  at inflated prices, draining the index's valuable assets. Two teenagers were later arrested
+  in connection with the attack.
+root_cause: >
+  Indexed Finance's index pools used an internal AMM to price tokens during rebalancing. When
+  an index needed to add a new token (or increase its weight), the protocol would buy that token
+  from its own AMM at the current (manipulable) spot price. Attackers discovered that by
+  cornering the supply of a low-liquidity token and then donating it to an index pool, they
+  could trigger a rebalancing that allowed them to sell their pumped tokens to the index at
+  artificial prices, draining the pool's primary assets in exchange for near-worthless tokens.
+exploit_pattern: >
+  Step 1: Attacker identifies low-liquidity tokens targeted for inclusion in an Indexed Finance
+  index pool. Step 2: Attacker purchases nearly all circulating supply of these tokens, controlling
+  the market price. Step 3: Attacker manipulates the index pool's spot price for these tokens
+  by providing them to the AMM. Step 4: Attacker triggers the index rebalancing mechanism,
+  which buys the attacker's overpriced tokens. Step 5: Index pool releases its valuable assets
+  (ETH, stablecoins) in exchange for the inflated tokens. Attacker drains $16M.
+remediation: >
+  Use time-weighted average prices with significant windows (hours) rather than spot prices for
+  index rebalancing decisions. Implement maximum rebalancing amounts per block or per period to
+  limit single-transaction drain attacks. Apply minimum liquidity and market cap requirements
+  for index inclusion. Use external oracle prices (Chainlink) as the reference for rebalancing
+  rather than internal AMM spot prices. Conduct economic security audits for all index weighting
+  and rebalancing mechanisms.
+excerpts: []

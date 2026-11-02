@@ -1,0 +1,39 @@
+doc_id: incident-fei-rari
+kind: postmortem
+title: "Fei Protocol / Rari Fuse Reentrancy"
+vuln_class:
+  - reentrancy
+swc_ids:
+  - SWC-107
+cwe_ids:
+  - CWE-841
+source_url: https://rekt.news/fei-rari-rekt/
+license: CC-BY-4.0
+date: "2022-04-30"
+loss_usd: 80000000
+summary: >
+  Fei Protocol and Rari Capital's Fuse pools were simultaneously exploited for approximately $80M
+  in April 2022 through a reentrancy vulnerability in the shared Compound v2 fork codebase. Both
+  protocols used the same vulnerable lending market implementation. The attacker drained multiple
+  Fuse pools, with the losses split between protocols that used the same vulnerable code. Rari
+  Capital subsequently shut down, and Fei Protocol merged this incident into its broader resolution.
+root_cause: >
+  The Compound v2 fork used by both Fei and Rari Fuse lacked reentrancy protection on its core
+  lending functions. When certain collateral tokens with ETH-transferring behavior (or callbacks)
+  were used, the borrow/redeem functions could be reentered before state updates completed.
+  The shared vulnerability in the fork code meant that all pools using this codebase were
+  simultaneously vulnerable, amplifying the total loss across the ecosystem.
+exploit_pattern: >
+  Step 1: Attacker identifies Fuse pools with collateral tokens that allow external calls during
+  transfer. Step 2: Attacker deposits collateral and calls borrow() on a target Fuse pool.
+  Step 3: The borrow triggers a token transfer that invokes a callback on the attacker's contract.
+  Step 4: Attacker reenters the borrow or exit function before debt state is updated, borrowing
+  additional assets against the same collateral. Step 5: Attacker drains multiple pools across
+  different markets using the same technique, extracting $80M total.
+remediation: >
+  All Compound forks must audit and add nonReentrant modifiers to borrow, repay, redeem, and
+  liquidation functions. Carefully review all token transfer callbacks and ETH-value flows for
+  reentrancy vectors. Establish a shared vulnerability disclosure process for forked codebases
+  so that fixes propagate to all forks simultaneously. Require re-auditing when forking any
+  protocol, treating it as a new codebase.
+excerpts: []

@@ -1,0 +1,42 @@
+doc_id: incident-tinyman-amm
+kind: postmortem
+title: "Tinyman AMM Pool Math Error"
+vuln_class:
+  - logic-error
+  - integer-overflow
+swc_ids:
+  - SWC-101
+cwe_ids:
+  - CWE-682
+source_url: https://rekt.news/tinyman-rekt/
+license: CC-BY-4.0
+date: "2022-01-01"
+loss_usd: 3000000
+summary: >
+  Tinyman, an Algorand-based automated market maker, was exploited for approximately $3M on
+  January 1, 2022 through a pool math error involving Algorand Standard Assets (ASAs). The
+  attacker exploited a vulnerability in Tinyman's smart contract that allowed burning pool
+  tokens (the liquidity provider tokens) against pools containing certain ASA combinations
+  to receive more underlying assets than the tokens represented. Tinyman paused all pools
+  and urged liquidity providers to withdraw immediately.
+root_cause: >
+  Tinyman's pool token burn logic contained an arithmetic vulnerability related to how it handled
+  certain combinations of ASA decimal precision. The contract calculated the amount of underlying
+  tokens to return when burning liquidity tokens, but the calculation had an edge case where
+  rounding or precision errors could cause the returned amount to significantly exceed the
+  proportional share. Specific ASA pairs with unusual decimal configurations triggered this error.
+exploit_pattern: >
+  Step 1: Attacker identifies Algorand Standard Assets with specific decimal configurations
+  that trigger the Tinyman pool burn calculation error. Step 2: Attacker provides liquidity
+  to an affected pool, receiving pool tokens. Step 3: Attacker calls the burn function to
+  redeem pool tokens, which triggers the flawed calculation. Step 4: The calculation returns
+  significantly more underlying ASAs than the pool tokens represent. Step 5: Attacker repeats
+  across multiple affected pools, extracting approximately $3M in various Algorand assets.
+remediation: >
+  Apply formal verification to all AMM pricing and liquidity formulas, especially for assets
+  with non-standard decimal configurations. Test AMM math with edge-case decimal values (0,
+  1, 18, 19+ decimals) in automated test suites. Use integer arithmetic libraries designed
+  for fixed-point math to avoid precision errors. Audit pool token minting and burning calculations
+  with property-based fuzzing. Implement invariant checks that verify pool balances match
+  expected values after every operation.
+excerpts: []

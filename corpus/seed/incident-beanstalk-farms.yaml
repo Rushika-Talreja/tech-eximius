@@ -1,0 +1,41 @@
+doc_id: incident-beanstalk-farms
+kind: postmortem
+title: "Beanstalk Farms Flash Loan Governance Attack"
+vuln_class:
+  - flash-loan
+  - logic-error
+swc_ids: []
+cwe_ids:
+  - CWE-284
+source_url: https://rekt.news/beanstalk-rekt/
+license: CC-BY-4.0
+date: "2022-04-17"
+loss_usd: 182000000
+summary: >
+  Beanstalk Farms, an algorithmic stablecoin protocol, was exploited for approximately $182M
+  in April 2022 through a flash loan governance attack. The attacker took out the largest
+  flash loan in DeFi history at the time, used it to acquire a supermajority of governance
+  voting power within a single transaction, and voted to pass a malicious emergency governance
+  proposal that transferred all protocol funds to the attacker. This demonstrated that protocols
+  allowing same-block governance voting are fundamentally vulnerable.
+root_cause: >
+  Beanstalk's governance system allowed users who held Bean Sprouts (governance tokens) to vote
+  on and immediately execute proposals with a 2/3 supermajority. There was no time delay between
+  voting and execution. By flash-loaning enough capital to acquire over 67% of governance tokens
+  in one transaction, an attacker could propose, vote on, and execute a malicious proposal all
+  within a single transaction, draining the protocol before any defense was possible.
+exploit_pattern: >
+  Step 1: Attacker prepares a malicious governance proposal that transfers all Beanstalk assets
+  to the attacker's address. Step 2: Attacker submits the proposal one block in advance (using
+  an earlier transaction) to pass the protocol's 1-block proposal delay. Step 3: Attacker takes
+  a massive flash loan from Aave (~$1B). Step 4: In the same transaction, attacker uses flash
+  loan to purchase a supermajority (>67%) of Bean Sprout governance tokens. Step 5: Attacker
+  votes for the malicious proposal and immediately executes it in the same transaction, draining
+  $182M. Flash loan repaid; net profit ~$80M after costs.
+remediation: >
+  Never allow flash-loaned governance tokens to be used for voting. Implement time-locks between
+  vote and execution (at least 24-48 hours) to allow community response. Use vote-escrowed or
+  time-weighted governance tokens that cannot be acquired instantly. Implement snapshot-based
+  voting using balances from a prior block. Require governance proposals to pass gradual quorum
+  thresholds and allow vetoes during a waiting period.
+excerpts: []

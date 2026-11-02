@@ -1,0 +1,40 @@
+doc_id: incident-cream-iron-bank
+kind: postmortem
+title: "Cream Finance Iron Bank Oracle Exploit"
+vuln_class:
+  - price-oracle-manipulation
+  - flash-loan
+swc_ids: []
+cwe_ids:
+  - CWE-682
+source_url: https://rekt.news/cream-rekt2/
+license: CC-BY-4.0
+date: "2021-10-27"
+loss_usd: 130000000
+summary: >
+  Cream Finance was exploited for approximately $130M in October 2021 through a sophisticated
+  price oracle manipulation attack using flash loans and Cream's own yUSD vault tokens. The
+  attacker used a combination of Cream's crYUSD tokens and flash loans to inflate the apparent
+  price of yUSD, then borrowed all available assets from Cream's Iron Bank against the
+  over-valued collateral. This was Cream Finance's third major exploit.
+root_cause: >
+  Cream Finance used Yearn's yUSD token as collateral, pricing it through Yearn's pricePerShare()
+  function. The attacker discovered that by making large flash-loaned deposits into Yearn's yUSD
+  vault within the same transaction, the pricePerShare calculation could be temporarily inflated.
+  Additionally, Cream's crYUSD token (its tokenized form of yUSD deposits) could be used as
+  collateral while the same underlying yUSD was being used in the flash loan loop.
+exploit_pattern: >
+  Step 1: Attacker obtains flash loans of massive ETH and DAI from MakerDAO and other sources.
+  Step 2: Attacker supplies yUSD to Cream, minting crYUSD. Step 3: Attacker borrows all ETH
+  from Cream against crYUSD collateral. Step 4: Attacker supplies borrowed ETH back to Cream,
+  minting crETH. Step 5: In a complex loop leveraging both crYUSD and crETH as collateral and
+  manipulating the yUSD pricePerShare, the attacker inflates their total collateral value.
+  Step 6: Attacker borrows $130M in various assets against the inflated collateral; all Cream
+  pools drained.
+remediation: >
+  Implement maximum leverage limits to prevent recursive collateral loops. Validate collateral
+  token prices against external, manipulation-resistant sources rather than internal functions
+  that can be temporarily inflated. Apply per-block borrowing limits for large positions. After
+  multiple exploits, conduct full protocol redesign reviews rather than incremental patches.
+  Use circuit breakers that automatically pause borrowing when unusual collateral patterns are detected.
+excerpts: []

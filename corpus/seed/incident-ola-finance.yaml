@@ -1,0 +1,41 @@
+doc_id: incident-ola-finance
+kind: postmortem
+title: "Ola Finance Reentrancy Attack"
+vuln_class:
+  - reentrancy
+swc_ids:
+  - SWC-107
+cwe_ids:
+  - CWE-841
+source_url: https://rekt.news/ola-finance-rekt/
+license: CC-BY-4.0
+date: "2022-03-31"
+loss_usd: 4700000
+summary: >
+  Ola Finance, a cross-chain lending protocol deployed on Fuse Network, was exploited for
+  approximately $4.7M in March 2022 through a reentrancy attack. Like the Rari Fuse exploit
+  (one month later), the attack exploited a Compound v2 fork that lacked reentrancy protection
+  on its borrow function when combined with ERC-677 (callAndTransfer) tokens. The attack
+  drained multiple lending pools on the Fuse Network.
+root_cause: >
+  Ola Finance deployed a Compound v2 fork on Fuse Network and supported ERC-677 tokens,
+  which have a transferAndCall function that invokes a callback on the recipient. The borrow
+  function in the Compound fork did not have reentrancy protection. When ERC-677 tokens were
+  borrowed, the callback was triggered on the attacker's contract before Ola updated the debt
+  balance, allowing the attacker to reenter and borrow again before the debt was recorded.
+exploit_pattern: >
+  Step 1: Attacker identifies Ola Finance's Compound fork supports ERC-677 tokens without
+  reentrancy protection. Step 2: Attacker supplies collateral to the Ola lending pool. Step 3:
+  Attacker calls borrow() for an ERC-677 token. Step 4: Token transfer triggers the attacker's
+  onTokenTransfer callback before Ola updates the borrow balance. Step 5: Attacker reenters
+  borrow() from within the callback, borrowing additional tokens against the still-unupdated
+  (lower) debt balance. Step 6: After multiple reentrant borrows, attacker drains $4.7M from
+  multiple pools.
+remediation: >
+  Add nonReentrant guards to all borrow, repay, and redeem functions in any Compound fork.
+  Before listing any token in a lending market, audit it for callbacks (ERC-677, ERC-777, etc.)
+  and either reject them or add specific reentrancy handling. When deploying forked protocols
+  on new chains, conduct fresh security audits rather than assuming the original's security.
+  Establish cross-protocol security communication channels so that Compound fork vulnerabilities
+  are patched across all deployments simultaneously.
+excerpts: []

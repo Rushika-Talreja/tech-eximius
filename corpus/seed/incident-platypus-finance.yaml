@@ -1,0 +1,41 @@
+doc_id: incident-platypus-finance
+kind: postmortem
+title: "Platypus Finance Emergency Withdraw Logic Error"
+vuln_class:
+  - logic-error
+  - flash-loan
+swc_ids: []
+cwe_ids:
+  - CWE-682
+source_url: https://rekt.news/platypus-finance-rekt/
+license: CC-BY-4.0
+date: "2023-02-16"
+loss_usd: 8500000
+summary: >
+  Platypus Finance, an Avalanche-based stablecoin AMM, was exploited for approximately $8.5M
+  in February 2023 through a logic error in its emergency withdraw function. The attacker used
+  a flash loan to collateralize a large USP (Platypus stablecoin) borrow position, then triggered
+  an emergency withdrawal of the collateral while keeping the USP debt. The flawed emergency
+  function allowed collateral to be withdrawn without verifying that the associated debt was repaid.
+root_cause: >
+  Platypus Finance's MasterPlatypusV4 contract contained an emergencyWithdraw function designed
+  to let users recover funds in emergency scenarios. The function allowed withdrawal of collateral
+  (LP tokens) without checking or clearing the associated USP debt position. This meant an attacker
+  could borrow USP against collateral, call emergencyWithdraw to recover the collateral, and keep
+  the borrowed USP—effectively getting both the collateral back and the borrowed stablecoins.
+exploit_pattern: >
+  Step 1: Attacker takes a large USDC flash loan from Aave on Avalanche. Step 2: Attacker
+  deposits USDC into Platypus to receive LP tokens, then stakes them as collateral. Step 3:
+  Attacker borrows maximum USP (Platypus's stablecoin) against the LP collateral. Step 4:
+  Attacker calls emergencyWithdraw() to retrieve the LP collateral without repaying USP debt.
+  Step 5: The emergency function does not check for outstanding debt, releasing LP tokens.
+  Step 6: Attacker redeems LP tokens for USDC, repays flash loan, keeps $8.5M in USP.
+  USP depegs as protocol has uncollateralized supply.
+remediation: >
+  Emergency withdraw functions must verify there is no outstanding debt before releasing
+  collateral, or must automatically repay/zero the debt before releasing collateral. Apply
+  health factor checks at the end of any collateral-releasing operation (solvent check after
+  action). Treat emergency functions as the highest-security code path and subject them to
+  extra scrutiny in audits. Use fuzz testing to discover edge cases where collateral can
+  be removed while debt remains outstanding.
+excerpts: []

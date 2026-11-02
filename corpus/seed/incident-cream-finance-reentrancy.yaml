@@ -1,0 +1,40 @@
+doc_id: incident-cream-finance-reentrancy
+kind: postmortem
+title: "Cream Finance Reentrancy Exploit"
+vuln_class:
+  - reentrancy
+  - flash-loan
+swc_ids:
+  - SWC-107
+cwe_ids:
+  - CWE-841
+source_url: https://rekt.news/cream-rekt/
+license: CC-BY-4.0
+date: "2021-08-30"
+loss_usd: 18800000
+summary: >
+  Cream Finance was exploited for approximately $18.8M in August 2021 through a reentrancy
+  attack using AMP token's ERC-777-like callback mechanism. The attacker leveraged AMP's
+  token transfer hooks to reenter Cream's lending contract during a borrow operation, borrowing
+  the same collateral twice. This was Cream Finance's second major exploit of 2021, highlighting
+  persistent vulnerabilities in lending protocol design.
+root_cause: >
+  Cream Finance's lending contract integrated AMP token, which implements the ERC-777 tokensReceived
+  callback. When AMP tokens were transferred, the receiver's callback was invoked before Cream
+  updated its internal accounting state. This allowed a malicious contract receiving AMP tokens
+  to reenter Cream's borrow function and take out additional loans against collateral that
+  had not yet been properly recorded, effectively borrowing against the same collateral twice.
+exploit_pattern: >
+  Step 1: Attacker deploys a malicious contract with a tokensReceived callback. Step 2: Attacker
+  obtains AMP tokens and supplies them as collateral to Cream. Step 3: Attacker calls borrow()
+  on Cream, which transfers AMP and triggers the malicious tokensReceived callback before
+  updating the borrow balance. Step 4: Inside the callback, the attacker calls borrow() again,
+  exploiting the not-yet-updated state to borrow additional assets. Step 5: Outer borrow
+  completes, but state shows only one borrow; attacker escapes with double the assets.
+remediation: >
+  Apply the checks-effects-interactions pattern and update all state before any external calls
+  or token transfers. Use OpenZeppelin's ReentrancyGuard on all borrow and supply functions.
+  Carefully vet any token with transfer hooks (ERC-777, ERC-1363) before adding to lending markets,
+  as these introduce reentrancy vectors. Conduct protocol-level integration audits when adding
+  new collateral types, not just individual contract audits.
+excerpts: []

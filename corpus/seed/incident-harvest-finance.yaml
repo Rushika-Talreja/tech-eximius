@@ -1,0 +1,39 @@
+doc_id: incident-harvest-finance
+kind: postmortem
+title: "Harvest Finance Flash Loan Attack"
+vuln_class:
+  - flash-loan
+  - price-oracle-manipulation
+swc_ids: []
+cwe_ids:
+  - CWE-682
+source_url: https://rekt.news/harvest-finance-rekt/
+license: CC-BY-4.0
+date: "2020-10-26"
+loss_usd: 34000000
+summary: >
+  Harvest Finance suffered a $34M flash loan attack in October 2020. The attacker repeatedly
+  manipulated the USDC/USDT price on Curve Finance to exploit Harvest's vault pricing mechanism.
+  The attack was conducted in 13 minutes across 17 transactions, and the attacker returned $2.5M
+  to the Harvest deployer address. The incident demonstrated the risk of using manipulable AMM
+  prices as oracle sources in yield-farming vaults.
+root_cause: >
+  Harvest Finance vaults calculated share prices based on spot AMM prices from Curve, which
+  could be temporarily manipulated within a single transaction using flash loans. When an attacker
+  manipulated the stablecoin price on Curve, Harvest's deposit and withdrawal calculations
+  used the distorted price, allowing the attacker to mint shares cheaply and redeem them
+  at a higher price, extracting value from existing vault depositors.
+exploit_pattern: >
+  Step 1: Attacker borrows large amounts of USDC from Uniswap via flash loan. Step 2: Attacker
+  swaps USDC for USDT on Curve, reducing the USDC price and raising USDT price. Step 3: Attacker
+  deposits USDC into Harvest fUSDC vault at the temporarily suppressed price, receiving more
+  shares than fair value. Step 4: Attacker swaps back USDT to USDC on Curve, restoring prices.
+  Step 5: Attacker withdraws from Harvest vault at the restored (higher) USDC price, extracting
+  profit. Step 6: Repeated 17 times; flash loan repaid, net profit $34M.
+remediation: >
+  Avoid using real-time AMM spot prices as oracle inputs for vault share calculations. Implement
+  TWAP-based pricing over multiple blocks to resist single-transaction manipulation. Add
+  per-block deposit/withdrawal limits and slippage guards to prevent large arbitrage. Use
+  Chainlink or similar manipulation-resistant oracles for any financial calculations. Conduct
+  economic audits specifically targeting flash loan attack vectors on all vault strategies.
+excerpts: []

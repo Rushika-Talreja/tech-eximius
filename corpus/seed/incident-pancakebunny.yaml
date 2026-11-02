@@ -1,0 +1,39 @@
+doc_id: incident-pancakebunny
+kind: postmortem
+title: "PancakeBunny Flash Loan Attack"
+vuln_class:
+  - flash-loan
+  - price-oracle-manipulation
+swc_ids: []
+cwe_ids:
+  - CWE-682
+source_url: https://rekt.news/pancakebunny-rekt/
+license: CC-BY-4.0
+date: "2021-05-19"
+loss_usd: 45000000
+summary: >
+  PancakeBunny, a BSC yield optimizer, was exploited for approximately $45M in May 2021 through
+  a flash loan price manipulation attack. The attacker borrowed a massive amount of BNB via
+  PancakeSwap flash loans, manipulated the BUNNY/BNB price, then minted an enormous quantity
+  of BUNNY tokens at a manipulated price. Selling those BUNNY tokens crashed the price by over
+  95%, causing significant losses to BUNNY holders.
+root_cause: >
+  PancakeBunny's minting mechanism calculated the amount of BUNNY tokens to mint based on
+  the current BUNNY/BNB price on PancakeSwap. This spot price could be dramatically manipulated
+  within a single transaction using flash loans. The protocol failed to use any price manipulation
+  resistance, allowing an attacker to borrow enough BNB to move the PancakeSwap pool price,
+  mint BUNNY at the artificially low price, and then dump all minted tokens on the market.
+exploit_pattern: >
+  Step 1: Attacker borrows approximately 2.3 million BNB through PancakeSwap flash loan.
+  Step 2: Attacker dumps massive amounts of BNB into the BUNNY/BNB pool, crashing BUNNY's price.
+  Step 3: Attacker triggers PancakeBunny's minting function, which mints a huge amount of BUNNY
+  at the artificially low BNB price (attacker receives massive BUNNY allocation). Step 4: Attacker
+  restores the pool by selling back BNB. Step 5: Attacker sells all minted BUNNY, crashing the
+  price 95%+; repays flash loan; keeps ~$45M profit.
+remediation: >
+  Never use AMM spot prices for token minting calculations—this creates a direct flash loan
+  attack vector. Use TWAP prices over multiple blocks for any minting or reward distribution
+  that depends on token price. Implement caps on maximum tokens mintable per block or transaction.
+  Use Chainlink or similar off-chain aggregated price feeds for reward calculations. Audit all
+  token issuance mechanisms for price manipulation vectors before mainnet deployment.
+excerpts: []

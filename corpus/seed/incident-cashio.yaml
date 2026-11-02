@@ -1,0 +1,42 @@
+doc_id: incident-cashio
+kind: postmortem
+title: "Cashio Infinite Mint (Missing Ownership Check)"
+vuln_class:
+  - access-control
+  - logic-error
+swc_ids:
+  - SWC-105
+cwe_ids:
+  - CWE-284
+source_url: https://rekt.news/cashio-rekt/
+license: CC-BY-4.0
+date: "2022-03-23"
+loss_usd: 52000000
+summary: >
+  Cashio, a Solana-based algorithmic stablecoin backed by Saber LP tokens, was exploited for
+  approximately $52M through an infinite mint vulnerability caused by a missing ownership
+  validation check. The attacker created fake accounts that impersonated legitimate collateral
+  accounts in the Cashio system, bypassing collateral checks and minting an unlimited supply
+  of CASH tokens, which were then swapped for real assets on Saber and drained from liquidity pools.
+root_cause: >
+  Cashio's mint function validated that the user-supplied collateral accounts were real Saber LP
+  token accounts but failed to verify that the accounts were owned/registered by the Cashio
+  protocol. Solana's account model allows arbitrary data to be placed in program-derived accounts,
+  and Cashio did not check whether the collateral account was an account it had registered.
+  This allowed an attacker to create fake collateral accounts that passed superficial checks
+  but had no real backing.
+exploit_pattern: >
+  Step 1: Attacker creates a tree of fake Solana accounts that mimic Cashio's expected account
+  structure for collateral verification. Step 2: Attacker calls Cashio's mint function, passing
+  fake accounts that pass shallow type checks but aren't registered with the protocol. Step 3:
+  The missing ownership check allows the mint to proceed as if real collateral was provided.
+  Step 4: Attacker mints billions of unbacked CASH tokens. Step 5: Attacker swaps CASH for
+  real USDC/USDT on Saber, draining $52M from liquidity pools. Small accounts (under $100K)
+  were later partially reimbursed by the attacker.
+remediation: >
+  Always verify account ownership and program derivation (PDA seeds) in Solana programs, not
+  just account type or structure. Use Anchor framework's account constraints (e.g., has_one,
+  constraint) to enforce ownership relationships. Conduct Solana-specific security audits that
+  cover account validation and program-derived address verification. Implement invariant checks
+  that verify total minted supply equals total registered collateral after every operation.
+excerpts: []

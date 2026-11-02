@@ -1,0 +1,40 @@
+doc_id: incident-spartan-protocol
+kind: postmortem
+title: "Spartan Protocol AMM Liquidity Exploit"
+vuln_class:
+  - logic-error
+  - flash-loan
+swc_ids: []
+cwe_ids:
+  - CWE-682
+source_url: https://rekt.news/spartan-rekt/
+license: CC-BY-4.0
+date: "2021-05-02"
+loss_usd: 30000000
+summary: >
+  Spartan Protocol, a BSC liquidity protocol, was exploited for approximately $30M in May 2021
+  through a flaw in its liquidity share calculation. The attacker exploited an incorrect formula
+  for calculating pool shares during liquidity removal, which allowed them to withdraw more assets
+  than they had deposited. The attack used flash loans to amplify the exploit across multiple
+  transaction steps.
+root_cause: >
+  Spartan Protocol calculated the share of pool assets a liquidity provider was entitled to
+  using a formula that was vulnerable to manipulation via large temporary liquidity additions.
+  The formula used the current pool reserves to compute shares, but these reserves could be
+  temporarily inflated by flash-loaning and adding liquidity just before removal, causing
+  the share calculation to over-allocate assets on withdrawal from the manipulated pool state.
+exploit_pattern: >
+  Step 1: Attacker borrows large amounts of BNB and SPARTA via flash loans. Step 2: Attacker
+  adds liquidity to Spartan pools, temporarily increasing reserves and pool token balance.
+  Step 3: Attacker removes liquidity, but the share calculation—based on the temporarily
+  inflated pool state—returns more assets than were deposited. Step 4: Attacker repays flash
+  loans and keeps the excess assets, repeating the cycle across multiple pools until $30M
+  is extracted.
+remediation: >
+  Formally verify all liquidity share calculation formulas to ensure they cannot be manipulated
+  by temporary reserve changes. Use reserve values averaged over multiple blocks rather than
+  instantaneous values. Apply reentrancy guards on liquidity add/remove functions to prevent
+  same-transaction exploits. Implement maximum liquidity change limits per block to prevent
+  flash loan amplification. Consult with experienced AMM mathematicians before deploying novel
+  liquidity formulas in production.
+excerpts: []

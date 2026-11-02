@@ -1,0 +1,43 @@
+doc_id: incident-transit-swap
+kind: postmortem
+title: "Transit Swap Arbitrary External Call Exploit"
+vuln_class:
+  - logic-error
+  - access-control
+swc_ids:
+  - SWC-105
+cwe_ids:
+  - CWE-284
+source_url: https://rekt.news/transit-swap-rekt/
+license: CC-BY-4.0
+date: "2022-10-01"
+loss_usd: 21000000
+summary: >
+  Transit Swap, a multi-chain DEX aggregator, was exploited for approximately $21M in October
+  2022 due to an arbitrary external call vulnerability. The attacker exploited a swap function
+  that allowed users to specify arbitrary calldata to be passed to arbitrary contracts. By
+  crafting malicious calldata targeting token approval functions, the attacker drained tokens
+  from users who had approved Transit Swap's contract. Most funds were eventually returned
+  by the attacker, who claimed to be a whitehat.
+root_cause: >
+  Transit Swap's aggregator contract forwarded user-supplied calldata to user-specified target
+  contracts without validating the target address or calldata content. An attacker could specify
+  a legitimate token contract as the target and craft calldata to call transferFrom, using the
+  Transit Swap contract as the intermediary. Since users had approved Transit Swap for token
+  transfers, this allowed the contract to transfer tokens from user wallets to the attacker.
+exploit_pattern: >
+  Step 1: Attacker crafts a malicious swap call with a target address pointing to an ERC-20
+  token contract and calldata encoding a transferFrom call. Step 2: Attacker calls Transit
+  Swap's swap function with this crafted payload. Step 3: Transit Swap forwards the calldata
+  to the token contract, calling transferFrom(victim, attacker, amount) using Transit Swap's
+  allowance from the victim. Step 4: Token contract executes the transfer, sending victim's
+  tokens to the attacker. Step 5: Repeated for thousands of victim addresses who had approved
+  Transit Swap, draining $21M total.
+remediation: >
+  Never pass arbitrary user-controlled calldata to arbitrary addresses in aggregator contracts.
+  Whitelist allowed target contracts (only legitimate DEX routers) and validate calldata function
+  selectors. Implement calldata validation that prohibits transferFrom, approve, and other
+  fund-movement functions from being called on behalf of users. Use approval-less patterns
+  (permit/EIP-2612) or atomic swap architectures that avoid holding user approvals. Regular
+  audits should specifically test for arbitrary call vulnerabilities in aggregators.
+excerpts: []

@@ -1,0 +1,42 @@
+doc_id: incident-axie-infinity-ronin
+kind: postmortem
+title: "Axie Infinity Ronin Bridge Validator Compromise"
+vuln_class:
+  - access-control
+swc_ids:
+  - SWC-105
+cwe_ids:
+  - CWE-284
+source_url: https://rekt.news/ronin-rekt/
+license: CC-BY-4.0
+date: "2022-03-23"
+loss_usd: 625000000
+summary: >
+  The Ronin Network bridge, used by Axie Infinity, was exploited for $625M making it the
+  largest crypto hack in history at the time. The Lazarus Group (North Korean state-sponsored
+  hackers) compromised validator keys through a sophisticated social engineering campaign targeting
+  Sky Mavis employees. With five of nine validator private keys compromised, the attackers
+  forged withdrawal transactions that drained 173,600 ETH and 25.5M USDC from the bridge.
+root_cause: >
+  The Ronin bridge used a 5-of-9 multi-signature scheme for approving bridge transactions.
+  The attacker compromised four Sky Mavis validator keys (via spear phishing using fake job offers
+  targeting employees) and leveraged a legacy permission granted to Sky Mavis to sign on behalf
+  of Axie DAO—permission that had never been revoked after a November 2021 traffic event.
+  This gave attackers five validator signatures, just enough to authorize withdrawals.
+exploit_pattern: >
+  Step 1: Lazarus Group researchers identified Ronin's validator architecture and the legacy
+  Sky Mavis delegation for Axie DAO. Step 2: Attackers sent highly targeted fake job offer
+  PDFs to Sky Mavis senior engineers; the PDFs contained malware that harvested credentials.
+  Step 3: Attackers gained access to Sky Mavis's internal systems and extracted four validator
+  private keys. Step 4: Attackers discovered the Axie DAO delegation was still active and
+  obtained that key as well. Step 5: On March 23, attackers submitted two fraudulent withdrawal
+  transactions (173,600 ETH and 25.5M USDC) signed with five validator keys. The theft was
+  undetected for 6 days.
+remediation: >
+  Implement real-time monitoring and anomaly detection for all bridge withdrawals, with alerts
+  for any transaction above a threshold. Increase signature threshold requirements for large
+  withdrawals (e.g., 7-of-9). Regularly audit and immediately revoke all delegated signing
+  permissions. Store validator keys in geographically distributed HSMs with strict access logging.
+  Implement personnel security training and simulate phishing attacks quarterly. Use hardware
+  security keys for all privileged infrastructure access.
+excerpts: []

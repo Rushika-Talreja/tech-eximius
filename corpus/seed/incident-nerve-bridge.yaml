@@ -1,0 +1,41 @@
+doc_id: incident-nerve-bridge
+kind: postmortem
+title: "Nerve Bridge Reentrancy Exploit"
+vuln_class:
+  - reentrancy
+swc_ids:
+  - SWC-107
+cwe_ids:
+  - CWE-841
+source_url: https://rekt.news/nerve-bridge-rekt/
+license: CC-BY-4.0
+date: "2022-08-01"
+loss_usd: 24000000
+summary: >
+  Nerve Bridge, a BSC cross-chain bridge protocol, was exploited for approximately $24M through
+  a reentrancy vulnerability in its bridge contract. The attacker exploited the contract's
+  failure to update state before processing cross-chain message callbacks, allowing repeated
+  withdrawal requests to be processed against the same deposited funds. The attack drained
+  multiple asset pools from the bridge.
+root_cause: >
+  Nerve Bridge's withdrawal processing function sent tokens or ETH to the recipient before
+  marking the withdrawal request as fulfilled. The bridge contract's external call to deliver
+  assets could be intercepted by a malicious contract, which could reenter the withdrawal
+  function with the same withdrawal request parameters before the request was marked as processed.
+  This classic reentrancy pattern allowed the same withdrawal to be processed multiple times.
+exploit_pattern: >
+  Step 1: Attacker deploys a malicious receiver contract with a fallback that reenters the
+  bridge. Step 2: Attacker initiates a legitimate deposit on the source chain and receives
+  a valid withdrawal credential for the destination chain. Step 3: Attacker calls withdraw()
+  on Nerve Bridge with the credential; bridge begins sending assets. Step 4: During asset
+  transfer, bridge calls attacker's contract, which reenters withdraw() with the same credential.
+  Step 5: Bridge processes the credential again (not yet marked fulfilled), sending duplicate
+  assets. Step 6: Repeated until all target pools drained.
+remediation: >
+  Mark withdrawal requests as processed at the beginning of the withdrawal function, before
+  any external calls or asset transfers (checks-effects-interactions). Use OpenZeppelin's
+  ReentrancyGuard nonReentrant modifier on all bridge withdrawal functions. Implement withdrawal
+  nonces that are consumed atomically before asset transfer. Monitor for duplicate withdrawal
+  attempts and implement automatic circuit breakers. Conduct security audits focused on
+  cross-chain message replay and reentrancy scenarios.
+excerpts: []

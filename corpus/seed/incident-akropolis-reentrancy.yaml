@@ -1,0 +1,38 @@
+doc_id: incident-akropolis-reentrancy
+kind: postmortem
+title: "Akropolis Reentrancy Attack"
+vuln_class:
+  - reentrancy
+swc_ids:
+  - SWC-107
+cwe_ids:
+  - CWE-841
+source_url: https://rekt.news/akropolis-rekt/
+license: CC-BY-4.0
+date: "2020-11-12"
+loss_usd: 2000000
+summary: >
+  Akropolis Protocol was exploited for approximately $2M in DAI in November 2020 through a
+  reentrancy attack on its savings pools. The attacker used a fake ERC-20 token with a malicious
+  transfer callback to reenter the Akropolis pool contract and drain funds. The attack exploited
+  Akropolis's failure to use reentrancy guards despite having had a security audit completed.
+root_cause: >
+  Akropolis savings pools allowed users to deposit any token that passed a basic interface check.
+  The deposit function transferred tokens from the user and then credited their balance, but lacked
+  reentrancy protection. The attacker created a malicious token contract whose transferFrom function
+  reentered the Akropolis pool during the deposit, allowing the attacker to claim credit for the
+  same deposit multiple times before the state was updated.
+exploit_pattern: >
+  Step 1: Attacker deploys a malicious ERC-20 token with a transferFrom that calls back into the
+  Akropolis pool's deposit function. Step 2: Attacker calls deposit() on the Akropolis pool with
+  the malicious token. Step 3: Akropolis calls transferFrom on the malicious token, which triggers
+  the malicious callback, reentering the deposit function. Step 4: Reentrant deposit credits
+  the attacker's balance again before the original deposit completes. Step 5: Attacker repeats
+  this multiple times, accumulating DAI balance, then withdraws all $2M.
+remediation: >
+  Apply OpenZeppelin's ReentrancyGuard nonReentrant modifier to all state-changing external
+  functions, especially deposit and withdraw. Follow the checks-effects-interactions pattern
+  by updating user balances before calling transferFrom. Whitelist approved tokens rather than
+  accepting arbitrary ERC-20 tokens to prevent malicious token injection. Validate security
+  audit recommendations with regression tests that cover reentrancy scenarios.
+excerpts: []

@@ -1,0 +1,37 @@
+doc_id: incident-the-dao
+kind: postmortem
+title: "The DAO Hack"
+vuln_class:
+  - reentrancy
+swc_ids:
+  - SWC-107
+cwe_ids:
+  - CWE-841
+source_url: https://rekt.news/the-dao-rekt/
+license: CC-BY-4.0
+date: "2016-06-17"
+loss_usd: 60000000
+summary: >
+  The DAO was a decentralized autonomous organization built on Ethereum that raised over $150M in
+  ETH in a crowdfunding campaign. On June 17, 2016, an attacker exploited a reentrancy vulnerability
+  in The DAO's splitDAO function to drain approximately 3.6 million ETH (worth ~$60M at the time).
+  The exploit triggered a contentious hard fork of the Ethereum blockchain, ultimately splitting
+  the community into Ethereum (ETH) and Ethereum Classic (ETC).
+root_cause: >
+  The DAO's withdraw function sent ETH to the caller before updating the internal balance state.
+  The fallback function of the attacker's contract recursively called back into the DAO's splitDAO
+  function before the state update completed, allowing repeated withdrawals against the same balance.
+  This classic reentrancy pattern was a known vulnerability but was not caught during auditing.
+exploit_pattern: >
+  The attacker created a malicious contract with a fallback function that re-entered the DAO's
+  splitDAO function. Step 1: attacker calls splitDAO with a proposal to move funds into a child DAO.
+  Step 2: DAO sends ETH to the attacker's contract. Step 3: attacker's fallback function calls
+  splitDAO again before the balance is updated. Step 4: this recursive loop continues until the
+  call stack depth limit is reached or gas runs out, draining millions of ETH per iteration.
+remediation: >
+  Always update state variables before transferring ETH or calling external contracts (checks-effects-
+  interactions pattern). Use reentrancy guard modifiers (e.g., OpenZeppelin's ReentrancyGuard) to
+  prevent recursive calls. Prefer pull-over-push payment patterns where recipients withdraw funds
+  themselves rather than contracts pushing funds out. Conduct thorough security audits with reentrancy
+  as a top priority before deploying contracts holding significant funds.
+excerpts: []

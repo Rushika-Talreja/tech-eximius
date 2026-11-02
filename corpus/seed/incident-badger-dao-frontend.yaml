@@ -1,0 +1,42 @@
+doc_id: incident-badger-dao-frontend
+kind: postmortem
+title: "BadgerDAO Frontend Attack"
+vuln_class:
+  - access-control
+swc_ids:
+  - SWC-105
+cwe_ids:
+  - CWE-284
+source_url: https://rekt.news/badger-rekt/
+license: CC-BY-4.0
+date: "2021-12-02"
+loss_usd: 120000000
+summary: >
+  BadgerDAO suffered a $120M front-end attack in December 2021 when attackers injected malicious
+  scripts into the BadgerDAO app interface via a compromised Cloudflare Workers API key. The
+  malicious script intercepted user transactions and added additional token approval calls,
+  granting the attacker unlimited spending allowances for victim tokens. Users who approved
+  these interceptions later had their funds drained silently.
+root_cause: >
+  The attacker obtained API credentials for Badger's Cloudflare account (likely through phishing
+  or credential compromise) and used them to inject malicious JavaScript into Badger's production
+  website. The injected script monitored user transactions and inserted additional approveAll
+  calls for popular tokens (WBTC, cvxCRV, etc.) to the attacker's address. Users approving
+  Badger transactions unknowingly also approved the attacker to spend their tokens.
+exploit_pattern: >
+  Step 1: Attacker compromises Badger's Cloudflare API credentials and injects malicious code
+  into the production front-end. Step 2: When users visit the BadgerDAO app and initiate a
+  transaction, the malicious script appends additional approval transactions targeting the
+  attacker's address. Step 3: Users see extra transactions in MetaMask pop-ups and approve them,
+  thinking they are legitimate protocol operations. Step 4: The attacker's address now has
+  unlimited spending allowance for the victims' tokens. Step 5: Attacker batch-drains all
+  approved tokens from victim wallets, accumulating $120M before the attack is detected and
+  the front-end is taken offline.
+remediation: >
+  Implement Content Security Policy (CSP) headers that restrict script sources to trusted domains.
+  Use Subresource Integrity (SRI) hashes for all loaded scripts to detect tampering. Monitor
+  production deployments for script changes and alert on any modifications. Require hardware
+  keys (YubiKey) for all infrastructure access. Implement anomaly detection for unusual approval
+  transaction patterns. Educate users to review approval amounts and recipients carefully.
+  Use timelocked approval workflows that alert the community before execution.
+excerpts: []

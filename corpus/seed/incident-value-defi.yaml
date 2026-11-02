@@ -1,0 +1,38 @@
+doc_id: incident-value-defi
+kind: postmortem
+title: "Value DeFi Flash Loan Attack"
+vuln_class:
+  - flash-loan
+  - price-oracle-manipulation
+swc_ids: []
+cwe_ids:
+  - CWE-682
+source_url: https://rekt.news/value-defi-rekt/
+license: CC-BY-4.0
+date: "2020-11-14"
+loss_usd: 7000000
+summary: >
+  Value DeFi's MultiStablesVault was exploited for approximately $7M in November 2020. The
+  attacker used a flash loan of 80,000 ETH from Aave and manipulated Curve's stablecoin pool
+  prices to exploit the vault's share price calculation. The attacker left a taunting message
+  onchain reading "Do you really know flashloan?" directed at Value DeFi, which had previously
+  claimed to be "flashloan-proof."
+root_cause: >
+  Value DeFi's vault calculated its underlying asset value using Curve pool token prices that
+  were vulnerable to single-transaction manipulation via flash loans. The protocol failed to
+  use manipulation-resistant oracles and did not implement adequate price sanity checks.
+  Despite claiming flash loan resistance as a security feature, the vault's pricing mechanism
+  could be distorted by temporarily imbalancing Curve's stablecoin pool within a single transaction.
+exploit_pattern: >
+  Step 1: Attacker borrows 80,000 ETH from Aave as a flash loan, swaps to stablecoins.
+  Step 2: Attacker makes large imbalanced deposits into Curve stablecoin pool, distorting prices.
+  Step 3: Attacker deposits into Value DeFi vault at the manipulated price, receiving excess shares.
+  Step 4: Attacker withdraws from Curve pool, restoring prices. Step 5: Attacker redeems Value DeFi
+  shares at restored prices, extracting $7M more than deposited. Flash loan repaid, profit kept.
+remediation: >
+  Implement TWAP-based pricing for vault share calculations instead of spot AMM prices.
+  Integrate multiple independent oracle sources and use the median value. Apply strict slippage
+  and price deviation checks before accepting deposits or calculating share prices. Test all
+  "flash loan proof" claims rigorously against economic attack simulations. Never market security
+  claims without mathematical proof and external verification.
+excerpts: []

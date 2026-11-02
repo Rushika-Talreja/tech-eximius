@@ -1,0 +1,38 @@
+doc_id: incident-pickle-finance
+kind: postmortem
+title: "Pickle Finance Evil Jar Exploit"
+vuln_class:
+  - logic-error
+swc_ids: []
+cwe_ids:
+  - CWE-693
+source_url: https://rekt.news/pickle-finance-rekt/
+license: CC-BY-4.0
+date: "2020-11-21"
+loss_usd: 19700000
+summary: >
+  Pickle Finance was exploited for approximately $19.7M in DAI through a sophisticated logic
+  error attack in November 2020. The attacker crafted a malicious "evil jar" contract that
+  impersonated a legitimate Pickle Finance jar (vault), then tricked the PickleJar controller
+  into calling a swap function with the evil jar as input, draining the DAI PickleJar. This
+  attack required deep protocol knowledge and took significant skill to execute.
+root_cause: >
+  Pickle Finance's controller contract had a swapExactJarForJar function intended to allow
+  migration between legitimate vaults. However, the function failed to validate that the input
+  and output jar contracts were legitimate Pickle Finance contracts. By passing a malicious
+  contract that returned false data about its balance and token, the attacker could manipulate
+  the controller into sending DAI from the real PickleJar to an attacker-controlled address.
+exploit_pattern: >
+  Step 1: Attacker studies Pickle Finance's controller and jar contract interfaces in detail.
+  Step 2: Attacker deploys a malicious "evil jar" contract that mimics the Pickle jar interface
+  but returns manipulated values. Step 3: Attacker calls swapExactJarForJar with the evil jar,
+  which the controller accepts without validating it's a legitimate Pickle contract. Step 4: The
+  controller calls functions on the evil jar, which manipulates execution flow to extract DAI
+  from the legitimate cDAI PickleJar. Step 5: $19.7M in DAI transferred to attacker.
+remediation: >
+  Validate all input contract addresses against a registry of approved contracts before interacting
+  with them. Never allow arbitrary external contract addresses to influence control flow in financial
+  operations. Implement a whitelist of allowed jar and strategy contracts, checked on every call.
+  Use interface-based validation and registry checks, not just type checking. Perform thorough
+  logic audits of all cross-contract interaction paths, not just individual contract functions.
+excerpts: []

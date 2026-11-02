@@ -1,0 +1,40 @@
+doc_id: incident-safe-dollar
+kind: postmortem
+title: "Safe Dollar Infinite Mint Reentrancy"
+vuln_class:
+  - reentrancy
+  - logic-error
+swc_ids:
+  - SWC-107
+cwe_ids:
+  - CWE-841
+source_url: https://rekt.news/safe-dollar-rekt/
+license: CC-BY-4.0
+date: "2021-07-24"
+loss_usd: 248000
+summary: >
+  Safe Dollar (SDS), a BSC algorithmic stablecoin project, was exploited for approximately
+  $248K through a reentrancy attack combined with an infinite mint vulnerability. The attacker
+  was able to repeatedly mint SDS tokens without providing the correct backing, causing the
+  token price to collapse to near zero. The attack drained the project's treasury and permanently
+  destroyed the stablecoin's peg.
+root_cause: >
+  Safe Dollar's minting contract allowed external calls during the minting process before
+  updating the contract state, creating a reentrancy vulnerability. The minting function
+  checked collateral requirements and issued tokens, but by reentering before the issuance
+  was recorded, an attacker could mint tokens multiple times against the same collateral.
+  Combined with the ability to dump these tokens on the market, this destroyed the project.
+exploit_pattern: >
+  Step 1: Attacker creates a malicious contract with a fallback/receive function. Step 2:
+  Attacker calls Safe Dollar's mint function with minimal collateral. Step 3: During the
+  minting process, an external call is made to the attacker's contract (e.g., for collateral
+  transfer), triggering the malicious callback. Step 4: The callback reenters the mint function,
+  minting additional SDS tokens before the first mint's state is recorded. Step 5: Attacker
+  receives many times more SDS than collateral warrants, dumps all tokens on market.
+remediation: >
+  Apply nonReentrant guards to all minting, burning, and redemption functions in stablecoin
+  protocols. Follow checks-effects-interactions strictly: update all internal state before
+  any external calls. Implement supply caps and per-transaction minting limits as additional
+  safety mechanisms. Conduct economic stress tests to model the impact of sudden large token
+  supply increases on the stablecoin's peg mechanism.
+excerpts: []

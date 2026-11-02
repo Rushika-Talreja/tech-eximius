@@ -1,0 +1,39 @@
+doc_id: incident-dydx-liquidation
+kind: postmortem
+title: "dYdX Oracle Manipulation Incident"
+vuln_class:
+  - price-oracle-manipulation
+swc_ids: []
+cwe_ids:
+  - CWE-682
+source_url: https://rekt.news/dydx-rekt/
+license: CC-BY-4.0
+date: "2021-02-11"
+loss_usd: null
+summary: >
+  In February 2021, a large SUSHI position worth approximately $11M on dYdX was at risk of
+  improper liquidation due to price oracle manipulation. The attacker bought large amounts of
+  SUSHI across multiple DEXes to inflate the price, which affected dYdX's oracle calculation.
+  The incident was partially mitigated but led to approximately $500K in losses. It highlighted
+  how DeFi composability and oracle design flaws can interact to create systemic risk even in
+  sophisticated protocols.
+root_cause: >
+  dYdX's oracle for SUSHI aggregated prices from multiple on-chain sources, but the aggregation
+  algorithm was susceptible to manipulation when an attacker coordinated large purchases across
+  those sources simultaneously. The liquidation threshold calculations used this oracle price,
+  meaning a temporary price manipulation could trigger liquidations of healthy positions or
+  prevent liquidations of underwater positions, depending on the attack direction.
+exploit_pattern: >
+  Step 1: Attacker identifies that dYdX's SUSHI oracle aggregates prices from on-chain DEX sources.
+  Step 2: Attacker purchases large amounts of SUSHI on multiple DEXes simultaneously, inflating
+  the on-chain price significantly. Step 3: The inflated oracle price causes the attacker's
+  large SUSHI long position to appear more valuable than it is. Step 4: Attacker borrows
+  additional assets against the over-valued SUSHI collateral. Step 5: SUSHI price crashes
+  back to normal, leaving dYdX with undercollateralized positions and approximately $500K bad debt.
+remediation: >
+  Use price feeds that aggregate from both centralized and decentralized sources to prevent
+  on-chain-only manipulation. Apply TWAP calculations over multiple hours to dampen short-term
+  price spikes. Implement conservative collateral factors for low-liquidity tokens. Set position
+  size limits relative to available liquidity. Run real-time economic simulations to detect
+  potential oracle manipulation scenarios and trigger circuit breakers.
+excerpts: []

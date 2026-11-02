@@ -1,0 +1,39 @@
+doc_id: incident-eminence-finance
+kind: postmortem
+title: "Eminence Finance Exploit"
+vuln_class:
+  - access-control
+swc_ids:
+  - SWC-105
+cwe_ids:
+  - CWE-284
+source_url: https://rekt.news/eminence-rekt-in-prod/
+license: CC-BY-4.0
+date: "2020-09-29"
+loss_usd: 15000000
+summary: >
+  Eminence Finance, an unreleased game project by yearn.finance's Andre Cronje, was exploited
+  for $15M just hours after its contracts were deployed to mainnet. Cronje had deployed the
+  contracts as a work-in-progress without announcing them publicly, but bots discovered the
+  contracts and users began depositing funds. An attacker then exploited missing access controls
+  to drain the contracts, returning $8M to the yearn deployer address.
+root_cause: >
+  The Eminence contracts were incomplete and lacked proper access controls and minting restrictions.
+  The EMN token's bonding curve mechanic allowed anyone to mint tokens and then burn them for
+  a proportional share of the DAI in the contract. The attacker identified that the minting
+  function was publicly accessible and that the bonding curve could be exploited with flash
+  loans to extract more DAI than was deposited.
+exploit_pattern: >
+  Step 1: Attacker notices $15M in DAI deposited by users into the unreleased Eminence contracts.
+  Step 2: Using flash loans, attacker buys a massive amount of EMN tokens, inflating the bonding
+  curve price. Step 3: Attacker mints linked game currency tokens (e.g., eLINK) at the inflated
+  price. Step 4: Attacker burns eLINK back to EMN and then burns EMN back to DAI, extracting
+  more DAI than originally paid due to the bonding curve mechanics. Step 5: Flash loan repaid;
+  attacker keeps $15M, later voluntarily returns $8M.
+remediation: >
+  Never deploy incomplete or test contracts to mainnet, especially ones capable of holding user
+  funds. Implement access controls and emergency pause mechanisms before any deployment. Use
+  contract registries or factory patterns that require explicit enablement before accepting funds.
+  Conduct thorough audits even for "test" deployments, as users and bots may interact with any
+  mainnet contract. Consider using testnets (Ropsten, Goerli) for work-in-progress deployments.
+excerpts: []

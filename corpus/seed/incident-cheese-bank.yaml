@@ -1,0 +1,38 @@
+doc_id: incident-cheese-bank
+kind: postmortem
+title: "Cheese Bank Flash Loan Oracle Attack"
+vuln_class:
+  - flash-loan
+  - price-oracle-manipulation
+swc_ids: []
+cwe_ids:
+  - CWE-682
+source_url: https://rekt.news/cheese-bank-rekt/
+license: CC-BY-4.0
+date: "2020-11-06"
+loss_usd: 3300000
+summary: >
+  Cheese Bank, a DeFi lending protocol, was exploited for approximately $3.3M in November 2020.
+  The attacker used flash loans to manipulate the price of CHEESE token (used as collateral) on
+  Uniswap, then borrowed against the artificially inflated collateral value. This was a textbook
+  example of a price oracle manipulation attack against a protocol using Uniswap spot prices for
+  collateral valuation.
+root_cause: >
+  Cheese Bank calculated the value of CHEESE token collateral using real-time Uniswap spot prices
+  rather than time-averaged or aggregated prices. Since CHEESE had relatively low liquidity,
+  a flash loan of modest size could significantly move its price on Uniswap. When the price was
+  inflated, users could borrow far more from Cheese Bank than their collateral was actually worth,
+  leaving the protocol with bad debt after the price was restored.
+exploit_pattern: >
+  Step 1: Attacker takes a large flash loan of ETH from dYdX or Uniswap. Step 2: Attacker buys
+  large amounts of CHEESE on Uniswap, dramatically inflating the price (e.g., 50-100x). Step 3:
+  Attacker deposits CHEESE as collateral in Cheese Bank, which values it at the inflated price.
+  Step 4: Attacker borrows maximum stablecoins against the over-valued CHEESE collateral. Step 5:
+  Attacker sells CHEESE, price crashes; repays flash loan with excess stablecoins; keeps profit.
+remediation: >
+  Never use Uniswap or other AMM spot prices directly as oracle inputs for lending protocols.
+  For low-liquidity collateral tokens, require significantly higher collateralization ratios to
+  buffer against price manipulation. Use TWAP oracles over at least 30-minute windows. Implement
+  collateral listing requirements that mandate minimum liquidity thresholds before a token can
+  be used as collateral. Use Chainlink price feeds for collateral valuation wherever available.
+excerpts: []

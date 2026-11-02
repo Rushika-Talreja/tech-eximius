@@ -1,0 +1,41 @@
+doc_id: incident-qubit-bridge
+kind: postmortem
+title: "Qubit Finance Bridge Deposit Validation Bypass"
+vuln_class:
+  - input-validation
+  - logic-error
+swc_ids:
+  - SWC-116
+cwe_ids:
+  - CWE-20
+source_url: https://rekt.news/qubit-rekt/
+license: CC-BY-4.0
+date: "2022-01-28"
+loss_usd: 80000000
+summary: >
+  Qubit Finance's QBridge cross-chain bridge was exploited for approximately $80M in January 2022
+  through a deposit validation bypass. The attacker exploited a logic error in the bridge's
+  Ethereum-side deposit function that allowed them to trigger bridge credit events on BSC without
+  actually depositing any ETH. The function failed to distinguish between a call with zero ETH
+  and a legitimate deposit, minting 77,162 qXETH on BSC against no actual collateral.
+root_cause: >
+  The QBridge deposit function on Ethereum had a code path that could be triggered by calling
+  deposit() with zero ETH value. Instead of reverting for zero-value deposits, the function
+  emitted a Deposit event that was monitored by QBridge's off-chain relayer. The relayer,
+  seeing the event, credited the user with qXETH on BSC. The contract failed to validate that
+  msg.value was greater than zero before processing the deposit.
+exploit_pattern: >
+  Step 1: Attacker calls the QBridge deposit() function on Ethereum with zero ETH (msg.value = 0).
+  Step 2: The function, instead of reverting, executes the deposit logic and emits a Deposit event.
+  Step 3: QBridge's off-chain relayer observes the Deposit event and credits the attacker with
+  qXETH on BSC proportional to the (zero) deposit. Step 4: Due to a logic error, the relayer
+  credits a non-zero amount. Step 5: Attacker uses qXETH as collateral on BSC to borrow $80M
+  in various assets. Step 6: Attacker bridges assets out, leaving QBridge with massive bad debt.
+remediation: >
+  Always validate that msg.value (or token amount) is greater than zero in deposit functions;
+  revert on zero-value deposits. Use explicit require checks with clear error messages for all
+  deposit preconditions. Implement invariant checks in bridge relayers: verify on-chain deposit
+  amounts match the credited amounts before minting on the destination chain. Apply formal
+  verification to bridge deposit/credit logic. Conduct thorough integration tests for zero,
+  negative, and overflow edge cases.
+excerpts: []

@@ -1,6 +1,5 @@
 """
-Core interfaces and stubs for evidence retrieval and finding verification.
-Real implementation is owned by the evidence workstream (Milestone M4).
+Core interfaces for evidence retrieval and finding verification (Milestone M4).
 """
 from __future__ import annotations
 
@@ -11,7 +10,6 @@ from pydantic import BaseModel, Field, field_validator
 try:
     from auditor_schemas.models import Evidence
 except ImportError:
-    # Standalone fallback if schemas package not installed
     from pydantic import HttpUrl
 
     class Evidence(BaseModel):  # type: ignore[no-redef]
@@ -37,7 +35,6 @@ class CandidateSummary(BaseModel):
     @field_validator("vuln_classes", "structural_facts")
     @classmethod
     def reject_source_code(cls, values: list[str]) -> list[str]:
-        # Disallow raw Solidity keywords or code fragments
         code_markers = ["pragma solidity", "contract ", "function ", "assembly {", "mapping("]
         for val in values:
             for marker in code_markers:
@@ -75,15 +72,14 @@ class SourceManifest(BaseModel):
     sha256: str = ""
 
 
-# ─── Stubs ───────────────────────────────────────────────────────────────────
+# ─── M4 real implementations ─────────────────────────────────────────────────
 
 
 async def retrieve_evidence(candidate: CandidateSummary) -> RetrievalResult:
-    """
-    TODO(spec): Retrieve grounded precedent evidence from security corpus.
-    Real implementation owned by the evidence workstream (Milestone M4).
-    """
-    return RetrievalResult(evidence=[], degraded=False, corpus_version=None)
+    """Retrieve grounded precedent evidence from the security corpus via RAG."""
+    from auditor_core.rag.retrieval import retrieve_evidence as _retrieve
+
+    return await _retrieve(candidate)  # type: ignore[return-value]
 
 
 def verify_draft(
@@ -92,9 +88,44 @@ def verify_draft(
     model: ContractSemanticModel,
     manifest: SourceManifest,
 ) -> FindingDraft | None:
-    """
-    TODO(spec): Verify LLM finding draft against retrieved chunks and semantic model.
-    Real implementation owned by the evidence workstream (Milestone M4).
-    """
-    return draft
+    """Verify a finding draft against retrieved chunks.
 
+    Uses the description as the candidate quote for a relaxed substring match.
+    Returns the draft when grounded, None when no chunk supports the claim.
+    When no chunks are provided the draft is returned unconditionally (nothing
+    to check against).
+    """
+    if not chunks:
+        return draft
+
+    from auditor_core.rag.retrieval import Evidence as RagEvidence
+    from auditor_core.verifier.verify import Claim
+    from auditor_core.verifier.verify import verify_draft as _verify
+
+    evidence = [
+        RagEvidence(
+            kind="chunk",
+            title=chunk.chunk_id,
+            doc_id=chunk.chunk_id,
+            chunk_id=chunk.chunk_id,
+            source_url=chunk.source_url or "",
+            exact_quote=chunk.content,
+            score=1.0,
+            level="chunk",
+        )
+        for chunk in chunks
+    ]
+
+    # Use the draft description as the quote to match against chunk content.
+    # Relaxed check (case-insensitive, whitespace-normalised) so that partial
+    # description fragments still ground the claim.
+    claim = Claim(
+        claim_id=draft.title,
+        title=draft.title,
+        description=draft.description,
+        swc_id=None,
+        severity=draft.severity,
+        quoted_evidence=draft.description or None,
+    )
+    result = _verify([claim], evidence, strict_quote_check=False)
+    return draft if result.verified_findings else None

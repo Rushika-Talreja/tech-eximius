@@ -1,0 +1,42 @@
+doc_id: incident-sushiswap-miso
+kind: postmortem
+title: "SushiSwap MISO Supply Chain Attack"
+vuln_class:
+  - access-control
+  - logic-error
+swc_ids:
+  - SWC-105
+cwe_ids:
+  - CWE-506
+source_url: https://rekt.news/sushiswap-miso-rekt/
+license: CC-BY-4.0
+date: "2021-09-17"
+loss_usd: 3000000
+summary: >
+  SushiSwap's MISO token launch platform was exploited for approximately $3M (864 ETH) in
+  September 2021 through a supply chain attack. An anonymous contractor with the handle "AristoK3"
+  submitted malicious code to the MISO front-end that replaced the legitimate auction contract
+  address with the attacker's address, redirecting ETH payments from an NFT auction to the
+  attacker's wallet. The code was reviewed but the malicious change was not caught before deployment.
+root_cause: >
+  The MISO platform used a collaborative development model where contractors could contribute
+  front-end code. A malicious contractor submitted a commit that hardcoded the attacker's Ethereum
+  address as the recipient of auction proceeds, replacing the legitimate contract address.
+  Code review processes failed to catch the substituted address, and the malicious code was
+  deployed to production, where it silently redirected user ETH for approximately 8 hours.
+exploit_pattern: >
+  Step 1: Malicious contractor "AristoK3" gains contributor access to MISO's front-end repository.
+  Step 2: Contractor submits a commit that modifies the auction contract address to the attacker's
+  wallet address in the front-end JavaScript. Step 3: The commit passes code review (the address
+  substitution is not flagged). Step 4: Updated front-end is deployed to production. Step 5:
+  Users participating in the Kashi auction submit ETH, which goes to the attacker's address
+  instead of the auction contract. Step 6: 864 ETH ($3M) accumulated before the issue is detected.
+  Attacker was later identified and returned funds under pressure.
+remediation: >
+  Enforce code review requirements that specifically check all Ethereum addresses in front-end
+  code against a registry of legitimate contract addresses. Use smart contract addresses from
+  verified on-chain sources (not hardcoded strings) in front-end code. Implement automated
+  CI/CD checks that flag any changes to wallet or contract addresses. Apply contractor access
+  controls with limited write permissions and mandatory multi-reviewer approval. Monitor
+  production deployments for anomalous fund flows immediately after each update.
+excerpts: []

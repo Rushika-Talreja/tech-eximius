@@ -1,0 +1,38 @@
+doc_id: incident-compound-price-oracle
+kind: postmortem
+title: "Compound DAI Price Oracle Incident"
+vuln_class:
+  - price-oracle-manipulation
+swc_ids: []
+cwe_ids:
+  - CWE-682
+source_url: https://rekt.news/compound-dai-rekt/
+license: CC-BY-4.0
+date: "2020-11-26"
+loss_usd: null
+summary: >
+  In November 2020, a price spike in DAI on Coinbase Pro caused Compound's price oracle to
+  report DAI at $1.30 instead of its $1.00 peg. This caused approximately $89M in automatic
+  liquidations on Compound, with borrowers losing collateral unfairly due to the erroneous
+  price feed. While not a direct exploit, the incident exposed critical risks of relying on
+  a single centralized exchange as a primary oracle source.
+root_cause: >
+  Compound's price oracle for DAI relied primarily on the Coinbase Pro reported price rather
+  than a TWAP or aggregated price. When a large market order temporarily pushed DAI's price
+  on Coinbase Pro to $1.30, Compound's oracle reflected this price, marking many DAI borrowing
+  positions as undercollateralized. The oracle design lacked safeguards against temporary
+  price spikes or extreme deviations from the known peg.
+exploit_pattern: >
+  Step 1: Market conditions (or a coordinated actor) caused DAI to briefly spike to $1.30 on
+  Coinbase Pro. Step 2: Compound's oracle fetched this inflated price and updated the on-chain
+  DAI price to $1.30. Step 3: All accounts borrowing against DAI collateral saw their collateral
+  factor temporarily spike by 30%, making previously healthy loans appear undercollateralized.
+  Step 4: Liquidators called liquidateBorrow() on these accounts, claiming collateral at a discount
+  and forcing users to lose funds through unjustified liquidations.
+remediation: >
+  Use aggregated price feeds from multiple independent sources to reduce reliance on any single
+  exchange. Implement price deviation guards that revert or pause when prices deviate more than
+  a set percentage from known anchor values (e.g., 5% from $1.00 for DAI). Adopt TWAP oracles
+  over longer windows to dampen temporary price spikes. Work with decentralized oracle providers
+  like Chainlink that aggregate prices across many exchanges and apply outlier filtering.
+excerpts: []

@@ -1,0 +1,41 @@
+doc_id: incident-reaper-farm
+kind: postmortem
+title: "Reaper Farm Reentrancy Exploit"
+vuln_class:
+  - reentrancy
+swc_ids:
+  - SWC-107
+cwe_ids:
+  - CWE-841
+source_url: https://rekt.news/reaper-rekt/
+license: CC-BY-4.0
+date: "2022-02-02"
+loss_usd: 1700000
+summary: >
+  Reaper Farm, a Fantom-based yield optimizer, was exploited for approximately $1.7M in February
+  2022 through a reentrancy vulnerability in its vault strategy contracts. The attacker exploited
+  a missing reentrancy guard on the strategy's harvest function, reentering the vault during
+  token transfers to manipulate share price calculations. The attack was mitigated relatively
+  quickly as the team was alerted and paused contracts.
+root_cause: >
+  Reaper Farm's strategy contracts called external protocols during harvest operations without
+  reentrancy protection. When the external call triggered a callback (via ERC-777 or similar
+  transfer hooks), the attacker could reenter Reaper's vault functions during a state where
+  the strategy's balance had changed but the vault's share price had not yet been updated.
+  This temporary state inconsistency allowed the attacker to deposit or withdraw at favorable
+  prices that did not reflect the strategy's true underlying value.
+exploit_pattern: >
+  Step 1: Attacker identifies a Reaper Farm strategy that calls an external protocol with a
+  callback mechanism during harvest. Step 2: Attacker deploys a malicious contract that receives
+  the callback and reenters the Reaper vault. Step 3: Attacker triggers a harvest, causing the
+  external call and callback. Step 4: In the callback, attacker deposits to the vault at the
+  temporarily distorted share price, receiving excess shares. Step 5: After harvest completes
+  and share price normalizes, attacker withdraws at the corrected (higher) share price, extracting
+  the difference. $1.7M extracted across multiple vault strategies.
+remediation: >
+  Add nonReentrant guards to all vault deposit, withdrawal, and harvest functions. Update share
+  price calculations atomically before any external calls in harvest operations. Use Checks-Effects-
+  Interactions rigorously in all strategy contracts. Monitor for unexpected reentrancy events
+  in production with automated alerting. Conduct comprehensive audits of all strategy contracts
+  when new external integrations are added.
+excerpts: []

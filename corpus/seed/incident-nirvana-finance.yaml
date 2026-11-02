@@ -1,0 +1,39 @@
+doc_id: incident-nirvana-finance
+kind: postmortem
+title: "Nirvana Finance Flash Loan Infinite Mint"
+vuln_class:
+  - flash-loan
+  - logic-error
+swc_ids: []
+cwe_ids:
+  - CWE-682
+source_url: https://rekt.news/nirvana-rekt/
+license: CC-BY-4.0
+date: "2022-07-28"
+loss_usd: 3500000
+summary: >
+  Nirvana Finance, a Solana-based algorithmic stablecoin protocol, was exploited for approximately
+  $3.5M in July 2022. The attacker used a Solana flash loan from Tulip Protocol to manipulate
+  Nirvana's bonding curve mechanism, minting a large amount of ANA tokens at a low price and
+  then immediately redeeming them for USDT at a higher price from the protocol's treasury.
+  The attack drained Nirvana's USDT reserves and effectively destroyed the protocol.
+root_cause: >
+  Nirvana Finance's ANA token used a bonding curve mechanism where the price was determined by
+  the ratio of ANA in circulation to USDT in the treasury. Large purchases pushed the price up,
+  and large sells pushed it down. An attacker with access to large flash-loaned capital could
+  exploit this mechanism: buying enough ANA to move the price, then redeeming at the higher price,
+  all within a single transaction, creating an instant arbitrage loop that drained the treasury.
+exploit_pattern: >
+  Step 1: Attacker borrows a large USDT flash loan from Tulip Protocol on Solana. Step 2: Attacker
+  uses flash-loaned USDT to purchase a massive amount of ANA from Nirvana's bonding curve, driving
+  the ANA price up significantly. Step 3: Attacker immediately redeems ANA at the inflated price
+  for USDT from the Nirvana treasury. Step 4: The redemption provides more USDT than was paid in
+  the initial purchase, due to the bonding curve price increase. Step 5: Flash loan repaid; attacker
+  keeps approximately $3.5M net profit while Nirvana treasury is drained and protocol collapses.
+remediation: >
+  Implement cooldown periods between purchases and redemptions in bonding curve mechanisms to
+  prevent same-transaction arbitrage. Apply maximum per-transaction purchase and redemption limits
+  relative to protocol treasury size. Use time-averaged prices rather than spot bonding curve prices
+  for redemptions. Assess bonding curve designs for flash loan attack profitability before deployment.
+  Consider minimum holding periods for newly minted tokens before they can be redeemed.
+excerpts: []

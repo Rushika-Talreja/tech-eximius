@@ -1,0 +1,42 @@
+doc_id: incident-euler-finance
+kind: postmortem
+title: "Euler Finance Donation Attack"
+vuln_class:
+  - logic-error
+swc_ids: []
+cwe_ids:
+  - CWE-682
+source_url: https://rekt.news/euler-rekt/
+license: CC-BY-4.0
+date: "2023-03-13"
+loss_usd: 197000000
+summary: >
+  Euler Finance was exploited for approximately $197M in March 2023 in one of the largest DeFi
+  hacks of 2023. The attacker exploited a flaw in Euler's liquidation logic related to the
+  protocol's "donateToReserves" function, which allowed a user to create unbacked bad debt by
+  donating tokens to reserves without repaying the associated debt. This created an exploitable
+  state where a liquidation of the attacker's position would yield more assets than the debt,
+  extracting value from the protocol.
+root_cause: >
+  Euler Finance allowed users to donate their eTokens (collateral tokens) to the protocol's
+  reserves. However, this donation did not reduce the user's dToken (debt) balance. An attacker
+  could use flash loans to create a large leveraged position, then donate a portion of the
+  collateral to reserves, deliberately making their position undercollateralized. When liquidated,
+  the liquidation discount (applied to the remaining collateral) would yield more than the
+  remaining debt, allowing the liquidating attacker to extract net value from the protocol.
+exploit_pattern: >
+  Step 1: Attacker takes flash loans and deposits into Euler, using leverage to create a
+  large leveraged long position. Step 2: Attacker calls donateToReserves to donate part of
+  the collateral eTokens to Euler's reserves, without reducing the corresponding debt.
+  Step 3: The donation makes the attacker's position insolvent (collateral less than debt).
+  Step 4: Attacker liquidates their own position from a second account, receiving the collateral
+  at a liquidation discount that yields more than the required debt repayment. Step 5: Net
+  profit extracted; repeated across multiple assets for total $197M.
+remediation: >
+  Ensure donation or reserve operations proportionally reduce the associated debt to maintain
+  collateralization invariants. Apply health factor checks before and after any operation that
+  reduces collateral value. Implement post-operation invariant assertions: total collateral value
+  must be at least equal to total debt after every state change. Conduct formal verification
+  of liquidation math and all state-changing operations. Use fuzz testing to discover unexpected
+  state combinations that violate economic invariants.
+excerpts: []

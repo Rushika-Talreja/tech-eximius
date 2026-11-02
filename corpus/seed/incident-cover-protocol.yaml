@@ -1,0 +1,39 @@
+doc_id: incident-cover-protocol
+kind: postmortem
+title: "Cover Protocol Infinite Mint"
+vuln_class:
+  - logic-error
+  - access-control
+swc_ids: []
+cwe_ids:
+  - CWE-682
+source_url: https://rekt.news/cover-protocol-rekt/
+license: CC-BY-4.0
+date: "2020-12-28"
+loss_usd: 8000000
+summary: >
+  Cover Protocol, a DeFi insurance platform, was exploited through an infinite mint vulnerability
+  in December 2020. An attacker (or blackhat using a whitehat's discovered vulnerability) minted
+  an astronomical number of COVER tokens—approximately 40 quintillion—and sold them on the market,
+  crashing the price by over 90%. A whitehat calling themselves "Grap Finance" also minted tokens
+  and returned profits to Cover's deployer address.
+root_cause: >
+  Cover Protocol's blacksmith (mining) contract contained a logic error in its reward calculation.
+  Specifically, when a user made a deposit, the contract incorrectly updated a timestamp-based
+  reward calculation that allowed rewards to be claimed multiple times within the same block or
+  transaction. The flash loan combination with repeated small deposits allowed the attacker to
+  claim vastly more COVER tokens than should have been possible, effectively minting unlimited supply.
+exploit_pattern: >
+  Step 1: Attacker analyzes Cover Protocol's blacksmith staking contract and identifies the flawed
+  reward calculation logic. Step 2: Attacker (or bot) makes a deposit that manipulates the
+  reward accounting state, allowing replay of reward claims. Step 3: Through repeated flash
+  loan-assisted deposit/withdraw cycles within the same block, the attacker accumulates massive
+  reward entitlements. Step 4: Attacker claims ~40 quintillion COVER tokens. Step 5: Attacker
+  sells COVER tokens on DEXes, crashing the price and extracting ~$8M before price collapses.
+remediation: >
+  Carefully audit reward distribution logic in yield farming contracts, particularly timestamp and
+  block-based reward calculations. Prevent reward manipulation by using block snapshots and
+  ensuring rewards cannot be claimed multiple times per block. Apply reentrancy guards to
+  deposit/withdraw functions. Implement rate limiting on reward claims. Consider a formal
+  verification of reward calculation formulas to prove correctness mathematically.
+excerpts: []

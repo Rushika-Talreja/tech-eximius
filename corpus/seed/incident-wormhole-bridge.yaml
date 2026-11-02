@@ -1,0 +1,42 @@
+doc_id: incident-wormhole-bridge
+kind: postmortem
+title: "Wormhole Bridge Signature Verification Bypass"
+vuln_class:
+  - input-validation
+  - signature-replay
+swc_ids:
+  - SWC-122
+cwe_ids:
+  - CWE-347
+source_url: https://rekt.news/wormhole-rekt/
+license: CC-BY-4.0
+date: "2022-02-02"
+loss_usd: 320000000
+summary: >
+  The Wormhole cross-chain bridge was exploited for approximately $320M (120,000 wETH) in
+  February 2022 through a signature verification bypass in its Solana smart contract. The
+  attacker found a way to forge guardian signatures for fake messages, allowing them to mint
+  120,000 wETH on Solana backed by no actual ETH collateral on Ethereum. Jump Crypto, Wormhole's
+  backer, subsequently replenished the stolen ETH to make users whole.
+root_cause: >
+  The Wormhole Solana program used a deprecated and unsafe system call (load_instruction_at)
+  to verify that guardian signatures had been verified in a prior instruction. The attacker
+  found that this system call could be spoofed using a crafted Sysvar account—a special Solana
+  account type—that was not properly validated. By creating a fake sysvar account that mimicked
+  the expected verification results, the attacker bypassed the signature check entirely.
+exploit_pattern: >
+  Step 1: Attacker studies Wormhole's Solana program and identifies the deprecated
+  load_instruction_at usage for signature verification. Step 2: Attacker crafts a malicious
+  transaction with a spoofed Sysvar account that returns forged verification data. Step 3:
+  Wormhole's verify_signatures instruction accepts the spoofed sysvar as legitimate, generating
+  a SignatureSet account indicating signatures are valid. Step 4: Attacker uses the fake
+  SignatureSet to call post_vaa, submitting a forged message claiming 120,000 ETH deposited.
+  Step 5: Wormhole mints 120,000 wETH on Solana with no backing. Attacker bridges back to Ethereum.
+remediation: >
+  Use current, non-deprecated system calls and APIs; audit for deprecated function usage in
+  security-critical paths. Validate Sysvar and system account addresses against known program
+  IDs rather than trusting caller-supplied accounts. Implement multiple independent signature
+  verification checks. Maintain a comprehensive test suite covering all message verification
+  paths including crafted/malicious inputs. Require security audits from specialists in
+  Solana-specific vulnerabilities before bridge deployments.
+excerpts: []

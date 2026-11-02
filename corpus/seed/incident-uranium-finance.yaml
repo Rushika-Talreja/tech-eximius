@@ -1,0 +1,40 @@
+doc_id: incident-uranium-finance
+kind: postmortem
+title: "Uranium Finance Arithmetic Error"
+vuln_class:
+  - integer-overflow
+  - logic-error
+swc_ids:
+  - SWC-101
+cwe_ids:
+  - CWE-682
+source_url: https://rekt.news/uranium-rekt/
+license: CC-BY-4.0
+date: "2021-04-28"
+loss_usd: 57200000
+summary: >
+  Uranium Finance, a BSC AMM fork of Uniswap v2, was exploited for $57.2M in April 2021 due
+  to an arithmetic error introduced during a contract migration. A single digit was changed in
+  the AMM's swap balance verification check—the constant was changed from 1000 to 10000—which
+  broke the invariant check and allowed attackers to drain liquidity pools. The error occurred
+  during a v2 migration and was discovered by an attacker almost immediately after deployment.
+root_cause: >
+  Uranium Finance's swap function contained a modified version of Uniswap v2's balance check.
+  Uniswap uses the constant 1000 in its k-value verification formula (ensuring x*y=k invariant).
+  Uranium changed this to 10000 in their migration, breaking the mathematical invariant.
+  This 10x change in the constant created a massive discrepancy between the expected and actual
+  balance checks, allowing an attacker to withdraw far more tokens from pools than they deposited.
+exploit_pattern: >
+  Step 1: Attacker notices the newly deployed Uranium v2 contracts have an arithmetic error in
+  the swap invariant check. Step 2: Attacker calls swap() functions on Uranium pairs with carefully
+  crafted amounts that satisfy the broken (10000) constant check but would fail the correct (1000)
+  check. Step 3: The broken invariant allows attacker to receive far more output tokens than
+  proportionally warranted by input amounts. Step 4: Attacker drains all major Uranium liquidity
+  pools, extracting $57.2M across multiple token pairs in a short time window.
+remediation: >
+  Implement comprehensive test suites that verify mathematical invariants in AMM contracts,
+  including the k-value check after every swap. Conduct differential testing comparing forked
+  contracts against the original source to catch any modifications. Perform security audits
+  specifically focused on any changes made during forks or migrations. Add monitoring to detect
+  invariant violations in production and trigger automatic circuit breakers.
+excerpts: []

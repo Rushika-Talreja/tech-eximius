@@ -1,0 +1,39 @@
+doc_id: incident-polygon-plasma
+kind: postmortem
+title: "Polygon Plasma Bridge Signature Replay"
+vuln_class:
+  - signature-replay
+swc_ids:
+  - SWC-121
+cwe_ids:
+  - CWE-347
+source_url: https://rekt.news/polygon-plasma-rekt/
+license: CC-BY-4.0
+date: "2021-10-05"
+loss_usd: null
+summary: >
+  A critical vulnerability was discovered in Polygon's Plasma bridge that could have allowed
+  an attacker to drain up to $850M through signature replay attacks. The vulnerability was
+  reported by security researcher Gerhard Wagner through Polygon's bug bounty program, earning
+  a $2M reward—the largest ever at the time. The vulnerability was patched before it could be
+  exploited, making this a responsible disclosure success story.
+root_cause: >
+  The Polygon Plasma bridge's exit mechanism allowed users to submit exit proofs to withdraw
+  assets from Polygon to Ethereum. A flaw in the exit proof validation allowed the same exit
+  proof to be submitted and processed multiple times. The bridge contract did not maintain a
+  set of used exit proofs, meaning a valid proof could be replayed to withdraw the same
+  assets multiple times, effectively draining the bridge's Ethereum-side asset reserves.
+exploit_pattern: >
+  Step 1: Attacker (hypothetical) initiates a legitimate withdrawal from Polygon to Ethereum,
+  generating a valid Merkle exit proof. Step 2: Attacker submits the exit proof to the Plasma
+  bridge, receiving their assets on Ethereum. Step 3: The bridge fails to mark the proof as
+  used/spent. Step 4: Attacker submits the same exit proof again and receives another payout
+  of the same assets. Step 5: By replaying the same proof hundreds or thousands of times,
+  attacker could drain all $850M in the bridge's asset reserves.
+remediation: >
+  Maintain a set of used/spent exit proof hashes or nullifiers and reject any proof that has
+  been previously submitted. This is the standard approach for preventing replay attacks in
+  Plasma and ZK bridge designs. Implement event-driven monitoring for duplicate proof submissions.
+  Use EIP-712 structured data signatures with nonces to prevent replay across different contexts.
+  Conduct dedicated audits for replay attack vectors in all bridge and withdrawal mechanism designs.
+excerpts: []

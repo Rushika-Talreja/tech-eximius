@@ -1,0 +1,39 @@
+doc_id: incident-rari-fuse-pool
+kind: postmortem
+title: "Rari Capital Fuse Pool Reentrancy"
+vuln_class:
+  - reentrancy
+swc_ids:
+  - SWC-107
+cwe_ids:
+  - CWE-841
+source_url: https://rekt.news/rari-capital-rekt2/
+license: CC-BY-4.0
+date: "2022-04-30"
+loss_usd: 80000000
+summary: >
+  Rari Capital's Fuse lending pools were exploited for approximately $80M in April 2022 through
+  a reentrancy attack. The vulnerability was in Fuse's Compound-forked codebase, where an
+  attacker could reenter the borrow function via a callback in certain supported tokens.
+  The same vulnerability was simultaneously exploited in Fei Protocol, which shared the Fuse
+  codebase, leading to this being reported jointly as the Fei/Rari exploit.
+root_cause: >
+  Fuse pools were forks of Compound v2 that added support for additional token types including
+  those with transfer callbacks. The borrow function did not have reentrancy protection, and
+  when tokens with callbacks (like ERC-777 compatible tokens) were borrowed, the callback could
+  reenter the borrow function before the debt was properly recorded. This allowed attackers
+  to borrow far more than their collateral supported, leaving pools with bad debt.
+exploit_pattern: >
+  Step 1: Attacker identifies Fuse pools supporting tokens with transfer callbacks. Step 2:
+  Attacker supplies collateral to the target Fuse pool. Step 3: Attacker calls borrow() for
+  a token with a callback hook. Step 4: During the token transfer, the callback reenters the
+  borrow function before the debt state is updated, allowing additional unbacked borrowing.
+  Step 5: Attacker drains multiple Fuse pools across different markets, extracting $80M total
+  before the pools are drained and paused.
+remediation: >
+  Add nonReentrant guards to all borrow, repay, liquidate, and redeem functions in Compound
+  forks. Carefully vet all collateral and borrow tokens for transfer callbacks (ERC-777, etc.)
+  and add special handling or blacklisting for those. When forking established protocols,
+  treat the fork as a fresh codebase requiring full audit rather than inheriting the original's
+  security guarantees. Maintain a security bug bounty program with generous rewards.
+excerpts: []

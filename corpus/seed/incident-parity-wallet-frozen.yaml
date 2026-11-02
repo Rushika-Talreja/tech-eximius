@@ -1,0 +1,38 @@
+doc_id: incident-parity-wallet-frozen
+kind: postmortem
+title: "Parity Wallet Frozen (2017)"
+vuln_class:
+  - unprotected-selfdestruct
+swc_ids:
+  - SWC-106
+cwe_ids:
+  - CWE-284
+source_url: https://rekt.news/parity-wallet-frozen-rekt/
+license: CC-BY-4.0
+date: "2017-11-06"
+loss_usd: null
+summary: >
+  In November 2017, a user accidentally triggered the self-destruct function of the Parity
+  multisig wallet library contract, permanently freezing approximately 513,774 ETH (worth ~$150M)
+  across hundreds of multisig wallets. Unlike the July hack which stole funds, this incident
+  rendered funds permanently inaccessible. The frozen funds have never been recovered and remain
+  locked to this day.
+root_cause: >
+  After the July 2017 Parity hack, the team deployed a new library contract but failed to
+  properly protect its initWallet and kill functions. The library contract itself was uninitialized
+  and lacked an owner, meaning any user could call initWallet to become owner and then call
+  kill() (selfdestruct) on the library. When the library self-destructed, all wallet contracts
+  delegatecalling into it lost their logic and their funds became permanently inaccessible.
+exploit_pattern: >
+  Step 1: A GitHub user noticed the uninitialized Parity library contract had no owner set.
+  Step 2: The user called initWallet on the library to claim ownership (claiming it was a bug
+  report attempt). Step 3: The user then called kill() which triggered selfdestruct on the library.
+  Step 4: All multisig wallets that depended on this library via delegatecall became permanently
+  broken, their ETH inaccessible forever since the logic contract no longer existed.
+remediation: >
+  Never deploy logic contracts (libraries) in an uninitialized state. Protect selfdestruct with
+  strict owner-only access control and multi-signature authorization for such destructive actions.
+  Avoid delegatecall patterns to shared mutable libraries for critical financial contracts.
+  Consider immutable deployment patterns and proxy upgrade mechanisms with timelocks. Run
+  automated checks to verify all critical functions are properly access-controlled after deployment.
+excerpts: []

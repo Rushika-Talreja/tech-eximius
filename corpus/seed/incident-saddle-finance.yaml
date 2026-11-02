@@ -1,0 +1,42 @@
+doc_id: incident-saddle-finance
+kind: postmortem
+title: "Saddle Finance Read-Only Reentrancy"
+vuln_class:
+  - reentrancy
+swc_ids:
+  - SWC-107
+cwe_ids:
+  - CWE-841
+source_url: https://rekt.news/saddle-finance-rekt2/
+license: CC-BY-4.0
+date: "2022-04-30"
+loss_usd: 10000000
+summary: >
+  Saddle Finance suffered a $10M exploit in April 2022 through a read-only reentrancy attack.
+  Unlike classic reentrancy that modifies state, read-only reentrancy exploits the fact that
+  view functions (like price calculations) can be called during another contract's execution
+  when state is temporarily inconsistent. The attacker exploited this to manipulate the apparent
+  price of Saddle's sUSD metapool LP tokens during a reentrant call.
+root_cause: >
+  Saddle's sUSD metapool LP token price was read by external protocols (notably a lending platform)
+  using a virtual price calculation that could be called at any time, including during the
+  middle of a Saddle swap that had already updated reserves but not yet completed all state changes.
+  During this in-between state, the virtual price was temporarily inflated. By triggering a
+  read of this price via a reentrancy callback during a Saddle transaction, the attacker made
+  external protocols perceive inflated LP token values.
+exploit_pattern: >
+  Step 1: Attacker takes flash loans and enters a Saddle swap transaction. Step 2: During the
+  swap, Saddle processes a remove_liquidity operation that transfers ETH to a recipient before
+  updating all internal state. Step 3: ETH transfer triggers attacker's fallback function.
+  Step 4: In the fallback, attacker reads Saddle's virtual_price (a view function), which returns
+  an inflated value due to incomplete state update. Step 5: Attacker uses this inflated price
+  to borrow against LP tokens in a lending protocol that also reads Saddle's virtual_price.
+  Step 6: Attacker drains the lending protocol's funds against over-valued LP collateral.
+remediation: >
+  Add reentrancy guards (not just nonReentrant, but also view-function reentrant guards) on
+  all price-reporting functions that external protocols may read. Implement the Checks-Effects-
+  Interactions pattern rigorously to ensure state is always consistent before any external call.
+  Protocols reading external prices should not rely on view functions that can be called during
+  the source contract's execution. Integrate read-only reentrancy protection using reentrancy
+  lock state that view functions also respect.
+excerpts: []

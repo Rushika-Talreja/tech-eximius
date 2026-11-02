@@ -1,0 +1,43 @@
+doc_id: incident-curve-vyper-reentrancy
+kind: postmortem
+title: "Curve Finance Vyper Compiler Reentrancy"
+vuln_class:
+  - reentrancy
+swc_ids:
+  - SWC-107
+cwe_ids:
+  - CWE-841
+source_url: https://rekt.news/curve-vyper-rekt/
+license: CC-BY-4.0
+date: "2023-07-30"
+loss_usd: 70000000
+summary: >
+  Curve Finance suffered approximately $70M in losses in July 2023 due to a reentrancy bug in
+  specific versions of the Vyper compiler (0.2.15, 0.2.16, and 0.3.0). These versions had a
+  malfunctioning nonreentrant guard that failed to properly prevent reentrant calls in Curve's
+  StableSwap pools with native ETH. Multiple Curve pools (alETH/ETH, msETH/ETH, pETH/ETH, and
+  CRV/ETH) were drained by different attackers, with some funds later recovered through
+  whitehat efforts and MEV bot returns.
+root_cause: >
+  The Vyper smart contract compiler versions 0.2.15, 0.2.16, and 0.3.0 contained a bug in
+  their reentrancy lock compilation. Despite Vyper's @nonreentrant decorator being applied,
+  the compiled bytecode did not correctly set or check the reentrancy lock during certain
+  execution paths involving native ETH (as opposed to ERC-20 tokens). This meant the lock was
+  bypassable, and malicious contracts could reenter Curve pools that were expected to be
+  protected.
+exploit_pattern: >
+  Step 1: Attacker identifies Curve pools compiled with vulnerable Vyper versions (0.2.15-0.3.0)
+  that handle native ETH. Step 2: Attacker takes flash loans to build large positions. Step 3:
+  Attacker calls remove_liquidity() on a vulnerable Curve pool, which initiates an ETH transfer.
+  Step 4: Attacker's contract receives ETH and reenters the pool's add_liquidity() or
+  remove_liquidity() function—the nonreentrant guard fails to block this due to the compiler bug.
+  Step 5: Reentrant call executes at a temporarily distorted pool state, allowing attacker to
+  extract more than deposited. Repeated to drain pools. Total $70M drained across four pools.
+remediation: >
+  Audit all contracts compiled with specific compiler versions when critical compiler bugs are
+  disclosed, especially those involving security-critical primitives like reentrancy guards.
+  Migrate vulnerable pools to newer compiler versions or rewrite in Solidity with audited
+  reentrancy protections. Implement automated scanning of all deployed contracts' compiler
+  versions as part of incident response planning. Establish rapid response coordination across
+  DeFi ecosystem when compiler-level bugs are discovered to pause vulnerable contracts.
+excerpts: []

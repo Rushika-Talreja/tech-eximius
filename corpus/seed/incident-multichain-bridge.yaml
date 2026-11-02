@@ -1,0 +1,41 @@
+doc_id: incident-multichain-bridge
+kind: postmortem
+title: "Multichain Bridge MPC Key Compromise"
+vuln_class:
+  - access-control
+swc_ids:
+  - SWC-105
+cwe_ids:
+  - CWE-284
+source_url: https://rekt.news/multichain-rekt2/
+license: CC-BY-4.0
+date: "2023-07-06"
+loss_usd: 126000000
+summary: >
+  Multichain (formerly Anyswap) suffered an approximately $126M outflow from its bridge contracts
+  in July 2023, attributed to compromise of the MPC (Multi-Party Computation) keys used to
+  authorize bridge transactions. The CEO of Multichain had been arrested by Chinese authorities,
+  and it is believed that authorities or unauthorized parties gained access to the server
+  infrastructure holding the MPC key shares, leading to the unauthorized withdrawals. The
+  protocol was shut down shortly after.
+root_cause: >
+  Multichain's bridge relied on MPC (Multi-Party Computation) keys distributed across servers
+  operated by the Multichain team. Unlike a true decentralized system, these servers were
+  concentrated enough that a single point of failure existed. When the team's CEO was arrested
+  and servers were seized, the MPC key shares were effectively compromised. The protocol had
+  no technical mechanism to prevent withdrawals once MPC key holders were unavailable or coerced.
+exploit_pattern: >
+  Step 1: Chinese authorities arrest Multichain CEO Zhaojun He, seizing server infrastructure.
+  Step 2: MPC key shares stored on the compromised servers are accessed by unauthorized parties
+  (authorities or others). Step 3: Unauthorized parties use the compromised MPC key material
+  to sign fraudulent withdrawal transactions. Step 4: Bridge contracts, seeing valid MPC signatures,
+  process the withdrawals and transfer $126M in assets (USDC, WBTC, WETH, and others) to
+  unknown addresses. Step 5: Multichain team announces inability to operate; protocol shuts down.
+remediation: >
+  Distribute MPC key shares across geographically and jurisdictionally diverse operators with
+  no single entity controlling enough shares to sign alone. Implement threshold signature schemes
+  (TSS) requiring approval from a sufficient subset of independent, vetted participants. Add
+  time-locks and anomaly detection for large withdrawals. Design bridges with governance-based
+  emergency pause mechanisms accessible to the community. Maintain transparency about key
+  management architecture and conduct regular third-party audits of operational security.
+excerpts: []

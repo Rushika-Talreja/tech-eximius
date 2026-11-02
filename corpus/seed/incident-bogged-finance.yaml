@@ -1,0 +1,38 @@
+doc_id: incident-bogged-finance
+kind: postmortem
+title: "Bogged Finance Flash Loan Fee Bypass"
+vuln_class:
+  - flash-loan
+  - logic-error
+swc_ids: []
+cwe_ids:
+  - CWE-682
+source_url: https://rekt.news/bogged-finance-rekt/
+license: CC-BY-4.0
+date: "2021-05-22"
+loss_usd: 3000000
+summary: >
+  Bogged Finance, a BSC DeFi tool platform, was exploited for approximately $3M through a
+  flash loan attack that bypassed the transaction fee mechanism on the BOG token. The BOG token
+  charged a tax on transactions to fund staking rewards, but the tax collection logic could be
+  bypassed when large flash-loaned amounts were used, allowing the attacker to manipulate the
+  staking reward pool and drain it without paying the required fees.
+root_cause: >
+  The BOG token's fee mechanism and the staking contract had a logic flaw where the fee
+  distribution and reward calculation could be gamed when very large token amounts were flash-loaned
+  into the system. The staking reward per token calculation did not properly account for
+  temporary large balance changes induced by flash loans, allowing the attacker to claim
+  staking rewards disproportionate to their actual stake duration and size.
+exploit_pattern: >
+  Step 1: Attacker flash loans a large amount of BNB from PancakeSwap. Step 2: Attacker
+  acquires a large position of BOG tokens using the flash-loaned BNB. Step 3: Attacker stakes
+  BOG tokens in the staking contract, triggering a reward recalculation based on the temporarily
+  large stake. Step 4: Attacker claims the inflated rewards calculated from the manipulated state.
+  Step 5: Attacker unstakes, sells BOG for BNB, repays flash loan, keeps ~$3M profit.
+remediation: >
+  Ensure staking reward calculations use time-weighted average balances rather than instantaneous
+  snapshots that can be inflated by flash loans. Add minimum staking periods to prevent same-block
+  stake/claim/unstake cycles. Test fee mechanisms against flash loan scenarios during security
+  audits. Use reentrancy guards on all staking operations. Require waiting periods between
+  staking and reward claiming to prevent instantaneous reward extraction.
+excerpts: []

@@ -1,0 +1,41 @@
+doc_id: incident-bzx-itoken
+kind: postmortem
+title: "bZx iToken Duplication Bug"
+vuln_class:
+  - integer-overflow
+  - logic-error
+swc_ids:
+  - SWC-101
+cwe_ids:
+  - CWE-682
+source_url: https://rekt.news/bzx-itoken-rekt/
+license: CC-BY-4.0
+date: "2020-09-13"
+loss_usd: 8000000
+summary: >
+  bZx Protocol suffered an $8M exploit in September 2020 due to an integer arithmetic error
+  in its iToken contract. The vulnerability allowed users to mint extra iTokens by sending
+  tokens to themselves through a specially crafted self-transfer transaction. This effectively
+  allowed token duplication, with the attacker minting approximately 219,999 iLINK tokens
+  worth $8M without backing assets.
+root_cause: >
+  The bZx iToken (tokenized lending position) contract had a flaw in its transferFrom function.
+  When a user transferred iTokens to themselves (from == to), the function incorrectly updated
+  balances: it subtracted from the sender's balance and added to the receiver's balance, but
+  since sender and receiver were the same address, the operations were not atomic. Depending on
+  execution order in storage, this could result in a net balance increase, effectively duplicating
+  tokens.
+exploit_pattern: >
+  Step 1: Attacker identifies that bZx iToken's transferFrom function allows self-transfers with
+  incorrect balance accounting. Step 2: Attacker mints a legitimate amount of iLINK tokens
+  by depositing LINK. Step 3: Attacker repeatedly calls transferFrom(attacker, attacker, amount)
+  to self-transfer iTokens. Step 4: Each self-transfer doubles the recorded balance due to the
+  arithmetic error. Step 5: After sufficient doubling, attacker redeems all iLINK for the
+  underlying LINK, extracting ~$8M more than was deposited. Protocol suffers equivalent bad debt.
+remediation: >
+  Explicitly check for and handle self-transfers in all token transfer functions; revert or
+  no-op on from == to. Use SafeMath or Solidity 0.8.x built-in overflow protection to prevent
+  arithmetic errors. Add comprehensive unit tests covering self-transfer edge cases in token
+  contracts. Apply balance invariant assertions (total balances must equal total deposits) as
+  regression tests. Conduct audits specifically targeting edge cases in transfer functions.
+excerpts: []

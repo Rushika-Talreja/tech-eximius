@@ -1,0 +1,39 @@
+doc_id: incident-yearn-dai-vault
+kind: postmortem
+title: "Yearn Finance DAI Vault Exploit"
+vuln_class:
+  - reentrancy
+  - flash-loan
+swc_ids:
+  - SWC-107
+cwe_ids:
+  - CWE-841
+source_url: https://rekt.news/yearn-rekt/
+license: CC-BY-4.0
+date: "2021-02-04"
+loss_usd: 11000000
+summary: >
+  Yearn Finance's DAI v1 vault was exploited for approximately $11M in February 2021. The attacker
+  used a combination of flash loans and a reentrancy-like interaction between Yearn's vault and
+  the Curve 3pool to manipulate the vault's share price. The attack was sophisticated, requiring
+  precise coordination across multiple DeFi protocols in a single transaction to extract profits.
+root_cause: >
+  The Yearn DAI vault's strategy deposited into the Curve 3pool and calculated share values using
+  Curve's virtual price, which could be temporarily inflated. The vault did not account for the
+  possibility that Curve's virtual price could be manipulated via large imbalanced deposits.
+  Combined with flash loan access to massive capital, the attacker could temporarily inflate
+  the apparent value of vault shares and extract more than the fair value on withdrawal.
+exploit_pattern: >
+  Step 1: Attacker takes large flash loans from multiple protocols (dYdX, Aave, Compound).
+  Step 2: Attacker uses flash-loaned funds to make a massive imbalanced deposit into Curve 3pool,
+  temporarily inflating the pool's virtual price. Step 3: Attacker deposits into Yearn DAI vault,
+  which records share price using the inflated Curve virtual price. Step 4: Attacker withdraws
+  the imbalanced Curve deposit, restoring prices. Step 5: Attacker redeems Yearn vault shares
+  at inflated valuation, extracting ~$11M profit before repaying flash loans.
+remediation: >
+  Validate vault share prices against manipulation-resistant price sources and reject abnormal
+  deviations. Use time-averaged or minimum/maximum bounded virtual prices instead of spot values.
+  Implement deposit and withdrawal fees or delays to make flash loan attacks economically infeasible.
+  Regularly audit vault strategies for price manipulation vectors, especially when integrating
+  with AMMs. Add circuit breakers that pause operations when abnormal price movements are detected.
+excerpts: []

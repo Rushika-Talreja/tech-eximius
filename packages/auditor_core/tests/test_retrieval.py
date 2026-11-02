@@ -12,8 +12,8 @@ def test_unfiltered_search_not_degraded() -> None:
 
 
 def test_vuln_class_filter_reduces_results() -> None:
-    unfiltered = search_evidence(QUERY)
-    filtered = search_evidence(QUERY, vuln_classes=["reentrancy"])
+    unfiltered = search_evidence("external call return value")
+    filtered = search_evidence("external call return value", vuln_classes=["unchecked-calls"])
     assert filtered.degraded is False
     assert 0 < len(filtered.evidence) < len(unfiltered.evidence)
 

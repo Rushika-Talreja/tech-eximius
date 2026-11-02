@@ -1,0 +1,39 @@
+doc_id: incident-fortress-protocol
+kind: postmortem
+title: "Fortress Protocol Oracle Price Manipulation"
+vuln_class:
+  - price-oracle-manipulation
+  - flash-loan
+swc_ids: []
+cwe_ids:
+  - CWE-682
+source_url: https://rekt.news/fortress-rekt/
+license: CC-BY-4.0
+date: "2022-05-09"
+loss_usd: 3000000
+summary: >
+  Fortress Protocol, a BSC lending platform, was exploited for approximately $3M in May 2022
+  through a combination of oracle manipulation and governance vulnerability. The attacker
+  manipulated the price of FTS (Fortress's governance token) using flash loans, passed a
+  malicious governance proposal that was accepted because of the inflated FTS price, and then
+  borrowed against over-valued FTS collateral to drain protocol funds.
+root_cause: >
+  Fortress Protocol calculated FTS token prices using on-chain AMM spot prices vulnerable to
+  flash loan manipulation. Additionally, the governance system used FTS token weight for voting,
+  and a malicious governance proposal was able to pass because the quorum and majority checks
+  could be satisfied with a flash-loaned position. The combined oracle and governance vulnerabilities
+  allowed a single attacker to both manipulate prices and push through malicious governance changes.
+exploit_pattern: >
+  Step 1: Attacker takes a large flash loan and buys FTS on PancakeSwap, inflating the spot price.
+  Step 2: Attacker uses the inflated FTS as collateral in Fortress and borrows maximum assets.
+  Step 3: Simultaneously, the attacker submits a malicious governance proposal to set FTS as
+  a collateral asset at 100% collateral factor. Step 4: Using the flash-loaned FTS voting power,
+  attacker passes the governance proposal immediately. Step 5: With governance-approved inflated
+  collateral factor, attacker drains all remaining borrowable assets. Flash loan repaid; ~$3M extracted.
+remediation: >
+  Use TWAP prices for all collateral valuation to prevent flash loan price manipulation.
+  Implement governance time-locks (24-48 hours minimum) between proposal submission and voting,
+  and between vote approval and execution. Prevent flash-loaned tokens from being used for
+  governance voting (use snapshot-based voting from a prior block). Set maximum collateral
+  factors for governance tokens that cannot be changed via governance itself.
+excerpts: []

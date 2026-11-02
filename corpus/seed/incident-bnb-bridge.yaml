@@ -1,0 +1,41 @@
+doc_id: incident-bnb-bridge
+kind: postmortem
+title: "BNB Bridge Proof Verification Bypass"
+vuln_class:
+  - input-validation
+  - logic-error
+swc_ids: []
+cwe_ids:
+  - CWE-20
+source_url: https://rekt.news/bnb-bridge-rekt/
+license: CC-BY-4.0
+date: "2022-10-06"
+loss_usd: 586000000
+summary: >
+  The BSC Token Hub bridge (BNB Chain's native bridge) was exploited for approximately $586M
+  in October 2022 through a vulnerability in its IAVL proof verification logic. The attacker
+  forged a cryptographic proof that was accepted by the bridge's verification code, allowing
+  them to mint 2 million BNB tokens directly on BSC. The BNB Chain validators halted the chain
+  to prevent the attacker from moving more funds off-chain.
+root_cause: >
+  The BNB bridge used IAVL Merkle proofs to verify cross-chain messages. A vulnerability in
+  the IAVL proof verification library allowed specially crafted proofs to pass verification
+  even without proper cryptographic backing. The library did not correctly validate certain
+  edge cases in the Merkle proof structure, allowing an attacker who understood the proof
+  format to construct a fake proof that the bridge accepted as legitimate.
+exploit_pattern: >
+  Step 1: Attacker studies the BNB bridge's IAVL Merkle proof verification implementation.
+  Step 2: Attacker crafts two forged Merkle proofs exploiting edge cases in the verification
+  code that cause it to accept invalid proofs. Step 3: Attacker submits forged proofs to the
+  bridge, claiming cross-chain transfer messages that never occurred on the source chain.
+  Step 4: Bridge accepts the forged proofs and mints 1 million BNB per proof (2M BNB total,
+  ~$586M). Step 5: BNB Chain validators coordinate to halt the chain; attacker bridges out
+  only ~$70-150M before the chain is frozen.
+remediation: >
+  Use formally verified cryptographic proof verification libraries for all bridge validation.
+  Apply defense-in-depth with multiple independent verification steps for large cross-chain
+  transfers. Implement automatic chain halting mechanisms triggered by anomalous mint events
+  (e.g., any mint above expected daily volume). Conduct cryptographic audits of proof verification
+  code by specialists in zero-knowledge and Merkle proof systems. Establish rapid response
+  protocols with validator communities for emergency chain coordination.
+excerpts: []

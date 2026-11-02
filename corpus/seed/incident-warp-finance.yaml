@@ -1,0 +1,40 @@
+doc_id: incident-warp-finance
+kind: postmortem
+title: "Warp Finance Price Oracle Flash Loan Attack"
+vuln_class:
+  - flash-loan
+  - price-oracle-manipulation
+swc_ids: []
+cwe_ids:
+  - CWE-682
+source_url: https://rekt.news/warp-finance-rekt/
+license: CC-BY-4.0
+date: "2020-12-17"
+loss_usd: 8000000
+summary: >
+  Warp Finance, a DeFi lending protocol accepting LP tokens as collateral, was exploited for
+  approximately $8M in December 2020. The attacker used Uniswap flash loans to manipulate the
+  price of Uniswap LP tokens, which Warp Finance used as collateral. By inflating the apparent
+  value of LP tokens, the attacker could borrow more stablecoins than the LP tokens were
+  actually worth, leaving Warp Finance with bad debt.
+root_cause: >
+  Warp Finance calculated LP token collateral value using instantaneous Uniswap reserve ratios,
+  which are vulnerable to manipulation within a single transaction. When the reserve ratio of a
+  Uniswap pool is temporarily changed by a large swap, the calculated fair value of LP tokens
+  changes significantly. Warp Finance did not use TWAP or any other manipulation-resistant
+  pricing for LP token collateral, making this attack straightforward to execute.
+exploit_pattern: >
+  Step 1: Attacker takes flash loans from multiple Uniswap pools (DAI/ETH, USDC/ETH).
+  Step 2: Attacker executes large swaps to manipulate the DAI/USDC/ETH reserve ratios in
+  target Uniswap pools, inflating the apparent value of specific LP tokens. Step 3: Attacker
+  deposits LP tokens as collateral into Warp Finance, which calculates collateral value using
+  the manipulated price. Step 4: Attacker borrows maximum stablecoins against over-valued LP
+  collateral. Step 5: Attacker repays flash loans, keeping borrowed stablecoins; LP collateral
+  value crashes to real price, leaving Warp with uncollateralized debt.
+remediation: >
+  Use fair LP token pricing formulas that are manipulation-resistant (e.g., based on pool
+  invariant k and external price feeds rather than reserve ratios). Reference Chainlink prices
+  for underlying assets rather than computing from pool state. Apply TWAP calculations for
+  all LP token pricing. Limit maximum borrow-to-collateral ratios for volatile LP tokens.
+  Conduct specialized audits for LP-token-collateralized lending protocols.
+excerpts: []

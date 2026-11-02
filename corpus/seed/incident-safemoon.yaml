@@ -1,0 +1,41 @@
+doc_id: incident-safemoon
+kind: postmortem
+title: "SafeMoon Burn Function Public Access"
+vuln_class:
+  - access-control
+swc_ids:
+  - SWC-105
+cwe_ids:
+  - CWE-284
+source_url: https://rekt.news/safemoon-rekt/
+license: CC-BY-4.0
+date: "2023-03-28"
+loss_usd: 8900000
+summary: >
+  SafeMoon, an infamous high-fee token project, had its liquidity pool drained of approximately
+  $8.9M in March 2023 due to a public burn function introduced in a contract upgrade. A newly
+  deployed contract update inadvertently made the burn() function publicly callable by anyone,
+  allowing an attacker to burn tokens directly from SafeMoon's liquidity pool. By burning pool
+  tokens, the attacker manipulated the price upward and then sold their previously held SafeMoon
+  tokens at the inflated price.
+root_cause: >
+  SafeMoon's contract was updated with a new version where a burn function that was previously
+  internal or owner-only became publicly callable. The function allowed any caller to burn SFM
+  tokens from any address, including from the SFM/BNB liquidity pool on PancakeSwap. By burning
+  tokens from the pool, the attacker reduced the SFM supply side of the pool, inflating the SFM
+  price. This was then exploited to dump the attacker's SFM holdings at an inflated price.
+exploit_pattern: >
+  Step 1: Attacker detects the newly deployed SafeMoon contract with a public burn function.
+  Step 2: Attacker purchases a substantial amount of SFM tokens at the normal market price.
+  Step 3: Attacker calls the public burn() function targeting the SFM/BNB liquidity pool address,
+  burning a large portion of the pool's SFM tokens. Step 4: With fewer SFM tokens in the pool,
+  the automated market maker pricing formula inflates the SFM price significantly. Step 5: Attacker
+  sells their pre-purchased SFM tokens at the inflated price, extracting ~$8.9M from the pool.
+remediation: >
+  Apply strict access control to all burn functions; burn functions should never be publicly
+  callable without ownership verification of the tokens being burned. Use the onlyOwner or
+  burn(address from, amount) pattern where only the token holder or an approved spender can burn.
+  Implement a formal contract upgrade review process that compares new vs. old ABI and flags any
+  function visibility changes as a critical review item. Test all access control changes in
+  post-upgrade audits before deploying to production.
+excerpts: []

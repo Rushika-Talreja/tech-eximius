@@ -1,0 +1,42 @@
+doc_id: incident-wintermute-profanity
+kind: postmortem
+title: "Wintermute Profanity Vanity Address Exploit"
+vuln_class:
+  - weak-randomness
+  - access-control
+swc_ids:
+  - SWC-120
+cwe_ids:
+  - CWE-330
+source_url: https://rekt.news/wintermute-rekt/
+license: CC-BY-4.0
+date: "2022-09-20"
+loss_usd: 160000000
+summary: >
+  Wintermute, a leading crypto market maker, lost approximately $160M in September 2022 when
+  an attacker exploited a known vulnerability in the Profanity vanity Ethereum address generator.
+  Profanity used a weak seeded random number generator (4-byte seed), making all generated
+  addresses vulnerable to brute-force private key recovery. Wintermute had used a Profanity-
+  generated address for their DeFi operations wallet, and the attacker recovered the private key
+  and drained the wallet.
+root_cause: >
+  The Profanity vanity address tool generated private keys using a 4-byte random seed, which
+  is cryptographically insufficient (only ~4 billion possible seed values). Researchers had
+  published a method to recover Profanity-generated private keys using GPU brute-force, requiring
+  only hours to days of computation. Despite this known vulnerability being disclosed earlier in
+  2022, Wintermute continued to use a Profanity-generated address, leaving $160M at risk.
+exploit_pattern: >
+  Step 1: Attacker or researcher identifies that Wintermute's DeFi operations address was generated
+  with the Profanity tool (identifiable by the vanity prefix). Step 2: Using a GPU cluster, attacker
+  brute-forces all 2^32 possible Profanity seed values to find the one that generates Wintermute's
+  address. Step 3: Attacker derives the private key for the Wintermute wallet from the matching seed.
+  Step 4: Using the recovered private key, attacker drains $160M in assets from Wintermute's
+  DeFi operations wallet in a single transaction.
+remediation: >
+  Immediately rotate any wallets generated with known-weak tools (Profanity, and similar 4-byte
+  seed generators). Use only cryptographically secure random number generators (CSPRNG) for key
+  generation, preferably from hardware random sources. For institutional wallets holding significant
+  value, use hardware security modules (HSMs) or multi-party computation key management.
+  Monitor security disclosures for tools used in key generation and respond immediately when
+  vulnerabilities are announced. Never use vanity addresses for high-value operational wallets.
+excerpts: []

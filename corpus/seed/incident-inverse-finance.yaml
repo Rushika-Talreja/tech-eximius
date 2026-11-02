@@ -1,0 +1,38 @@
+doc_id: incident-inverse-finance
+kind: postmortem
+title: "Inverse Finance Price Oracle Manipulation"
+vuln_class:
+  - price-oracle-manipulation
+swc_ids: []
+cwe_ids:
+  - CWE-682
+source_url: https://rekt.news/inverse-finance-rekt/
+license: CC-BY-4.0
+date: "2022-04-02"
+loss_usd: 15600000
+summary: >
+  Inverse Finance was exploited for approximately $15.6M in April 2022 through a price oracle
+  manipulation attack on its Anchor lending market. The attacker borrowed flash loans to
+  manipulate the price of INV token on SushiSwap, Inverse's oracle source, and used the
+  artificially inflated collateral value to borrow large amounts of ETH, WBTC, and DOLA.
+  This was one of several oracle manipulation attacks on Inverse Finance in 2022.
+root_cause: >
+  Inverse Finance's Anchor lending protocol used the Keep3r network oracle, which derived INV
+  prices from SushiSwap's TWAP. However, the TWAP window was too short (30 minutes), making
+  it feasible to manipulate within a single transaction or across a few blocks with large capital.
+  An attacker with enough flash-loaned capital could move the SushiSwap price enough to
+  significantly impact the TWAP, allowing over-collateralized borrowing.
+exploit_pattern: >
+  Step 1: Attacker borrows large amounts of WBTC and ETH via Aave flash loans. Step 2: Attacker
+  buys large amounts of INV on SushiSwap, pushing the price significantly upward. Step 3: The
+  short-window TWAP oracle records the elevated INV price. Step 4: Attacker deposits INV as
+  collateral in Inverse Finance Anchor market at the inflated price. Step 5: Attacker borrows
+  maximum WBTC, ETH, and DOLA against over-valued INV collateral. Step 6: Flash loan repaid;
+  INV price crashes but attacker keeps $15.6M in borrowed assets.
+remediation: >
+  Use longer TWAP windows (at least 2-4 hours) to make price manipulation economically infeasible.
+  Integrate multiple independent oracle sources and use median pricing. Apply collateral factor
+  caps based on liquidity depth—low-liquidity tokens should have lower collateral factors.
+  Set maximum borrow limits per token per block to limit damage from oracle manipulation.
+  Use Chainlink price feeds as primary oracles wherever available.
+excerpts: []

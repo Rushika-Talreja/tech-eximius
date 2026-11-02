@@ -1,0 +1,39 @@
+doc_id: incident-belt-finance
+kind: postmortem
+title: "Belt Finance Flash Loan Exploit"
+vuln_class:
+  - flash-loan
+  - reentrancy
+swc_ids:
+  - SWC-107
+cwe_ids:
+  - CWE-841
+source_url: https://rekt.news/belt-rekt/
+license: CC-BY-4.0
+date: "2021-05-29"
+loss_usd: 6200000
+summary: >
+  Belt Finance, a BSC yield aggregator, was exploited for approximately $6.2M in May 2021.
+  The attacker used a complex flash loan attack combined with reentrancy to manipulate Belt's
+  4Belt pool and beltBUSD vault share prices. The attack involved multiple protocol interactions
+  across PancakeSwap, Venus Protocol, and Belt Finance, exploiting the composability of BSC DeFi
+  in a single-transaction multi-step attack.
+root_cause: >
+  Belt Finance's strategy contracts calculated their asset values using real-time AMM spot prices
+  that could be manipulated via flash loans within a single transaction. Additionally, insufficient
+  reentrancy protection allowed the attacker to interact with Belt Finance's vaults while holding
+  flash-loaned funds, temporarily distorting price calculations. The compound effect of flash
+  loan manipulation and reentrancy allowed repeated extraction of excess value.
+exploit_pattern: >
+  Step 1: Attacker borrows large stablecoin amounts via PancakeSwap flash loans. Step 2: Attacker
+  deposits into Belt's 4Belt pool, manipulating share prices. Step 3: Attacker uses reentrancy
+  in Venus Protocol interaction to manipulate Belt vault state. Step 4: Through repeated
+  deposit/withdraw cycles with manipulated prices, attacker extracts more than deposited.
+  Step 5: Flash loan repaid; attacker retains $6.2M net profit after all repayments.
+remediation: >
+  Apply nonReentrant guards to all vault deposit and withdrawal functions. Validate share prices
+  against TWAP or Chainlink oracles rather than relying on spot AMM calculations. Limit the
+  amount of funds that can flow through vaults in a single transaction or block. Conduct
+  comprehensive integration testing across all external protocol dependencies before deployment.
+  Use economic security simulations to model flash loan attack profitability.
+excerpts: []

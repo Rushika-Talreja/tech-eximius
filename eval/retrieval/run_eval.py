@@ -29,7 +29,11 @@ from dataclasses import dataclass
 from pathlib import Path
 
 import yaml
-from auditor_core.rag.retrieval import Evidence, RetrievalResult, retrieve_evidence
+from auditor_core.rag.retrieval import (
+    Evidence,
+    RetrievalResult,
+    search_evidence as retrieve_evidence,
+)
 
 #: Default location of the ground-truth pairs.
 GOLDEN_SET_PATH = Path(__file__).resolve().parent / "golden_set.yaml"

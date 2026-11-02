@@ -1,0 +1,39 @@
+doc_id: incident-deus-finance
+kind: postmortem
+title: "Deus Finance Flash Loan Oracle Attack"
+vuln_class:
+  - flash-loan
+  - price-oracle-manipulation
+swc_ids: []
+cwe_ids:
+  - CWE-682
+source_url: https://rekt.news/deus-dao-rekt/
+license: CC-BY-4.0
+date: "2022-03-15"
+loss_usd: 13400000
+summary: >
+  Deus Finance was exploited for approximately $13.4M in March 2022 through a flash loan attack
+  that manipulated the price oracle for DEI (Deus's stablecoin). The attacker used flash loans
+  to manipulate the Spirit Finance DEI/USDC pair price, which Deus used as its oracle, and then
+  borrowed against the distorted prices. This was the first of two major exploits Deus Finance
+  suffered in 2022, with the second attack occurring in April 2022.
+root_cause: >
+  Deus Finance used Spirit Finance's DEI/USDC AMM pair as an oracle for DEI's price in its
+  lending contracts. The Spirit Finance pair had relatively low liquidity, making it susceptible
+  to price manipulation via flash loans. By temporarily manipulating the DEI/USDC price in the
+  Spirit pool, the attacker could distort Deus's oracle reading and borrow against artificially
+  altered collateral valuations.
+exploit_pattern: >
+  Step 1: Attacker takes a large USDC flash loan from the Solidly exchange on Fantom. Step 2:
+  Attacker swaps USDC for DEI on Spirit Finance, significantly moving the DEI/USDC price.
+  Step 3: Deus Finance's oracle reads the manipulated price from the Spirit pair. Step 4: Attacker
+  uses USDC borrowed via Deus against the manipulated DEI collateral price, extracting more
+  than the fair value. Step 5: Attacker swaps DEI back to USDC on Spirit, restoring the price.
+  Step 6: Flash loan repaid; attacker keeps ~$13.4M profit.
+remediation: >
+  Use TWAP oracles with adequate observation windows to prevent single-block price manipulation.
+  Integrate Chainlink price feeds for stablecoin pricing rather than relying on on-chain AMM
+  spot prices. Apply per-block borrow limits and price deviation checks. After the first exploit,
+  conduct a comprehensive oracle security review before relaunching. Require minimum liquidity
+  thresholds in oracle source pools proportional to potential borrowed amounts.
+excerpts: []

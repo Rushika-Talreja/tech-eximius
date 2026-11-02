@@ -1,0 +1,42 @@
+doc_id: incident-ronin-bridge
+kind: postmortem
+title: "Ronin Bridge Hack"
+vuln_class:
+  - access-control
+swc_ids:
+  - SWC-105
+cwe_ids:
+  - CWE-284
+source_url: https://rekt.news/ronin-rekt/
+license: CC-BY-4.0
+date: "2022-03-23"
+loss_usd: 625000000
+summary: >
+  The Ronin Network bridge, used by Axie Infinity, was exploited for approximately $625M in
+  March 2022—the largest DeFi hack in history at the time. Attackers (later attributed to North
+  Korea's Lazarus Group) compromised five of the nine Ronin validator nodes' private keys,
+  including four from Sky Mavis and one from Axie DAO. With five signatures, they could authorize
+  fraudulent bridge withdrawals of 173,600 ETH and 25.5M USDC.
+root_cause: >
+  Ronin Bridge required only 5 of 9 validator signatures to approve large withdrawals.
+  Sky Mavis had been granted permission to sign transactions on behalf of Axie DAO during a
+  November 2021 peak traffic event, and this permission was never revoked. Attackers compromised
+  Sky Mavis's four validator keys (likely via spear phishing or social engineering), then also
+  obtained the Axie DAO key that Sky Mavis still controlled, yielding the 5-of-9 threshold
+  needed to drain the bridge.
+exploit_pattern: >
+  Step 1: Attackers (Lazarus Group) social-engineered or phished Sky Mavis employees to obtain
+  access to validator infrastructure. Step 2: Attackers compromised four Sky Mavis validator
+  nodes' private keys. Step 3: Attackers discovered the Axie DAO had granted Sky Mavis signing
+  rights that were never revoked, providing the fifth key. Step 4: Attackers forged two
+  fraudulent withdrawal transactions for 173,600 ETH and 25.5M USDC with the five signatures.
+  Step 5: Bridge processed the withdrawals without detecting the unauthorized access. The hack
+  went undetected for 6 days until a user reported inability to withdraw.
+remediation: >
+  Implement time-locks and anomaly detection on large bridge withdrawals, alerting operators
+  before final processing. Increase validator threshold requirements (e.g., 7-of-9 for large
+  amounts). Regularly audit and revoke any delegated signing permissions. Use hardware security
+  modules (HSMs) for all validator key storage. Implement 24/7 monitoring for unusual withdrawal
+  patterns and daily reconciliation of bridge balances. Apply principle of least privilege for
+  all validator node permissions.
+excerpts: []

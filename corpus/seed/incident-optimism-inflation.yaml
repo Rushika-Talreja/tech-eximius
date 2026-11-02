@@ -1,0 +1,43 @@
+doc_id: incident-optimism-inflation
+kind: postmortem
+title: "Optimism Token Inflation (Wintermute)"
+vuln_class:
+  - reentrancy
+  - logic-error
+swc_ids:
+  - SWC-107
+cwe_ids:
+  - CWE-841
+source_url: https://rekt.news/optimism-winter-rekt/
+license: CC-BY-4.0
+date: "2022-06-08"
+loss_usd: 20000000
+summary: >
+  In February 2022, Optimism sent 20 million OP tokens to Wintermute for a liquidity program,
+  but inadvertently sent them to an address that Wintermute had not yet deployed their multisig
+  to on Optimism (they had only deployed on Ethereum). An attacker realized the address had a
+  known vulnerability due to the vanity address generator "Profanity" and drained the 20M OP
+  tokens. While not a smart contract vulnerability in the traditional sense, the incident
+  highlights deployment address security risks in multi-chain environments.
+root_cause: >
+  Wintermute used the Profanity vanity address generator to create a wallet address, unaware
+  that Profanity had a critical vulnerability allowing private key recovery. When Optimism
+  sent 20M OP tokens to the Wintermute multisig address, the multisig had not been deployed
+  on Optimism (it existed on Ethereum). The attacker noticed the funds in an undeployed address
+  with a known weak private key and exploited the Profanity vulnerability to recover the key
+  and drain the tokens.
+exploit_pattern: >
+  Step 1: Optimism transfers 20M OP tokens to Wintermute's multisig address on the Optimism
+  network. Step 2: Wintermute had not deployed their Safe multisig to this address on Optimism
+  yet. Step 3: An attacker recognizes the address was generated with Profanity (vanity address
+  tool with a known private key recovery vulnerability). Step 4: Attacker exploits Profanity's
+  seeded random number vulnerability to recover the wallet's private key. Step 5: Attacker
+  uses recovered key to drain all 20M OP tokens. Attacker later returned 17M OP.
+remediation: >
+  Verify recipient addresses are fully deployed and operational on the target network before
+  transferring tokens. Never use vanity address generators with known vulnerabilities (like
+  Profanity) for storing significant value. Use CREATE2-based multisig deployments with
+  reproducible addresses and verify deployment before receiving funds. Confirm cross-chain address
+  equivalence before any large transfer. Apply multi-step confirmation processes for large
+  token distributions.
+excerpts: []

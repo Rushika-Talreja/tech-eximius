@@ -1,0 +1,40 @@
+doc_id: incident-mango-markets
+kind: postmortem
+title: "Mango Markets Oracle Manipulation"
+vuln_class:
+  - price-oracle-manipulation
+swc_ids: []
+cwe_ids:
+  - CWE-682
+source_url: https://rekt.news/mango-markets-rekt/
+license: CC-BY-4.0
+date: "2022-10-11"
+loss_usd: 114000000
+summary: >
+  Mango Markets, a Solana-based decentralized exchange and lending protocol, was exploited for
+  approximately $114M in October 2022. The attacker, later identified as Avraham Eisenberg (who
+  publicly claimed responsibility), manipulated the price of MNGO token on spot markets to
+  inflate the value of a large MNGO position, then borrowed all available assets from Mango's
+  treasury against the artificially inflated collateral. The attacker later negotiated a $47M
+  "bug bounty" to return remaining funds.
+root_cause: >
+  Mango Markets used its own native market prices (spot prices from its order book) to value
+  collateral for lending. The MNGO token had relatively low liquidity, making it feasible to
+  manipulate its price by buying aggressively on the spot market. The attacker pre-positioned
+  with a large MNGO position on both sides (as maker and taker), then used one account to pump
+  the MNGO price, making the other account appear to have enormously valuable collateral.
+exploit_pattern: >
+  Step 1: Attacker funds two accounts on Mango Markets. Step 2: Account A takes a large MNGO
+  perpetual long position. Account B takes a large MNGO spot long. Step 3: Account B aggressively
+  buys MNGO on Mango's spot market using borrowed USDC, pumping MNGO price 5-10x. Step 4:
+  Account A's MNGO perp position shows enormous unrealized profit at the inflated price.
+  Step 5: Account A uses inflated MNGO value as collateral to borrow all available assets
+  (BTC, ETH, SOL, USDC, etc.) from Mango's treasury. Step 6: Attacker withdraws $114M in
+  assets; MNGO price crashes; Account A is left with unpayable bad debt.
+remediation: >
+  Use manipulation-resistant oracle prices (e.g., Pyth Network, Switchboard) rather than
+  native spot prices for collateral valuation. Implement position size limits relative to
+  total protocol TVL. Apply collateral discounts for illiquid or volatile assets. Set per-block
+  borrowing limits and pause mechanisms for anomalous borrowing activity. Conduct economic
+  simulation of large-position manipulation scenarios during protocol design.
+excerpts: []

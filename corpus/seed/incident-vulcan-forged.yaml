@@ -1,0 +1,40 @@
+doc_id: incident-vulcan-forged
+kind: postmortem
+title: "Vulcan Forged Private Key Compromise"
+vuln_class:
+  - access-control
+swc_ids:
+  - SWC-105
+cwe_ids:
+  - CWE-284
+source_url: https://rekt.news/vulcan-forged-rekt/
+license: CC-BY-4.0
+date: "2021-12-13"
+loss_usd: 140000000
+summary: >
+  Vulcan Forged, a blockchain gaming platform, was exploited for approximately $140M in December
+  2021 when an attacker gained access to the private keys of 96 user wallets. The keys were stored
+  on Vulcan Forged's centralized servers (used for the "MyForge" wallet feature), and the attacker
+  compromised the server to extract the keys. All affected users had their PYR tokens drained.
+  Vulcan Forged reimbursed all victims using its treasury.
+root_cause: >
+  Vulcan Forged's MyForge wallet service stored user private keys on centralized servers to provide
+  a "custodial-like" experience for users unfamiliar with managing their own keys. This centralized
+  storage created a single high-value target: compromising the server meant compromising all
+  stored keys. The server was breached, and the attacker was able to extract private keys for
+  96 active wallets, giving them complete control over user funds.
+exploit_pattern: >
+  Step 1: Attacker identifies that Vulcan Forged's MyForge system stores user private keys on
+  centralized servers. Step 2: Attacker compromises the Vulcan Forged server infrastructure
+  (method not fully disclosed; likely credential theft or server vulnerability). Step 3: Attacker
+  extracts private keys for 96 user wallet addresses from the server. Step 4: Using the stolen
+  private keys, attacker drains PYR tokens from each wallet. Step 5: All 96 wallets are drained
+  in rapid succession; total loss is approximately 4.5 million PYR (~$140M at the time).
+remediation: >
+  Never store user private keys on centralized servers; use non-custodial architectures where
+  users control their own keys. If custodial services are necessary, use hardware security modules
+  (HSMs) and split key management across multiple parties. Implement threshold signatures to
+  prevent single-point-of-failure key storage. Educate users to use hardware wallets for large
+  holdings. Apply strict server hardening, access controls, and intrusion detection on any
+  infrastructure that handles sensitive cryptographic material.
+excerpts: []

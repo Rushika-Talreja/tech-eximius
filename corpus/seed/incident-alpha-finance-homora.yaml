@@ -1,0 +1,42 @@
+doc_id: incident-alpha-finance-homora
+kind: postmortem
+title: "Alpha Finance / Alpha Homora Exploit"
+vuln_class:
+  - reentrancy
+  - logic-error
+swc_ids:
+  - SWC-107
+cwe_ids:
+  - CWE-841
+source_url: https://rekt.news/alpha-finance-rekt/
+license: CC-BY-4.0
+date: "2021-02-13"
+loss_usd: 37500000
+summary: >
+  Alpha Homora v2 was exploited for approximately $37.5M in February 2021 through a complex
+  attack involving Iron Bank (Cream Finance's institutional lending market). The attacker
+  exploited a reentrancy vulnerability combined with incorrect debt accounting to borrow
+  uncollateralized funds from Iron Bank through Alpha Homora as an intermediary. This was
+  one of the most sophisticated DeFi exploits to date, leaving Iron Bank with significant
+  bad debt that was the subject of ongoing disputes.
+root_cause: >
+  Alpha Homora v2 acted as a borrower from Iron Bank with special uncollateralized borrowing
+  privileges. A reentrancy vulnerability in Alpha Homora's HomoraBank contract allowed an
+  attacker to manipulate the debt tracking state. By reentering the contract during an open
+  position operation, the attacker could borrow from Iron Bank through Alpha Homora's privileged
+  credit line without properly recording the debt, leaving Iron Bank with $37.5M in bad debt.
+exploit_pattern: >
+  Step 1: Attacker finds reentrancy vector in Alpha Homora's spell (strategy) execution flow.
+  Step 2: Attacker calls execute() to open a leveraged position, triggering a borrow from
+  Iron Bank under Alpha's credit line. Step 3: During execution, attacker reenters HomoraBank
+  to manipulate position accounting, making the protocol think less debt was incurred than
+  actually borrowed from Iron Bank. Step 4: Attacker closes position, repays the under-counted
+  debt, and keeps the difference (~$37.5M borrowed but unrepaid from Iron Bank).
+remediation: >
+  Use comprehensive reentrancy guards on all execution paths in complex multi-step DeFi operations.
+  Implement strict accounting invariants checked at the start and end of every transaction.
+  Audit the interaction between protocols that have privileged borrowing relationships—these are
+  high-risk composability points. Use formal verification for debt accounting logic. Require
+  credit line protocols to have independent security audits before granting uncollateralized
+  borrowing privileges.
+excerpts: []

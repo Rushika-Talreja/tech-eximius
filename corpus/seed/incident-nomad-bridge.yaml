@@ -1,0 +1,42 @@
+doc_id: incident-nomad-bridge
+kind: postmortem
+title: "Nomad Bridge Exploit"
+vuln_class:
+  - input-validation
+swc_ids:
+  - SWC-116
+cwe_ids:
+  - CWE-20
+source_url: https://rekt.news/nomad-rekt/
+license: CC-BY-4.0
+date: "2022-08-02"
+loss_usd: 190000000
+summary: >
+  The Nomad bridge was drained of approximately $190M in August 2022 through a critical
+  input validation vulnerability introduced in a routine upgrade. The vulnerability allowed
+  anyone to spoof arbitrary cross-chain messages and process fraudulent withdrawal transactions.
+  Unlike most exploits done by a single attacker, Nomad's exploit became a chaotic free-for-all
+  as hundreds of copycats observed the initial transactions and replayed them with their own
+  addresses, draining the bridge collaboratively.
+root_cause: >
+  During a routine upgrade, a zero value (0x00) was set as a trusted root in Nomad's
+  Replica contract. The message verification function checked whether the message's root was
+  in the approved roots mapping, and since bytes32(0) mapped to a non-zero value (due to the
+  mapping initialization), any message with a zero root was considered valid. This meant that
+  an attacker could craft any withdrawal message with a zero root and it would pass validation.
+exploit_pattern: >
+  Step 1: Nomad developers accidentally set bytes32(0) as a trusted root during contract
+  initialization/upgrade. Step 2: Attacker discovers that the process() function accepts any
+  message with root == 0x00 as legitimate. Step 3: Attacker crafts a fraudulent withdrawal
+  message claiming ownership of bridge funds, with root set to bytes32(0). Step 4: The Replica
+  contract accepts this as a valid cross-chain message and processes the withdrawal.
+  Step 5: News spreads on-chain and Twitter; hundreds of copycats replay transactions with
+  their own addresses, draining all $190M within hours.
+remediation: >
+  Never allow the zero value to serve as a valid trust anchor or approved root; explicitly
+  reject bytes32(0) in all message verification functions. Implement multi-stage deployment
+  verification that validates all security-critical constants after each upgrade. Use formal
+  verification for cross-chain message validation logic. Establish incident response playbooks
+  for immediate bridge pausing when anomalous outflows are detected. Conduct staged rollouts
+  with monitoring between each upgrade step.
+excerpts: []

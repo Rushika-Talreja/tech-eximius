@@ -1,0 +1,39 @@
+doc_id: incident-elephant-money
+kind: postmortem
+title: "Elephant Money Flash Loan Exploit"
+vuln_class:
+  - flash-loan
+  - price-oracle-manipulation
+swc_ids: []
+cwe_ids:
+  - CWE-682
+source_url: https://rekt.news/elephant-money-rekt/
+license: CC-BY-4.0
+date: "2022-04-13"
+loss_usd: 11200000
+summary: >
+  Elephant Money, a BSC algorithmic token protocol, was exploited for approximately $11.2M in
+  April 2022. The attacker used flash loans to manipulate the PancakeSwap price of ELEPHANT token,
+  then exploited the protocol's treasury contract, which used the manipulated spot price to
+  calculate how much BUSD to release per ELEPHANT burned. The attack drained the treasury's
+  BUSD reserves.
+root_cause: >
+  Elephant Money's treasury minting and redemption mechanism relied on PancakeSwap's real-time
+  spot price of ELEPHANT/BUSD to determine redemption ratios. Since the protocol used spot
+  prices without TWAP protection, a flash loan of sufficient size could dramatically move the
+  ELEPHANT price and trick the treasury into releasing more BUSD per token burned than the
+  tokens were actually worth at fair market value.
+exploit_pattern: >
+  Step 1: Attacker takes flash loan of large amounts of BUSD from PancakeSwap. Step 2: Attacker
+  buys large amounts of ELEPHANT using flash-loaned BUSD, spiking the PancakeSwap price.
+  Step 3: Attacker calls the treasury redemption function with ELEPHANT, which uses the inflated
+  spot price to calculate BUSD payout. Step 4: Attacker receives far more BUSD from the treasury
+  than the ELEPHANT tokens' fair value. Step 5: Attacker sells ELEPHANT back, repays flash loan,
+  keeps ~$11.2M net profit from treasury drainage.
+remediation: >
+  Replace spot price oracles with TWAP calculations using at least a 30-minute window. Implement
+  per-block and per-transaction limits on redemption amounts. Apply price deviation guards that
+  reject redemptions when prices deviate significantly from recent averages. Use multi-source
+  oracle aggregation for critical price-sensitive calculations. Perform economic attack simulations
+  against all redemption mechanisms before deployment.
+excerpts: []

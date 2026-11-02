@@ -1,0 +1,41 @@
+doc_id: incident-grim-finance
+kind: postmortem
+title: "Grim Finance Vault Reentrancy"
+vuln_class:
+  - reentrancy
+swc_ids:
+  - SWC-107
+cwe_ids:
+  - CWE-841
+source_url: https://rekt.news/grim-finance-rekt/
+license: CC-BY-4.0
+date: "2021-12-18"
+loss_usd: 30000000
+summary: >
+  Grim Finance, a Fantom-based yield optimizer, was exploited for approximately $30M in December
+  2021 through a reentrancy vulnerability in its vault deposit function. The attacker used a
+  malicious token with a transfer callback to reenter the vault during the deposit process,
+  crediting themselves with far more vault shares than their actual deposit warranted. The
+  protocol had only launched recently and had not undergone a comprehensive security audit.
+root_cause: >
+  Grim Finance's vault accepted arbitrary ERC-20 tokens as deposits, including tokens with
+  transfer hooks. The depositFor function transferred tokens from the user and then minted
+  vault shares based on the token balance increase. However, if the token's transfer hook
+  reentered the depositFor function, the share minting calculation could be triggered multiple
+  times against the same token balance, issuing excess shares.
+exploit_pattern: >
+  Step 1: Attacker creates a malicious ERC-20 token with a custom transfer function that calls
+  back into Grim Finance's depositFor function. Step 2: Attacker calls depositFor on the Grim
+  vault with the malicious token. Step 3: During the token transfer, the attacker's token calls
+  back into depositFor, reentering before the vault's share minting state is updated. Step 4:
+  The reentrant call mints additional vault shares for the same token balance. Step 5: After
+  multiple reentrant loops, attacker holds far more shares than deposited. Step 6: Attacker
+  redeems shares for underlying assets, draining $30M from the vault.
+remediation: >
+  Apply OpenZeppelin's nonReentrant modifier to all vault deposit and withdrawal functions.
+  Validate that deposited token contracts are on an approved whitelist rather than accepting
+  arbitrary tokens. Calculate share minting after verifying the actual balance increase (using
+  before/after balance checks) rather than trusting reported transfer amounts. Conduct security
+  audits before mainnet deployment, especially for any protocol accepting user-supplied token
+  addresses.
+excerpts: []

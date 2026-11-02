@@ -1,0 +1,38 @@
+doc_id: incident-bzx-fulcrum-flash-loan
+kind: postmortem
+title: "bZx Fulcrum Flash Loan Attack"
+vuln_class:
+  - flash-loan
+  - price-oracle-manipulation
+swc_ids: []
+cwe_ids:
+  - CWE-682
+source_url: https://rekt.news/bzx-rekt/
+license: CC-BY-4.0
+date: "2020-02-14"
+loss_usd: 350000
+summary: >
+  The bZx Fulcrum protocol suffered two flash loan attacks in February 2020, with the first
+  netting approximately $350K and the second $600K. These were among the first high-profile
+  flash loan exploits in DeFi, demonstrating how flash loans could be used to manipulate
+  on-chain price oracles and extract value from protocols. The attacks highlighted fundamental
+  risks in DeFi composability.
+root_cause: >
+  bZx relied on Kyber Network's on-chain price oracle, which could be manipulated within a
+  single transaction. By borrowing large amounts via flash loans from dYdX, attackers could
+  move market prices on Kyber significantly within one transaction. The bZx protocol used
+  spot prices from this oracle without any manipulation resistance (e.g., TWAPs), making it
+  trivially vulnerable to single-block oracle manipulation.
+exploit_pattern: >
+  Step 1: Attacker borrows 10,000 ETH from dYdX via flash loan at zero cost. Step 2: Attacker
+  borrows 5,500 ETH from Compound using 5,500 ETH as collateral. Step 3: Attacker shorts WBTC
+  on bZx Fulcrum using the flash-loaned ETH, causing Fulcrum to buy WBTC on Uniswap, spiking
+  the WBTC/ETH price. Step 4: Attacker dumps WBTC (borrowed from Compound) into the artificially
+  inflated market, profiting from the price difference. Step 5: Flash loan repaid, net profit ~350K.
+remediation: >
+  Use time-weighted average price (TWAP) oracles rather than spot prices to resist single-block
+  manipulation. Integrate multiple independent price sources and use a median or aggregated price.
+  Apply circuit breakers that revert transactions with abnormal price deviations. Use Chainlink
+  or other decentralized oracle networks with manipulation-resistant designs. Implement slippage
+  limits and position size caps relative to available liquidity.
+excerpts: []

@@ -1,0 +1,40 @@
+doc_id: incident-merlin-lab
+kind: postmortem
+title: "Merlin Lab Exploit"
+vuln_class:
+  - access-control
+  - logic-error
+swc_ids:
+  - SWC-105
+cwe_ids:
+  - CWE-284
+source_url: https://rekt.news/merlin-lab-rekt/
+license: CC-BY-4.0
+date: "2021-05-26"
+loss_usd: 680000
+summary: >
+  Merlin Lab, a BSC yield farming protocol, was exploited for approximately $680K through an
+  improper privilege escalation vulnerability. The attacker exploited a flaw in Merlin's
+  strategy contract that allowed an unauthorized caller to trigger a harvest function that
+  improperly transferred tokens to the caller. This was a relatively small exploit but
+  demonstrated the risks of improper access control in yield farming strategy contracts.
+root_cause: >
+  Merlin Lab's strategy contract had a harvest or earn function that was intended to be called
+  only by the vault contract or an authorized keeper. However, the access control check on this
+  function was either missing or bypassable, allowing any external caller to invoke it.
+  When called by the attacker, the function executed token transfers as part of the reward
+  collection logic, inadvertently sending protocol funds to the unauthorized caller.
+exploit_pattern: >
+  Step 1: Attacker identifies that Merlin Lab's strategy contract has a publicly callable
+  earn/harvest function without proper access control. Step 2: Attacker calls the function
+  directly, bypassing intended vault-only access. Step 3: The function executes the harvest
+  logic, collecting staking rewards and protocol fees. Step 4: Due to incorrect recipient
+  logic in the token transfer, funds are sent to the attacker's address rather than the vault.
+  Step 5: Attacker repeats across multiple strategy contracts, extracting ~$680K total.
+remediation: >
+  Apply strict access control modifiers (onlyOwner, onlyVault, onlyKeeper) to all harvest,
+  earn, and reward collection functions in strategy contracts. Use role-based access control
+  (RBAC) patterns for multi-role authorization. Conduct audits specifically focused on
+  privilege escalation and unauthorized function call scenarios. Test all external-facing
+  functions to verify they revert when called by unauthorized addresses.
+excerpts: []

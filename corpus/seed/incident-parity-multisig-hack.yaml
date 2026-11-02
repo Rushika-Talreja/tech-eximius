@@ -1,0 +1,38 @@
+doc_id: incident-parity-multisig-hack
+kind: postmortem
+title: "Parity Multisig Wallet Hack"
+vuln_class:
+  - access-control
+swc_ids:
+  - SWC-105
+cwe_ids:
+  - CWE-284
+source_url: https://rekt.news/parity-multisig-hack-rekt/
+license: CC-BY-4.0
+date: "2017-07-19"
+loss_usd: 31000000
+summary: >
+  In July 2017, an attacker exploited the Parity multisig wallet library contract to steal
+  approximately 153,037 ETH (worth ~$31M) from three large wallets. The Parity multisig wallet
+  used a library contract pattern where the wallet logic was in a shared library called via
+  delegatecall. The library's initWallet function lacked proper access control, allowing anyone
+  to call it and take ownership of the wallets.
+root_cause: >
+  The Parity multisig wallet library exposed an initWallet function that was meant to be called
+  only during contract construction. However, the function had no access control preventing it
+  from being called again after deployment. Since the wallet delegatecalled into the shared library,
+  an attacker could call initWallet directly on victim wallets to reset the owners array and
+  replace the legitimate owners with an attacker-controlled address.
+exploit_pattern: >
+  Step 1: The attacker identified the shared Parity library contract and discovered initWallet
+  lacked access control. Step 2: The attacker called initWallet on target multisig wallets,
+  passing their own address as the sole owner, effectively taking ownership. Step 3: With ownership
+  established, the attacker called execute() to drain the wallets' ETH balances to their address.
+  Step 4: The attacker repeated this for multiple high-value wallets, extracting 153,037 ETH total.
+remediation: >
+  Initialize contracts atomically in constructors or use initializer modifiers that enforce
+  single-call semantics (e.g., OpenZeppelin's Initializable). Apply strict access control on
+  all sensitive functions, especially those that modify ownership or privileged roles. Avoid
+  shared mutable library patterns with delegatecall for security-critical code. Conduct
+  dedicated audits for access control on all state-changing external functions.
+excerpts: []
