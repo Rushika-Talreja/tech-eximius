@@ -222,7 +222,7 @@ async def main() -> None:
 
         # Generate recorded fallback file for the UI
         fallback_data = await generate_recorded_fallback(client, headers, results)
-        fallback_path = REPO_ROOT / "tester frontend" / "src" / "lib" / "demoFallback.json"
+        fallback_path = REPO_ROOT / "data" / "demoFallback.json"
         fallback_path.parent.mkdir(parents=True, exist_ok=True)
         fallback_path.write_text(json.dumps(fallback_data, indent=2, default=str))
         print(f"\n[+] Generated UI recorded fallback at {fallback_path}")
@@ -232,7 +232,7 @@ async def main() -> None:
     token_id = results["token"]["audit_id"]
     reent_id = results["reentrancy"]["audit_id"]
 
-    console_base = "http://localhost:3001"
+    console_base = "http://localhost:3000"
 
     print("\n" + "=" * 68)
     print("           === DEFI CONTRACT AUDITOR DEMO READY ===")

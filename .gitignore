@@ -48,7 +48,6 @@ secrets/
 .local/
 
 # Generated
-apps/web/src/lib/api/schema.d.ts
 openapi.json
 
 # Local database and storage

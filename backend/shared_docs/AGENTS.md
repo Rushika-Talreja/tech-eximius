@@ -5,7 +5,7 @@ Read `README.md` first. Build milestones in `build_plan.md` order. Do not start 
 ## Repository Layout (monorepo)
 
 ```
-/apps/web                  Next.js dashboard (TypeScript)
+/frontend                  Stitch advisory dashboard (Vite + React)
 /services/api              FastAPI app (routes, auth, schemas, DB access)
 /services/worker           Arq worker: pipeline stages
 /services/sandbox          Dockerfiles + runner for compile/analysis/test containers
@@ -27,7 +27,7 @@ make up           # docker compose up (postgres, redis, qdrant, minio)
 make migrate      # alembic upgrade head
 make api          # run FastAPI with reload
 make worker       # run Arq worker
-make web          # run Next.js dev server
+make web          # run Stitch frontend dev server (port 3000)
 make test         # backend unit + integration tests
 make test-web     # frontend tests
 make lint         # ruff, mypy, eslint, prettier --check

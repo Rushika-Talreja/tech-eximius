@@ -1,6 +1,6 @@
 # DeFi Contract Auditor — Makefile
 # All targets must remain working. See AGENTS.md.
-.PHONY: setup up down migrate api worker web console gen-console-types test test-web lint precommit token-a token-b gen-types eval clean security-check demo demo-reset
+.PHONY: setup up down migrate api worker web test test-web lint precommit token-a token-b eval clean security-check demo demo-reset
 
 PYTHON ?= $(if $(wildcard .venv/bin/python),$(abspath .venv/bin/python),python3)
 PIP ?= $(PYTHON) -m pip
@@ -10,8 +10,8 @@ UV ?= uv
 setup:
 	@echo "Installing Python deps..."
 	@which $(UV) >/dev/null 2>&1 && $(UV) pip install -e "packages/schemas[dev]" -e "packages/auditor_core[dev]" -e "services/api[dev]" -e "services/worker[dev]" || $(PIP) install -e "packages/schemas[dev]" -e "packages/auditor_core[dev]" -e "services/api[dev]" -e "services/worker[dev]"
-	@echo "Installing Node deps..."
-	cd apps/web && (npm ci || npm install)
+	@echo "Installing Node deps for Stitch frontend..."
+	cd frontend && (npm ci || npm install)
 	@echo "Installing pre-commit hooks..."
 	@which pre-commit >/dev/null 2>&1 && pre-commit install || true
 	@echo "Setup complete."
@@ -36,17 +36,7 @@ worker:
 	cd services/worker && $(PYTHON) -m app.main
 
 web:
-	cd apps/web && npm run dev
-
-console:
-	cd "tester frontend" && npm run dev
-
-gen-console-types:
-	@echo "Generating OpenAPI schema..."
-	@curl -s http://localhost:8000/openapi.json > openapi.json 2>/dev/null || (cd services/api && $(PYTHON) -c "from app.main import app; import json; print(json.dumps(app.openapi()))" > ../../openapi.json)
-	@echo "Generating TypeScript types for test console..."
-	cd "tester frontend" && npx openapi-typescript ../openapi.json -o src/types/backend.d.ts
-	@echo "Types generated at tester frontend/src/types/backend.d.ts"
+	cd frontend && npm run dev
 
 # ─── Testing ──────────────────────────────────────────────────────────────────
 test:
@@ -74,14 +64,13 @@ security-check:
 	 echo "==============================================" && exit 1)
 
 test-web:
-	cd apps/web && npm test
+	cd frontend && npm run build
 
 # ─── Lint / typecheck ─────────────────────────────────────────────────────────
 lint:
 	@which ruff >/dev/null 2>&1 && ruff check services/ packages/ corpus/ || true
 	@which ruff >/dev/null 2>&1 && ruff format --check services/ packages/ corpus/ || true
 	@which mypy >/dev/null 2>&1 && mypy services/ packages/ || true
-	@cd apps/web && (which npx >/dev/null 2>&1 && npx eslint . && npx prettier --check . || true)
 
 precommit:
 	@which pre-commit >/dev/null 2>&1 && pre-commit run --all-files || echo "pre-commit command not found; run pip install pre-commit"
@@ -97,10 +86,7 @@ token-b:
 gen-types:
 	@echo "Generating OpenAPI schema..."
 	cd services/api && $(PYTHON) -c "from app.main import app; import json; print(json.dumps(app.openapi()))" > ../../openapi.json
-	@echo "Generating TypeScript types..."
-	@mkdir -p apps/web/src/lib/api
-	cd apps/web && ("$(CURDIR)/tester frontend/node_modules/.bin/openapi-typescript" ../../openapi.json -o src/lib/api/schema.d.ts 2>/dev/null || npx openapi-typescript ../../openapi.json -o src/lib/api/schema.d.ts)
-	@echo "Types generated at apps/web/src/lib/api/schema.d.ts"
+	@echo "OpenAPI schema generated at openapi.json"
 
 # ─── Evaluation ───────────────────────────────────────────────────────────────
 eval:
@@ -118,7 +104,7 @@ ingest-corpus:
 clean:
 	find . -type d -name __pycache__ -exec rm -rf {} + 2>/dev/null || true
 	find . -name "*.pyc" -delete 2>/dev/null || true
-	cd apps/web && rm -rf .next out
+	cd frontend && rm -rf dist
 
 # ─── Demo ─────────────────────────────────────────────────────────────────────
 demo: up migrate
@@ -129,10 +115,10 @@ demo: up migrate
 		sleep 1.5; \
 	fi
 	@echo "Backend API is ready."
-	@echo "Checking test console..."
-	@if ! (curl -s http://localhost:3001 >/dev/null 2>&1 || (test -f $(CURDIR)/data/console.pid && kill -0 $$(cat $(CURDIR)/data/console.pid) 2>/dev/null)); then \
-		echo "Starting Test Console on http://localhost:3001..."; \
-		(cd "tester frontend" && exec npm run dev > $(CURDIR)/data/console.log 2>&1 & echo $$! > $(CURDIR)/data/console.pid); \
+	@echo "Checking Stitch frontend..."
+	@if ! (curl -s http://localhost:3000 >/dev/null 2>&1 || (test -f $(CURDIR)/data/frontend.pid && kill -0 $$(cat $(CURDIR)/data/frontend.pid) 2>/dev/null)); then \
+		echo "Starting Stitch frontend on http://localhost:3000..."; \
+		(cd frontend && exec npm run dev > $(CURDIR)/data/frontend.log 2>&1 & echo $$! > $(CURDIR)/data/frontend.pid); \
 		sleep 1.5; \
 	fi
 	@echo "Seeding demo contracts..."
@@ -141,7 +127,7 @@ demo: up migrate
 	@echo "================================================================="
 	@echo "                   DEFI AUDITOR DEMO READY                       "
 	@echo "================================================================="
-	@echo "  Test Console:  http://localhost:3001"
+	@echo "  Stitch UI:     http://localhost:3000"
 	@echo "  Backend API:   http://localhost:8000"
 	@echo "  API Docs:      http://localhost:8000/docs"
 	@echo "================================================================="
@@ -150,11 +136,11 @@ demo: up migrate
 demo-reset:
 	@echo "Stopping demo processes..."
 	@-test -f $(CURDIR)/data/api.pid && kill -9 $$(cat $(CURDIR)/data/api.pid) 2>/dev/null || true
-	@-test -f $(CURDIR)/data/console.pid && kill -9 $$(cat $(CURDIR)/data/console.pid) 2>/dev/null || true
+	@-test -f $(CURDIR)/data/frontend.pid && kill -9 $$(cat $(CURDIR)/data/frontend.pid) 2>/dev/null || true
 	@-pkill -9 -f "uvicorn app.main:app.*8000" 2>/dev/null || true
-	@-pkill -9 -f "next.*3001" 2>/dev/null || true
+	@-pkill -9 -f "vite.*3000" 2>/dev/null || true
 	@-lsof -ti:8000 | xargs kill -9 2>/dev/null || true
-	@-lsof -ti:3001 | xargs kill -9 2>/dev/null || true
+	@-lsof -ti:3000 | xargs kill -9 2>/dev/null || true
 	@rm -f $(CURDIR)/data/*.pid $(CURDIR)/data/*.log
 	@echo "Wiping demo database and storage..."
 	@rm -f $(CURDIR)/data/auditor.db $(CURDIR)/data/auditor.db-shm $(CURDIR)/data/auditor.db-wal $(CURDIR)/data/demo_state.json
