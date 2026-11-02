@@ -1,16 +1,26 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { api } from '../api.js';
 
 /**
  * Sidebar component.
  * Strict text-first navigation without icons, emojis, or symbol glyphs.
+ * Displays real user session (GET /v1/me) and corpus version (GET /v1/corpus/versions).
  */
 export function Sidebar({ currentView, onNavigate }) {
+  const [currentUser, setCurrentUser] = useState(null);
+  const [corpusInfo, setCorpusInfo] = useState(null);
+
+  useEffect(() => {
+    api.getMe().then(setCurrentUser).catch(() => {});
+    api.getCorpusVersions().then(setCorpusInfo).catch(() => {});
+  }, []);
+
   const navItems = [
     { id: 'workspace', label: 'Workspace', badge: 'Intake' },
     { id: 'live-run', label: 'Live Run', badge: 'Active' },
     { id: 'report-summary', label: 'Report Summary', badge: 'Dashboard' },
     { id: 'patch-diff', label: 'Patch Diff', badge: 'Remediation' },
-    { id: 'evidence-drawer', label: 'Evidence Drawer', badge: 'Inspection' }
+    { id: 'evidence-drawer', label: 'Evidence Dossier', badge: 'Formal' },
   ];
 
   return (
@@ -30,6 +40,15 @@ export function Sidebar({ currentView, onNavigate }) {
             Security & Regulatory Suite
           </p>
         </div>
+
+        {/* User Identity from /v1/me */}
+        {currentUser && (
+          <div className="p-3 border-b border-[#3A332D] bg-[#14110F] flex flex-col gap-0.5 text-xs font-code-sm">
+            <span className="text-[10px] font-label-caps text-outline uppercase">Active Principal</span>
+            <span className="text-on-surface font-semibold truncate">{currentUser.email || currentUser.id}</span>
+            <span className="text-[10px] text-primary uppercase font-label-caps">Role: {currentUser.role || 'Auditor'}</span>
+          </div>
+        )}
 
         {/* Navigation list */}
         <nav className="p-3 flex flex-col gap-1">
@@ -65,7 +84,7 @@ export function Sidebar({ currentView, onNavigate }) {
         </nav>
       </div>
 
-      {/* Persistent Security Disclaimer */}
+      {/* Persistent Security Disclaimer & Toolchain Version */}
       <div className="p-4 border-t border-[#3A332D] bg-[#100E0C]">
         <div className="font-label-caps text-[10px] text-outline uppercase tracking-wider mb-1">
           Compliance Posture
@@ -73,12 +92,13 @@ export function Sidebar({ currentView, onNavigate }) {
         <p className="font-disclaimer text-[10px] text-on-surface-variant leading-relaxed">
           Automated advisory check. Not a formal audit. Not legal advice.
         </p>
-        <div className="mt-2 text-[10px] font-code-sm text-primary flex items-center justify-between">
-          <span>Engine: SOLC 0.8.20</span>
-          <span>Status: Online</span>
+        <div className="mt-2 text-[10px] font-code-sm text-primary flex flex-col gap-0.5">
+          <div className="flex items-center justify-between">
+            <span>Corpus: {corpusInfo?.current_version || '2026.10.1'}</span>
+            <span>API: Online</span>
+          </div>
         </div>
       </div>
     </aside>
   );
 }
-

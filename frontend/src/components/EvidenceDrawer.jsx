@@ -4,40 +4,22 @@ import React from 'react';
  * EvidenceDrawer component.
  * Sliding / contextual drawer detailing diagnostic evidence,
  * AST control-flow traces, historical exploit post-mortems, and regulatory clauses.
- * Text-first affordances throughout.
  */
-export function EvidenceDrawer({ isOpen, onClose, evidenceData }) {
+export function EvidenceDrawer({ isOpen, onClose, evidenceData, onDismiss }) {
   if (!isOpen) return null;
 
   const data = evidenceData || {
     findingId: 'FINDING-082',
-    title: 'State Modification Following External Low-Level Call (Reentrancy)',
+    title: 'State Modification Following External Low-Level Call',
     severity: 'CRITICAL',
-    location: 'YieldVault.sol:58:9',
+    status: 'open',
+    location: 'Contract.sol:58:9',
     method: 'withdraw(uint256)',
-    sections: [
-      {
-        title: 'Section 1: Why This Was Flagged',
-        content: 'Control flow graph analysis revealed that msg.sender.call transfers execution flow to an arbitrary address while contract storage balances[msg.sender] remains unmodified. The callee contract fallback routine can execute a second call to withdraw(), repeating the balance verification before the first reduction occurs.'
-      },
-      {
-        title: 'Section 2: Evidence Type',
-        content: 'AST Trace & Control Flow Graph: Node 182 (CallExpr) -> Node 194 (StateVarWrite). CFG indicates path branching without lock verification.'
-      },
-      {
-        title: 'Section 3: Historical Post-Mortems',
-        content: 'Parallels the Euler Finance protocol exploit ($197M lost) and Grim Finance vault drain ($30M lost), where external state sync delays enabled recursive collateralization calls.'
-      },
-      {
-        title: 'Section 4: Regulatory Clause (SEBI & RBI Advisory Context)',
-        content: 'SEBI Circular 2023/114 Annexure B: Protocol architectures processing retail investor capital must enforce provable isolation against recursive reentrancy attacks.'
-      },
-      {
-        title: 'Section 5: Confidence and Limits',
-        content: 'Static heuristic analysis confidence: 99.2%. Automated advisory check. Not a formal audit. Not legal advice.'
-      }
-    ]
+    sections: [],
+    rawEvidence: [],
   };
+
+  const isDismissed = data.status === 'dismissed';
 
   return (
     <div className="fixed inset-0 z-50 flex justify-end bg-black/60 backdrop-blur-xs">
@@ -50,14 +32,17 @@ export function EvidenceDrawer({ isOpen, onClose, evidenceData }) {
                 {data.severity}
               </span>
               <span className="font-label-caps text-xs text-primary font-mono font-bold">
-                [{data.findingId}]
+                [{data.findingId?.slice(0, 11)}]
+              </span>
+              <span className="font-label-caps text-[10px] text-outline uppercase border border-[#3A332D] px-1.5 py-0.5">
+                {data.status}
               </span>
             </div>
             <h2 className="font-headline-sm text-sm text-on-surface font-semibold leading-snug">
               {data.title}
             </h2>
             <div className="font-code-sm text-[11px] text-outline mt-1">
-              Method: <span className="text-on-surface">{data.method}</span> | Target: <span className="text-on-surface">{data.location}</span>
+              Target: <span className="text-on-surface">{data.location}</span>
             </div>
           </div>
 
@@ -66,62 +51,66 @@ export function EvidenceDrawer({ isOpen, onClose, evidenceData }) {
             onClick={onClose}
             className="font-label-caps text-xs text-on-surface-variant hover:text-primary border border-[#3A332D] hover:border-primary px-3 py-1.5 transition-colors uppercase font-bold shrink-0"
           >
-            [ Close Drawer ]
+            [ Close ]
           </button>
         </div>
 
         {/* Diagnostic Sections */}
         <div className="p-6 flex flex-col gap-6 divide-y divide-[#3A332D] text-xs">
-          {data.sections.map((section, idx) => (
+          {(data.sections || []).map((section, idx) => (
             <div key={idx} className={idx > 0 ? 'pt-5' : ''}>
               <div className="font-label-caps text-[11px] text-primary uppercase font-bold tracking-wider mb-2">
                 {section.title}
               </div>
-              <p className="font-body-md text-on-surface leading-relaxed text-xs">
+              <p className="font-body-md text-on-surface leading-relaxed text-xs whitespace-pre-wrap">
                 {section.content}
               </p>
             </div>
           ))}
 
-          {/* Post-Mortem Deep Dives */}
-          <div className="pt-5 flex flex-col gap-3">
-            <div className="font-label-caps text-[11px] text-outline uppercase font-bold tracking-wider">
-              Corroborating Historical Exploits
-            </div>
-            <div className="p-3 bg-[#14110F] border border-[#3A332D]">
-              <div className="font-headline-sm text-xs font-semibold text-on-surface">
-                Euler Finance Liquidation Protocol Exploit ($197M)
+          {/* Raw Evidence Items from DB */}
+          {(data.rawEvidence || []).length > 0 && (
+            <div className="pt-5 flex flex-col gap-3">
+              <div className="font-label-caps text-[11px] text-outline uppercase font-bold tracking-wider">
+                Attached Artifacts & Quotes ({data.rawEvidence.length})
               </div>
-              <p className="font-body-sm text-[11px] text-on-surface-variant mt-1 leading-snug">
-                Liquidation health factor state update deferred past external collateral call, enabling recursive leverage without margin.
-              </p>
+              {data.rawEvidence.map((ev, idx) => (
+                <div key={idx} className="p-3 bg-[#14110F] border border-[#3A332D] flex flex-col gap-1">
+                  <div className="flex items-center justify-between text-[11px] font-mono">
+                    <span className="text-primary font-bold">{ev.title}</span>
+                    <span className="text-outline">{ev.kind}</span>
+                  </div>
+                  {ev.locator && <div className="text-[10px] text-outline">Locator: {ev.locator}</div>}
+                  {ev.quote && <p className="text-[11px] text-on-surface-variant font-mono mt-1">{ev.quote}</p>}
+                </div>
+              ))}
             </div>
-            <div className="p-3 bg-[#14110F] border border-[#3A332D]">
-              <div className="font-headline-sm text-xs font-semibold text-on-surface">
-                Grim Finance Vault Reentrancy Drain ($30M)
-              </div>
-              <p className="font-body-sm text-[11px] text-on-surface-variant mt-1 leading-snug">
-                Custom token transfer hook hijacked re-deposits before balance decrement was stored in global contract memory.
-              </p>
-            </div>
-          </div>
+          )}
         </div>
 
-        {/* Drawer Footer */}
+        {/* Drawer Footer Actions */}
         <div className="p-4 bg-[#14110F] border-t border-[#3A332D] flex items-center justify-between">
           <span className="font-disclaimer text-[10px] text-outline">
-            Automated advisory check. Not a formal audit. Not legal advice.
+            Automated advisory check. Not legal advice.
           </span>
-          <button
-            type="button"
-            onClick={onClose}
-            className="font-label-caps text-xs text-primary border border-primary px-4 py-1.5 hover:bg-primary hover:text-[#14110F] transition-colors uppercase font-bold"
-          >
-            [ Dismiss Finding ]
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => onDismiss && onDismiss(data.findingId, data.status)}
+              className="font-label-caps text-xs text-[#E8782A] border border-[#E8782A] px-3.5 py-1.5 hover:bg-[#E8782A]/10 transition-colors uppercase font-bold"
+            >
+              {isDismissed ? '[ Reopen Finding ]' : '[ Dismiss Finding ]'}
+            </button>
+            <button
+              type="button"
+              onClick={onClose}
+              className="font-label-caps text-xs text-primary border border-primary px-3.5 py-1.5 hover:bg-primary hover:text-[#14110F] transition-colors uppercase font-bold"
+            >
+              [ Close Drawer ]
+            </button>
+          </div>
         </div>
       </div>
     </div>
   );
 }
-

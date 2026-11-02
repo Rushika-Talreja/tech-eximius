@@ -105,19 +105,12 @@
       console.log('Monaco Editor loaded successfully');
     });
   </script>
-
-  <!-- React 18 & ReactDOM -->
-  <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
-  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
-
-  <!-- Babel Standalone for direct in-browser JSX ES module transformation -->
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 </head>
 <body class="bg-[#161311] text-[#E9E1DD] overflow-hidden m-0 p-0 font-sans">
   <div id="root"></div>
 
   <!-- Main Application Script -->
-  <script type="text/babel" data-type="module" src="./src/main.jsx"></script>
+  <script type="module" src="/src/main.jsx"></script>
 </body>
 </html>
 

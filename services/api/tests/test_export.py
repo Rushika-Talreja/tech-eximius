@@ -147,3 +147,17 @@ async def test_export_formats_and_clean_verdict(
     assert props["verdict"] == "No verified issues detected by this analysis"
     assert "coverage" in props
 
+    # 5. PDF export
+    import sys
+    import unittest.mock as mock
+
+    fake_weasy = mock.MagicMock()
+    fake_weasy.HTML.return_value.write_pdf.return_value = b"%PDF-1.4 mock content"
+    with mock.patch.dict(sys.modules, {"weasyprint": fake_weasy}):
+        pdf_resp = await async_client.get(f"/v1/audits/{audit.id}/export?format=pdf", headers=auth_a)
+        assert pdf_resp.status_code == 200
+        assert pdf_resp.headers["Content-Type"] == "application/pdf"
+        assert "audit-" in pdf_resp.headers["Content-Disposition"]
+        assert pdf_resp.content.startswith(b"%PDF")
+
+

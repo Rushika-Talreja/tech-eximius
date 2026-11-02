@@ -3,32 +3,14 @@ import React from 'react';
 export function EvidenceView({ evidenceData, onBackToDashboard }) {
   const data = evidenceData || {
     findingId: 'FINDING-082',
-    title: 'State Modification Following External Low-Level Call (Reentrancy)',
+    title: 'State Modification Following External Low-Level Call',
     severity: 'CRITICAL',
-    location: 'YieldVault.sol:58:9',
+    status: 'open',
+    location: 'Contract.sol:58:9',
     method: 'withdraw(uint256)',
-    sections: [
-      {
-        title: 'Section 1: Why This Was Flagged',
-        content: 'Control flow graph analysis revealed that msg.sender.call transfers execution flow to an arbitrary address while contract storage balances[msg.sender] remains unmodified. The callee contract fallback routine can execute a second call to withdraw(), repeating the balance verification before the first reduction occurs.'
-      },
-      {
-        title: 'Section 2: Evidence Type',
-        content: 'AST Trace & Control Flow Graph: Node 182 (CallExpr) -> Node 194 (StateVarWrite). CFG indicates path branching without lock verification.'
-      },
-      {
-        title: 'Section 3: Historical Post-Mortems',
-        content: 'Parallels the Euler Finance protocol exploit ($197M lost) and Grim Finance vault drain ($30M lost), where external state sync delays enabled recursive collateralization calls.'
-      },
-      {
-        title: 'Section 4: Regulatory Clause (SEBI & RBI Advisory Context)',
-        content: 'SEBI Circular 2023/114 Annexure B: Protocol architectures processing retail investor capital must enforce provable isolation against recursive reentrancy attacks.'
-      },
-      {
-        title: 'Section 5: Confidence and Limits',
-        content: 'Static heuristic analysis confidence: 99.2%. Automated advisory check. Not a formal audit. Not legal advice.'
-      }
-    ]
+    confidence: 0.98,
+    sections: [],
+    rawEvidence: [],
   };
 
   return (
@@ -41,7 +23,10 @@ export function EvidenceView({ evidenceData, onBackToDashboard }) {
               {data.severity}
             </span>
             <span className="font-label-caps text-xs text-primary font-mono font-bold">
-              [{data.findingId}]
+              [{data.findingId?.slice(0, 11)}]
+            </span>
+            <span className="font-label-caps text-[10px] text-outline uppercase border border-[#3A332D] px-1.5 py-0.5">
+              STATUS: {data.status}
             </span>
           </div>
           <h1 className="font-headline-lg text-xl sm:text-2xl text-on-surface font-semibold tracking-tight">
@@ -63,45 +48,45 @@ export function EvidenceView({ evidenceData, onBackToDashboard }) {
 
       {/* Structured Sections */}
       <div className="bg-[#1D1916] border border-[#3A332D] p-6 flex flex-col gap-6 divide-y divide-[#3A332D]">
-        {data.sections.map((section, idx) => (
+        {(data.sections || []).map((section, idx) => (
           <div key={idx} className={idx > 0 ? 'pt-5' : ''}>
             <div className="font-label-caps text-xs text-primary uppercase font-bold tracking-wider mb-2">
               {section.title}
             </div>
-            <p className="font-body-md text-on-surface leading-relaxed text-xs max-w-4xl">
+            <p className="font-body-md text-on-surface leading-relaxed text-xs max-w-4xl whitespace-pre-wrap">
               {section.content}
             </p>
           </div>
         ))}
-      </div>
 
-      {/* Historical Exploits Case Studies */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="bg-[#1D1916] border border-[#3A332D] p-5 flex flex-col gap-2">
-          <div className="font-label-caps text-xs text-outline uppercase font-bold tracking-wider">
-            Case Study: Euler Finance ($197M)
+        {/* Attached Artifacts & Quotes */}
+        {(data.rawEvidence || []).length > 0 && (
+          <div className="pt-5 flex flex-col gap-3">
+            <div className="font-label-caps text-xs text-primary uppercase font-bold tracking-wider">
+              Attached Artifacts & Grounding Evidence ({data.rawEvidence.length})
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {data.rawEvidence.map((ev, idx) => (
+                <div key={idx} className="p-4 bg-[#14110F] border border-[#3A332D] flex flex-col gap-1 text-xs font-code-sm">
+                  <div className="flex items-center justify-between">
+                    <span className="text-primary font-bold">{ev.title}</span>
+                    <span className="font-label-caps text-[9px] text-outline border border-[#3A332D] px-1">{ev.kind}</span>
+                  </div>
+                  {ev.locator && <span className="text-[10px] text-outline">Locator: {ev.locator}</span>}
+                  {ev.retrieval_score && (
+                    <span className="text-[10px] text-[#8FA84A]">RAG Similarity: {ev.retrieval_score.toFixed(3)}</span>
+                  )}
+                  {ev.quote && (
+                    <p className="p-2.5 bg-[#161311] border border-[#2D2927] text-on-surface-variant font-mono text-[11px] mt-2">
+                      {ev.quote}
+                    </p>
+                  )}
+                </div>
+              ))}
+            </div>
           </div>
-          <div className="font-headline-sm text-xs font-semibold text-on-surface">
-            Liquidation Health Factor State Desynchronization
-          </div>
-          <p className="font-body-sm text-[11px] text-on-surface-variant leading-relaxed">
-            Liquidation health factor state update was deferred past an external transfer call, permitting malicious contracts to repeat borrowing actions without supplying collateral.
-          </p>
-        </div>
-
-        <div className="bg-[#1D1916] border border-[#3A332D] p-5 flex flex-col gap-2">
-          <div className="font-label-caps text-xs text-outline uppercase font-bold tracking-wider">
-            Case Study: Grim Finance ($30M)
-          </div>
-          <div className="font-headline-sm text-xs font-semibold text-on-surface">
-            Hook Reentrancy via Custom Token Transfer
-          </div>
-          <p className="font-body-sm text-[11px] text-on-surface-variant leading-relaxed">
-            Unprotected external hook during deposit transfer hijacked execution before storage balances were decremented, multiplying synthetic shares.
-          </p>
-        </div>
+        )}
       </div>
     </div>
   );
 }
-

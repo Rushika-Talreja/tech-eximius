@@ -9,6 +9,7 @@ from __future__ import annotations
 import json
 import uuid
 from datetime import datetime
+from typing import Any
 
 from fastapi import APIRouter, Depends, Query
 from fastapi.responses import Response
@@ -21,6 +22,135 @@ from app.errors import AppError, audit_not_ready, audit_purged, not_found
 from auditor_schemas.constants import STANDARD_DISCLAIMER
 
 router = APIRouter(tags=["export"])
+
+
+def _generate_fallback_pdf(report: dict, findings_data: list[dict], verdict: str | None) -> bytes:
+    """Fallback minimalist valid PDF generator when WeasyPrint / cairo is unavailable."""
+    audit_id = report.get("audit_id", "")
+    lines = [
+        "DeFi Contract Audit Advisory Report",
+        f"Audit ID: {audit_id}",
+        f"Generated: {report.get('generated_at', '')}",
+        "---",
+        "DISCLAIMER:",
+        report.get("disclaimer", "")[:90] + "...",
+        "---",
+        "FINDINGS:"
+    ]
+    if findings_data:
+        for f in findings_data[:20]:
+            sev = (f.get("severity") or "INFO").upper()
+            title = (f.get("title") or "")[:50]
+            lines.append(f"[{sev}] {title}")
+    else:
+        lines.append(verdict or "No verified issues detected by this analysis")
+
+    stream_data = "BT /F1 10 Tf 40 750 Td 14 TL "
+    for l in lines:
+        safe_l = str(l).replace("\\", "\\\\").replace("(", "\\(").replace(")", "\\)")
+        stream_data += f"({safe_l}) ' "
+    stream_data += "ET"
+    stream_bytes = stream_data.encode("latin-1", "replace")
+
+    pdf = (
+        b"%PDF-1.4\n"
+        b"1 0 obj <</Type /Catalog /Pages 2 0 R>> endobj\n"
+        b"2 0 obj <</Type /Pages /Kids [3 0 R] /Count 1>> endobj\n"
+        b"3 0 obj <</Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources <</Font <</F1 5 0 R>>>>>> endobj\n"
+        b"4 0 obj <</Length " + str(len(stream_bytes)).encode() + b">> stream\n" + stream_bytes + b"\nendstream\nendobj\n"
+        b"5 0 obj <</Type /Font /Subtype /Type1 /BaseFont /Helvetica>> endobj\n"
+        b"xref\n0 6\n0000000000 65535 f \n0000000009 00000 n \n0000000058 00000 n \n0000000115 00000 n \n"
+        b"0000000225 00000 n \n0000000300 00000 n \ntrailer <</Size 6 /Root 1 0 R>>\nstartxref\n380\n%%EOF\n"
+    )
+    return pdf
+
+
+def _build_pdf_html(report: dict, findings_data: list[dict], verdict: str | None) -> str:
+    """Build a self-contained HTML document for WeasyPrint to render as PDF."""
+    disclaimer = report.get("disclaimer", "")
+    audit_id = report.get("audit_id", "")
+    generated_at = report.get("generated_at", "")
+    toolchain = report.get("toolchain") or {}
+    corpus_version = report.get("corpus_version", "")
+    scores = report.get("scores") or {}
+    coverage = report.get("coverage") or {}
+    analyzed = coverage.get("analyzed") or {}
+    out_of_scope = coverage.get("out_of_scope") or []
+
+    toolchain_str = ", ".join(f"{k} {v}" for k, v in toolchain.items()) or "N/A"
+    contracts_str = ", ".join(analyzed.get("contracts") or []) or "None"
+    detectors_count = len(analyzed.get("detectors_run") or [])
+    out_of_scope_str = ", ".join(out_of_scope) or "None"
+
+    findings_html = ""
+    if findings_data:
+        rows = ""
+        for f in findings_data:
+            sev = (f.get("severity") or "").upper()
+            sev_color = {
+                "CRITICAL": "#7b0000", "HIGH": "#c0392b", "MEDIUM": "#e67e22",
+                "LOW": "#2980b9", "INFO": "#27ae60",
+            }.get(sev, "#555")
+            rows += f"""
+            <tr>
+              <td style="color:{sev_color};font-weight:bold">{sev}</td>
+              <td>{f.get('title','')}</td>
+              <td>{f.get('source','')}</td>
+              <td>{f.get('status','')}</td>
+              <td style="font-size:0.85em">{(f.get('description','') or '')[:200]}</td>
+            </tr>"""
+        findings_html = f"""
+        <h2>Findings</h2>
+        <table>
+          <thead><tr><th>Severity</th><th>Title</th><th>Source</th><th>Status</th><th>Description</th></tr></thead>
+          <tbody>{rows}</tbody>
+        </table>"""
+    else:
+        clean = verdict or "No verified issues detected by this analysis"
+        findings_html = f'<h2>Findings</h2><p class="clean">{clean}</p>'
+
+    return f"""<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>DeFi Contract Audit Report</title>
+<style>
+  body {{ font-family: sans-serif; font-size: 11pt; margin: 2cm; color: #222; }}
+  h1 {{ font-size: 18pt; border-bottom: 2px solid #333; padding-bottom: 6px; }}
+  h2 {{ font-size: 13pt; margin-top: 1.5em; color: #333; }}
+  .meta {{ color: #555; font-size: 0.9em; margin-bottom: 1em; }}
+  .disclaimer {{ background: #fff3cd; border: 1px solid #ffc107; padding: 10px 14px;
+                 border-radius: 4px; font-size: 0.88em; margin: 1em 0; }}
+  table {{ width: 100%; border-collapse: collapse; font-size: 0.9em; }}
+  th {{ background: #333; color: #fff; padding: 6px 8px; text-align: left; }}
+  td {{ padding: 5px 8px; border-bottom: 1px solid #ddd; vertical-align: top; }}
+  tr:nth-child(even) td {{ background: #f9f9f9; }}
+  .clean {{ font-weight: bold; color: #27ae60; font-size: 1.1em; }}
+  .score-box {{ display: inline-block; padding: 4px 12px; border-radius: 4px;
+                background: #eef; border: 1px solid #99c; margin-right: 10px; }}
+</style>
+</head>
+<body>
+<h1>DeFi Contract Audit Report</h1>
+<div class="meta">
+  <strong>Audit ID:</strong> {audit_id}<br>
+  <strong>Generated:</strong> {generated_at}<br>
+  <strong>Toolchain:</strong> {toolchain_str}<br>
+  <strong>Corpus Version:</strong> {corpus_version}
+</div>
+<div class="disclaimer"><strong>⚠ DISCLAIMER:</strong> {disclaimer}</div>
+<h2>Scores <small>({scores.get('label','heuristic risk indicator')})</small></h2>
+<span class="score-box">Security: {scores.get('security','N/A')}/100</span>
+<span class="score-box">Overall: {scores.get('overall','N/A')}/100</span>
+<h2>Coverage Statement</h2>
+<ul>
+  <li><strong>Analyzed Contracts:</strong> {contracts_str}</li>
+  <li><strong>Detectors Run:</strong> {detectors_count}</li>
+  <li><strong>Out of Scope:</strong> {out_of_scope_str}</li>
+</ul>
+{findings_html}
+</body>
+</html>"""
 
 CLEAN_VERDICT = "No verified issues detected by this analysis"
 
@@ -196,4 +326,17 @@ async def export_audit(
         )
 
     elif format == "pdf":
-        raise AppError("VALIDATION_ERROR", "PDF export is not yet implemented", 422)
+        try:
+            import weasyprint
+            html = _build_pdf_html(report, findings_data, CLEAN_VERDICT if not findings else None)
+            pdf_bytes = weasyprint.HTML(string=html).write_pdf()
+        except Exception:
+            pdf_bytes = _generate_fallback_pdf(report, findings_data, CLEAN_VERDICT if not findings else None)
+
+        return Response(
+            content=pdf_bytes,
+            media_type="application/pdf",
+            headers={
+                "Content-Disposition": f'attachment; filename="audit-{audit_id}.pdf"'
+            },
+        )
